@@ -32,7 +32,7 @@ public:
 	static std::shared_ptr<PIDController> driveBaseFrontLeft;
 	static std::shared_ptr<AnalogInput> driveBaseFrontRightPos;
 	static std::shared_ptr<CANTalon> driveBaseFrontRightSteer;
-	static std::shared_ptr<PIDController> driveBaseFrontRigt;
+	static std::shared_ptr<PIDController> driveBaseFrontRight;
 	static std::shared_ptr<AnalogInput> driveBaseRearLeftPos;
 	static std::shared_ptr<CANTalon> driveBaseRearLeftSteer;
 	static std::shared_ptr<PIDController> driveBaseRearLeft;

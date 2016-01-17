@@ -23,7 +23,7 @@ std::shared_ptr<CANTalon> RobotMap::driveBaseFrontLeftSteer;
 std::shared_ptr<PIDController> RobotMap::driveBaseFrontLeft;
 std::shared_ptr<AnalogInput> RobotMap::driveBaseFrontRightPos;
 std::shared_ptr<CANTalon> RobotMap::driveBaseFrontRightSteer;
-std::shared_ptr<PIDController> RobotMap::driveBaseFrontRigt;
+std::shared_ptr<PIDController> RobotMap::driveBaseFrontRight;
 std::shared_ptr<AnalogInput> RobotMap::driveBaseRearLeftPos;
 std::shared_ptr<CANTalon> RobotMap::driveBaseRearLeftSteer;
 std::shared_ptr<PIDController> RobotMap::driveBaseRearLeft;
@@ -66,11 +66,11 @@ void RobotMap::init() {
     driveBaseFrontRightSteer.reset(new CANTalon(7));
     lw->AddActuator("DriveBase", "FrontRightSteer", driveBaseFrontRightSteer);
     
-    driveBaseFrontRigt.reset(new PIDController(0.1, 0.0, 0.0,/* F: 0.0, */ driveBaseFrontRightPos.get(), driveBaseFrontRightSteer.get(), 0.02));
-    lw->AddActuator("DriveBase", "FrontRigt", driveBaseFrontRigt);
-    driveBaseFrontRigt->SetContinuous(true); driveBaseFrontRigt->SetAbsoluteTolerance(0.2); 
-        driveBaseFrontRigt->SetInputRange(0.0, 5.0);
-        driveBaseFrontRigt->SetOutputRange(-0.75, 0.75);
+    driveBaseFrontRight.reset(new PIDController(0.1, 0.0, 0.0,/* F: 0.0, */ driveBaseFrontRightPos.get(), driveBaseFrontRightSteer.get(), 0.02));
+    lw->AddActuator("DriveBase", "FrontRight", driveBaseFrontRight);
+    driveBaseFrontRight->SetContinuous(true); driveBaseFrontRight->SetAbsoluteTolerance(0.2); 
+        driveBaseFrontRight->SetInputRange(0.0, 5.0);
+        driveBaseFrontRight->SetOutputRange(-0.75, 0.75);
     driveBaseRearLeftPos.reset(new AnalogInput(2));
     lw->AddSensor("DriveBase", "RearLeftPos", driveBaseRearLeftPos);
     
