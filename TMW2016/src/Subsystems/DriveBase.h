@@ -13,6 +13,7 @@
 #define DRIVEBASE_H
 #include "Commands/Subsystem.h"
 #include "WPILib.h"
+#include "AHRS.h"
 
 /**
  *
@@ -145,6 +146,7 @@ public:
 	void SetRRTurns(int val);
 	PIDController *DriveControlTwist;
 	PIDController *DriveControlUS;
+	AHRS *imu;
 	SerialPort *serialport;
 	uint8_t USAdress;
 
