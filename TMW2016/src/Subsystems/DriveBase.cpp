@@ -60,7 +60,7 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	pFRVolt = 0;
 	pRLVolt = 0;
 	pRRVolt = 0;
-	driveFront = true;
+	driveFront = false;
 
 	Y=0;
 	robotangle=0;
