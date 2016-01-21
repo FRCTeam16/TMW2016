@@ -42,5 +42,17 @@ public:
 	virtual void TeleopInit();
 	virtual void TeleopPeriodic();
 	virtual void TestPeriodic();
+	static PowerDistributionPanel *pdp;
+
+private:
+//	RAWCConstants* File;
+	double FLOffset;
+	double FROffset;
+	double RLOffset;
+	double RROffset;
+	bool prevTrigger;
+	Preferences* Prefs;
+	void SystemSMDB();
+	void DriveBaseSMDB();
 };
 #endif

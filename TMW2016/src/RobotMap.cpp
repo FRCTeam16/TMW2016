@@ -52,43 +52,52 @@ void RobotMap::init() {
     driveBaseFrontLeftPos.reset(new AnalogInput(0));
     lw->AddSensor("DriveBase", "FrontLeftPos", driveBaseFrontLeftPos);
     
+
+
     driveBaseFrontLeftSteer.reset(new CANTalon(6));
     lw->AddActuator("DriveBase", "FrontLeftSteer", driveBaseFrontLeftSteer);
     
-    driveBaseFrontLeft.reset(new PIDController(0.1, 0.0, 0.0,/* F: 0.0, */ driveBaseFrontLeftPos.get(), driveBaseFrontLeftSteer.get(), 0.02));
+    driveBaseFrontLeft.reset(new PIDController(1, 0.0, 0.0,/* F: 0.0, */ driveBaseFrontLeftPos.get(), driveBaseFrontLeftSteer.get(), 0.02));
     lw->AddActuator("DriveBase", "FrontLeft", driveBaseFrontLeft);
     driveBaseFrontLeft->SetContinuous(true); driveBaseFrontLeft->SetAbsoluteTolerance(0.2); 
         driveBaseFrontLeft->SetInputRange(0.0, 5.0);
         driveBaseFrontLeft->SetOutputRange(-0.75, 0.75);
+
+
     driveBaseFrontRightPos.reset(new AnalogInput(1));
     lw->AddSensor("DriveBase", "FrontRightPos", driveBaseFrontRightPos);
     
     driveBaseFrontRightSteer.reset(new CANTalon(7));
     lw->AddActuator("DriveBase", "FrontRightSteer", driveBaseFrontRightSteer);
     
-    driveBaseFrontRight.reset(new PIDController(0.1, 0.0, 0.0,/* F: 0.0, */ driveBaseFrontRightPos.get(), driveBaseFrontRightSteer.get(), 0.02));
+    driveBaseFrontRight.reset(new PIDController(1, 0.0, 0.0,/* F: 0.0, */ driveBaseFrontRightPos.get(), driveBaseFrontRightSteer.get(), 0.02));
     lw->AddActuator("DriveBase", "FrontRight", driveBaseFrontRight);
     driveBaseFrontRight->SetContinuous(true); driveBaseFrontRight->SetAbsoluteTolerance(0.2); 
         driveBaseFrontRight->SetInputRange(0.0, 5.0);
         driveBaseFrontRight->SetOutputRange(-0.75, 0.75);
+
+
+
     driveBaseRearLeftPos.reset(new AnalogInput(2));
     lw->AddSensor("DriveBase", "RearLeftPos", driveBaseRearLeftPos);
     
     driveBaseRearLeftSteer.reset(new CANTalon(8));
     lw->AddActuator("DriveBase", "RearLeftSteer", driveBaseRearLeftSteer);
     
-    driveBaseRearLeft.reset(new PIDController(0.1, 0.0, 0.0,/* F: 0.0, */ driveBaseRearLeftPos.get(), driveBaseRearLeftSteer.get(), 0.02));
+    driveBaseRearLeft.reset(new PIDController(1, 0.0, 0.0,/* F: 0.0, */ driveBaseRearLeftPos.get(), driveBaseRearLeftSteer.get(), 0.02));
     lw->AddActuator("DriveBase", "RearLeft", driveBaseRearLeft);
     driveBaseRearLeft->SetContinuous(true); driveBaseRearLeft->SetAbsoluteTolerance(0.2); 
         driveBaseRearLeft->SetInputRange(0.0, 5.0);
         driveBaseRearLeft->SetOutputRange(-0.75, 0.75);
+
+
     driveBaseRearRightPos.reset(new AnalogInput(3));
     lw->AddSensor("DriveBase", "RearRightPos", driveBaseRearRightPos);
     
     driveBaseRearRightSteer.reset(new CANTalon(9));
     lw->AddActuator("DriveBase", "RearRightSteer", driveBaseRearRightSteer);
     
-    driveBaseRearRight.reset(new PIDController(0.1, 0.0, 0.0,/* F: 0.0, */ driveBaseRearRightPos.get(), driveBaseRearRightSteer.get(), 0.02));
+    driveBaseRearRight.reset(new PIDController(1, 0.0, 0.0,/* F: 0.0, */ driveBaseRearRightPos.get(), driveBaseRearRightSteer.get(), 0.02));
     lw->AddActuator("DriveBase", "RearRight", driveBaseRearRight);
     driveBaseRearRight->SetContinuous(true); driveBaseRearRight->SetAbsoluteTolerance(0.2); 
         driveBaseRearRight->SetInputRange(0.0, 5.0);

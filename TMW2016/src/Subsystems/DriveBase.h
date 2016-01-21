@@ -149,6 +149,8 @@ public:
 	AHRS *imu;
 	SerialPort *serialport;
 	uint8_t USAdress;
+	void TestDrive(float first);
+	void SMDB();
 
 };
 
