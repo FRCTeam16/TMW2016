@@ -67,8 +67,8 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	A=0;
 	AP=0;
 	BP=0;
-	cFLVolt=0;
 	cFRVolt=0;
+	cFLVolt=0;
 	CP=0;
 	cRLVolt=0;
 	cRRVolt=0;
@@ -487,4 +487,6 @@ void DriveBase::TestDrive(float first) {
 
 void DriveBase::SMDB() {
 	SmartDashboard::PutNumber("RearLeftPost", rearLeftPos->GetAverageVoltage());
+	SmartDashboard::PutNumber("Yaw", imu->GetYaw());
+	SmartDashboard::PutNumber("Angle", imu->GetAngle());
 }
