@@ -360,6 +360,39 @@ Children:
           value: '0'
       Base: Compressor
       Name: Comp
+    - Children: []
+      Properties:
+        Output Channel (Solenoid): !!robotbuilder.data.properties.ChoicesProperty
+          choices: &id007 ['0', '1', '2', '3', '4', '5', '6', '7']
+          default: '0'
+          name: Output Channel (Solenoid)
+          validators: &id008 [Solenoid]
+          value: '0'
+        Output PCM (Solenoid): !!robotbuilder.data.properties.ChoicesProperty
+          choices: &id009 ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+            '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']
+          default: '0'
+          name: Output PCM (Solenoid)
+          validators: &id010 [Solenoid]
+          value: '0'
+      Base: Solenoid
+      Name: ClimbLeft
+    - Children: []
+      Properties:
+        Output Channel (Solenoid): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id007
+          default: '0'
+          name: Output Channel (Solenoid)
+          validators: *id008
+          value: '1'
+        Output PCM (Solenoid): !!robotbuilder.data.properties.ChoicesProperty
+          choices: *id009
+          default: '0'
+          name: Output PCM (Solenoid)
+          validators: *id010
+          value: '0'
+      Base: Solenoid
+      Name: ClimbRight
     Properties:
       Default command parameters: !!robotbuilder.data.properties.ParametersProperty
         default: []
@@ -382,30 +415,30 @@ Children:
   - Children: []
     Properties:
       Number: !!robotbuilder.data.properties.ChoicesProperty
-        choices: &id007 ['0', '1', '2', '3', '4', '5']
+        choices: &id011 ['0', '1', '2', '3', '4', '5']
         default: 1
         name: Number
-        validators: &id008 [Joystick]
+        validators: &id012 [Joystick]
         value: '0'
     Base: Joystick
     Name: DriverLeft
   - Children: []
     Properties:
       Number: !!robotbuilder.data.properties.ChoicesProperty
-        choices: *id007
+        choices: *id011
         default: 1
         name: Number
-        validators: *id008
+        validators: *id012
         value: '1'
     Base: Joystick
     Name: DriverRight
   - Children: []
     Properties:
       Number: !!robotbuilder.data.properties.ChoicesProperty
-        choices: *id007
+        choices: *id011
         default: 1
         name: Number
-        validators: *id008
+        validators: *id012
         value: '2'
     Base: Joystick
     Name: Gamepad

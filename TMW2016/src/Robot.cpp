@@ -107,8 +107,14 @@ void Robot::TeleopPeriodic() {
 		driveBase->Crab(oi->getJoystickTwist(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
 
-	driveBase->tankLeft->Set(-oi->getDriverRight()->GetRawAxis(1));
-	driveBase->tankRight->Set(-oi->getDriverRight()->GetRawAxis(1));
+	if(fabs(driveBase->imu->GetYaw())>90) {
+		driveBase->tankLeft->Set(oi->getDriverRight()->GetRawAxis(1));
+		driveBase->tankRight->Set(oi->getDriverRight()->GetRawAxis(1));
+	}
+	else {
+		driveBase->tankLeft->Set(-oi->getDriverRight()->GetRawAxis(1));
+		driveBase->tankRight->Set(-oi->getDriverRight()->GetRawAxis(1));
+	}
 
 	driveBase->SMDB();
 
@@ -129,6 +135,14 @@ void Robot::TeleopPeriodic() {
 	else if(dartOpen) {
 		arm->DartSetToCurrent();
 		dartOpen = false;
+	}
+
+	if(oi->getGamepad()->GetRawButton(4)) {
+		arm->ClimbExtend();
+	}
+
+	if(oi->getGamepad()->GetRawButton(1)) {
+		arm->ClimbRetract();
 	}
 }
 
