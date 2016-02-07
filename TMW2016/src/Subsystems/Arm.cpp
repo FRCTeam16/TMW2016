@@ -115,10 +115,12 @@ void Arm::RunShooter(bool run, float speed) {
 	if(run) {
 		shooterWheel->Set(speed);
 		feederWheel->Set(-1.0);
+		comp->Stop();
 	}
 	else {
 		shooterWheel->Set(0);
 		feederWheel->Set(0);
+		comp->Start();
 		}
 }
 
