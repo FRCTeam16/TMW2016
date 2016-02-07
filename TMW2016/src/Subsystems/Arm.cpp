@@ -129,3 +129,10 @@ void Arm::Fire(bool value) {
 void Arm::BeaterBar(float speed) {
 	beaterBar->Set(speed);
 }
+
+void Arm::SMDB() {
+	SmartDashboard::PutNumber("DartOffset", dartOffset);
+	SmartDashboard::PutNumber("Shooter Speed", shooterWheel->GetSpeed());
+	SmartDashboard::PutNumber("Shooter Amps", shooterWheel->GetOutputCurrent());
+	SmartDashboard::PutNumber("Feeder Amps", feederWheel->GetOutputCurrent());
+}

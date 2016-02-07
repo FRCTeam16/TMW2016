@@ -57,6 +57,7 @@ public:
 	void RunShooter(bool run, float speed);
 	void Fire(bool value);
 	void BeaterBar(float speed);
+	void SMDB();
 };
 
 #endif

@@ -44,7 +44,7 @@ void Robot::RobotInit() {
 	driveBase->SetOffsets(File->getValueForKey("FLOff"), File->getValueForKey("FROff"), File->getValueForKey("RLOff"), File->getValueForKey("RROff"));
 	dartOpen = false;
 	shooterRun = false;
-	shooterRunPress = false;
+	shooterRunButton = new BSButton(oi->getGamepad(), 2);
   }
 
 /**
@@ -58,6 +58,7 @@ void Robot::DisabledInit(){
 void Robot::DisabledPeriodic() {
 	Scheduler::GetInstance()->Run();
 	driveBase->SMDB();
+	arm->SMDB();
 
 }
 
@@ -81,6 +82,9 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 	Scheduler::GetInstance()->Run();
+
+	driveBase->SMDB();
+	arm->SMDB();
 
 	prevTrigger = oi->getDriverRight()->GetRawButton(1);
 
@@ -114,7 +118,6 @@ void Robot::TeleopPeriodic() {
 		driveBase->tankRight->Set(-oi->getDriverRight()->GetRawAxis(1));
 	}
 
-	driveBase->SMDB();
 
 
 /*	if(oi->getGamepad()->GetRawButton(5)) {
@@ -143,17 +146,8 @@ void Robot::TeleopPeriodic() {
 		arm->ClimbRetract();
 	}
 
-	if (oi->getGamepad()->GetRawButton(2) && !shooterRunPress) {
-		shooterRunPress = true;
-		if(oi->getGamepad()->GetRawButton(2) && !shooterRun){
-			shooterRun = true;
-		}
-		else if(oi->getGamepad()->GetRawButton(2) && shooterRun){
-			shooterRun = false;
-		}
-	}
-	else {
-		shooterRunPress = false;
+	if(shooterRunButton->RisingEdge()) {
+		shooterRun = !shooterRun;
 	}
 
 	arm->RunShooter(shooterRun, prefs->GetFloat("ShooterSpeed"));
