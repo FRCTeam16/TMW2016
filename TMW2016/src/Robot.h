@@ -54,10 +54,12 @@ private:
 	double RLOffset;
 	double RROffset;
 	bool prevTrigger;
-	Preferences* Prefs;
+	Preferences* prefs;
 	RAWCConstants* File;
 	void SystemSMDB();
 	void DriveBaseSMDB();
 	bool dartOpen;
+	bool shooterRun;
+	bool shooterRunPress;
 };
 #endif
