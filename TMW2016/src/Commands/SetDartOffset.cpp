@@ -29,6 +29,7 @@ void SetDartOffset::Initialize() {
 	File = RAWCConstants::getInstance();
 	if(DriverStation::GetInstance().IsDisabled()){
 		File->insertKeyAndValue("DartOffset", Robot::arm->GetCurrentDartDifference());
+		File->save();
 		Robot::arm->SetDartOffset(Robot::arm->GetCurrentDartDifference());
 		SetTimeout(1);
 	}
