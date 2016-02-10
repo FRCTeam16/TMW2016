@@ -40,6 +40,7 @@ void Robot::RobotInit() {
 	driveBase->SetWheelbase(22.5/2, 21.75, 22.5/2);
 	prefs = Preferences::GetInstance();
 	prefs->PutFloat("ShooterSpeed",12000);
+	prefs->PutFloat("FeederSpeed", 1.0);
 	File = RAWCConstants::getInstance();
 	driveBase->SetOffsets(File->getValueForKey("FLOff"), File->getValueForKey("FROff"), File->getValueForKey("RLOff"), File->getValueForKey("RROff"));
 	dartOpen = false;
@@ -150,7 +151,7 @@ void Robot::TeleopPeriodic() {
 		shooterRun = !shooterRun;
 	}
 
-	arm->RunShooter(shooterRun, prefs->GetFloat("ShooterSpeed"));
+	arm->RunShooter(shooterRun, prefs->GetFloat("ShooterSpeed"),prefs->GetFloat("FeederSpeed"));
 
 	arm->Fire(oi->getGamepad()->GetRawButton(6));
 

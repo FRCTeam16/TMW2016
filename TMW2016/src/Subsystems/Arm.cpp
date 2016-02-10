@@ -111,10 +111,10 @@ void Arm::ClimbRetract() {
 	climbRight->Set(false);
 }
 
-void Arm::RunShooter(bool run, float speed) {
+void Arm::RunShooter(bool run, float shooterSpeed, float feederSpeed) {
 	if(run) {
-		shooterWheel->Set(speed);
-		feederWheel->Set(-1.0);
+		shooterWheel->Set(shooterSpeed);
+		feederWheel->Set(feederSpeed);
 		comp->Stop();
 	}
 	else {

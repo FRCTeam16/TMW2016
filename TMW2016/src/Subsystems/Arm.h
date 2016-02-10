@@ -54,7 +54,7 @@ public:
 	void SetDartOffset(int offset);
 	void ClimbExtend();
 	void ClimbRetract();
-	void RunShooter(bool run, float speed);
+	void RunShooter(bool run, float shooterSpeed, float feederSpeed);
 	void Fire(bool value);
 	void BeaterBar(float speed);
 	void SMDB();
