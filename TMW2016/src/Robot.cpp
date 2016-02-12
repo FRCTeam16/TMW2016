@@ -172,7 +172,6 @@ void Robot::TeleopPeriodic() {
 	}
 
 	if(firing && ((fireTime + 1) < GetClock())) {
-		std::cout << "FireTime:" << fireTime + 1 << "|| GetClock: " << GetClock() << std::endl;
 		firing = false;
 		arm->Fire(false);
 		shooterRun = false;
@@ -182,6 +181,8 @@ void Robot::TeleopPeriodic() {
 	arm->RunShooter(shooterRun, prefs->GetFloat("ShooterSpeed"),prefs->GetFloat("FeederSpeed"));
 
 	arm->BeaterBar(oi->getGamepad()->GetRawAxis(1));
+
+	arm->DartMonitor();
 
 }
 

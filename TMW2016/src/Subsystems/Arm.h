@@ -40,6 +40,8 @@ private:
 //	Preferences prefs;
 	RAWCConstants* File;
 	float dartOffset;
+	float dartMaxForward;
+	float dartMaxReverse;
 
 public:
 	Arm();
@@ -53,7 +55,9 @@ public:
 	void DartSpeedControl(float speed);
 	void DartSetToCurrent();
 	int GetCurrentDartDifference();
+	int GetCorrectedDartDifference();
 	void SetDartOffset(int offset);
+	void DartMonitor();
 	void ClimbExtend();
 	void ClimbRetract();
 	void RunShooter(bool run, float shooterSpeed, float feederSpeed);
