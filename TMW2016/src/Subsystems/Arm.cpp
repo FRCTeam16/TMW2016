@@ -42,7 +42,8 @@ Arm::Arm() : Subsystem("Arm") {
     dartRight->SetControlMode(CANTalon::kPosition);
     dartLeft->ConfigSoftPositionLimits(972,0);
     dartLeft->ConfigSoftPositionLimits(972 + dartOffset,0);
-
+    dartLeft->ConfigPeakOutputVoltage(5, -12);
+    dartRight->ConfigPeakOutputVoltage(5, -12);
 	shooterWheel->SetFeedbackDevice(CANTalon::EncRising);
 	shooterWheel->SetControlMode(CANTalon::kSpeed);
 	shooterWheel->ConfigEncoderCodesPerRev(3);
@@ -93,6 +94,16 @@ void Arm::DartOpenLoop(float speed) {
 	dartRight->Set(speed);
 }
 
+void Arm::DartSpeedControl(float speed) {
+	dartLeft->SetControlMode(CANTalon::kPercentVbus);
+	dartRight->SetControlMode(CANTalon::kPosition);
+
+	dartLeft->Set(speed);
+	dartRight->Set(dartLeft->GetPosition()+dartOffset);
+}
+
+
+
 int Arm::GetCurrentDartDifference() {
 	return dartRight->GetPosition() - dartLeft->GetPosition();
 }
@@ -137,4 +148,5 @@ void Arm::SMDB() {
 	SmartDashboard::PutNumber("Shooter Speed", shooterWheel->GetSpeed());
 	SmartDashboard::PutNumber("Shooter Amps", shooterWheel->GetOutputCurrent());
 	SmartDashboard::PutNumber("Feeder Amps", feederWheel->GetOutputCurrent());
+	SmartDashboard::PutNumber("DartPosition", dartLeft->GetPosition());
 }

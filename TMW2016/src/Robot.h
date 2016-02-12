@@ -59,7 +59,11 @@ private:
 	void SystemSMDB();
 	void DriveBaseSMDB();
 	bool dartOpen;
+	bool dartSpeed;
 	bool shooterRun;
 	BSButton* shooterRunButton;
+	BSButton* fireButton;
+	bool firing;
+	float fireTime;
 };
 #endif

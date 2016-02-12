@@ -11,6 +11,7 @@
 
 #ifndef ARM_H
 #define ARM_H
+
 #include "Commands/Subsystem.h"
 #include "WPILib.h"
 #include "../RAWCConstants.h"
@@ -49,6 +50,7 @@ public:
 	void Darter(float speed);
 	void DartPosition(int pos);
 	void DartOpenLoop(float speed);
+	void DartSpeedControl(float speed);
 	void DartSetToCurrent();
 	int GetCurrentDartDifference();
 	void SetDartOffset(int offset);
