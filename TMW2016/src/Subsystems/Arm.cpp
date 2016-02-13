@@ -108,30 +108,24 @@ void Arm::DartMonitor() {
 	if(GetCorrectedDartDifference() > 5) { //right dart is lower than left
 		if(dartLeft->Get() > 0) { //going down
 			dartRight->ConfigPeakOutputVoltage(2,dartMaxReverse);
-			std::cout << "RightForward";
 		}
 		if(dartLeft->Get() < 0) { //going up
 			dartLeft->ConfigPeakOutputVoltage(dartMaxForward,-1);
-			std::cout << "LeftReverse";
 		}
 	}
 
 	else if(GetCorrectedDartDifference() < -5) { //left dart lower than right
 		if(dartLeft->Get() > 0) { //going down
 			dartLeft->ConfigPeakOutputVoltage(2,dartMaxReverse);
-			std::cout << "LeftForward";
 		}
 		if(dartLeft->Get() < 0) { //going up
 			dartRight->ConfigPeakOutputVoltage(dartMaxForward,-1);
-			std::cout << "RightReverse";
 		}
 	}
 	else {
 		dartLeft->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
 		dartRight->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
-		std::cout << "Neither";
 	}
-	std::cout << GetCorrectedDartDifference() << std::endl;
 }
 
 int Arm::GetCurrentDartDifference() {

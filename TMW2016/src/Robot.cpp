@@ -48,8 +48,7 @@ void Robot::RobotInit() {
 	dartOpen = false;
 	dartSpeed = false;
 	shooterRun = false;
-	shooterRunButton = new BSButton(oi->getGamepad(), 2);
-	fireButton = new BSButton(oi->getGamepad(), 6);
+	tankRun = false;
 	firing = false;
 	fireTime = 0;
   }
@@ -104,10 +103,10 @@ void Robot::TeleopPeriodic() {
 	{
 		driveBase->Crab(0,-oi->getJoystickY(),0,true);
 	}
-	else if (oi->getDriverLeft()->GetRawButton(2))
-	{
-		driveBase->Steer(oi->getLeftJoystickXRadians(),oi->getJoystickY(),.5);
-	}
+//	else if (oi->getDriverLeft()->GetRawButton(2))
+//	{
+//		driveBase->Steer(oi->getLeftJoystickXRadians(),oi->getJoystickY(),.5);
+//	}
 //		else if (oi->getDriverLeft()->GetRawButton(3)) {
 //			driveBase->Steer(3.14159,oi->getDriverLeft()->GetX(),2.1);
 //		}
@@ -116,33 +115,45 @@ void Robot::TeleopPeriodic() {
 		driveBase->Crab(oi->getJoystickTwist(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
 
-	if(fabs(driveBase->imu->GetYaw())>90) {
-		driveBase->tankLeft->Set(oi->getDriverRight()->GetRawAxis(1));
-		driveBase->tankRight->Set(oi->getDriverRight()->GetRawAxis(1));
+	if(tankRun) {
+		if(fabs(driveBase->imu->GetYaw())>90) {
+			driveBase->tankLeft->Set(oi->getDriverRight()->GetRawAxis(1));
+			driveBase->tankRight->Set(oi->getDriverRight()->GetRawAxis(1));
+		}
+		else {
+			driveBase->tankLeft->Set(-oi->getDriverRight()->GetRawAxis(1));
+			driveBase->tankRight->Set(-oi->getDriverRight()->GetRawAxis(1));
+		}
 	}
 	else {
-		driveBase->tankLeft->Set(-oi->getDriverRight()->GetRawAxis(1));
-		driveBase->tankRight->Set(-oi->getDriverRight()->GetRawAxis(1));
+		driveBase->tankLeft->Set(0);
+		driveBase->tankRight->Set(0);
 	}
 
 
 
-	if(oi->getGamepad()->GetRawButton(1)) {
-		arm->DartPosition(960);
+	if(oi->GPA->RisingEdge()) {
+		arm->DartPosition(940);
+		shooterRun = false;
+		tankRun = false;
 	}
 
-	if(oi->getGamepad()->GetRawButton(3)) {
-		arm->DartPosition(710);
+	if(oi->GPX->RisingEdge()) {
+		arm->DartPosition(720);
+		shooterRun = true;
+		tankRun = false;
 	}
 
-	if(oi->getGamepad()->GetRawButton(4)) {
-			arm->DartPosition(630);
+	if(oi->GPY->RisingEdge()) {
+		arm->DartPosition(630);
+		shooterRun = true;
+		tankRun = false;
 		}
 
-	if(oi->getGamepad()->GetRawButton(5)) {
+	if(oi->GPLT->RisingEdge()) {
 		arm->DartPosition(838);
+		tankRun = true;
 	}
-
 
 	if(fabs(oi->getGamepad()->GetRawAxis(5)) > .05) {
 		arm->DartSpeedControl(oi->getGamepad()->GetRawAxis(5));
@@ -161,11 +172,11 @@ void Robot::TeleopPeriodic() {
 		arm->ClimbRetract();
 	}
 
-	if(shooterRunButton->RisingEdge()) {
+	if(oi->GPB->RisingEdge()) {
 		shooterRun = !shooterRun;
 	}
 
-	if(fireButton->RisingEdge()) {
+	if(shooterRun && oi->GPRT->RisingEdge()) {// || oi->driverFire->RisingEdge()) {
 		firing = true;
 		arm->Fire(true);
 		fireTime = GetClock();

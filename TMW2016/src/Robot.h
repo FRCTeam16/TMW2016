@@ -61,8 +61,7 @@ private:
 	bool dartOpen;
 	bool dartSpeed;
 	bool shooterRun;
-	BSButton* shooterRunButton;
-	BSButton* fireButton;
+	bool tankRun;
 	bool firing;
 	float fireTime;
 };
