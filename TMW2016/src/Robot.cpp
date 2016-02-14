@@ -176,7 +176,7 @@ void Robot::TeleopPeriodic() {
 		shooterRun = !shooterRun;
 	}
 
-	if(shooterRun && oi->GPRT->RisingEdge()) {// || oi->driverFire->RisingEdge()) {
+	if(shooterRun && (oi->GPRT->RisingEdge() || oi->driverFire->RisingEdge())) {
 		firing = true;
 		arm->Fire(true);
 		fireTime = GetClock();
