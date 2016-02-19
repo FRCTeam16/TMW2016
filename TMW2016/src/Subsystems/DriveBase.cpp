@@ -100,7 +100,7 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	Z=0;
 
 	CrabSpeedTwist = new CrabSpeed();
-    DriveControlTwist = new PIDController(.035, 0, .1, imu, CrabSpeedTwist, 0.02);
+    DriveControlTwist = new PIDController(.01, 0, .05, imu, CrabSpeedTwist, 0.02);
 	DriveControlTwist->SetContinuous(true);
 	DriveControlTwist->SetAbsoluteTolerance(2.0);
 	DriveControlTwist->Enable();
@@ -495,4 +495,10 @@ void DriveBase::SMDB() {
 	SmartDashboard::PutNumber("RearLeftPost", rearLeftPos->GetAverageVoltage());
 	SmartDashboard::PutNumber("Yaw", imu->GetYaw());
 	SmartDashboard::PutNumber("Angle", imu->GetAngle());
+	SmartDashboard::PutNumber("FrontLeftDriveCurrent", frontLeftDrive->GetOutputCurrent());
+	SmartDashboard::PutNumber("FrontRightDriveCurrent", frontRightDrive->GetOutputCurrent());
+	SmartDashboard::PutNumber("RearLeftDriveCurrent", rearLeftDrive->GetOutputCurrent());
+	SmartDashboard::PutNumber("RearRightDriveCurrent", rearRightDrive->GetOutputCurrent());
+	SmartDashboard::PutNumber("LeftTankDriveCurrent", tankLeft->GetOutputCurrent());
+	SmartDashboard::PutNumber("RightTankDriveCurrent", tankRight->GetOutputCurrent());
 }

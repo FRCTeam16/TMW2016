@@ -53,12 +53,7 @@ void Robot::RobotInit() {
 	driveBase->SetOffsets(File->getValueForKey("FLOff"), File->getValueForKey("FROff"), File->getValueForKey("RLOff"), File->getValueForKey("RROff"));
 	dartOpen = false;
 	dartSpeed = false;
-	shooterRun = false;
 	tankRun = false;
-	firing = false;
-	fireTime = 0;
-	lowFiring = false;
-	lowFireTime = 0;
 	shooterSpeed = 0;
 	feederSpeed = 0;
 	beaterBarSpeed = 0;
@@ -138,42 +133,7 @@ void Robot::TeleopPeriodic() {
 	}
 
 
-
-	if(oi->GPA->RisingEdge()) {
-		arm->DartPosition(940);
-		shooterRun = false;
-		tankRun = false;
-	}
-
-	if(oi->GPX->RisingEdge()) {
-		arm->DartPosition(720);
-		shooterRun = true;
-		tankRun = false;
-		shooterSpeed = prefs->GetFloat("ShooterSpeed");
-		feederSpeed = prefs->GetFloat("FeederSpeed");
-	}
-
-	if(oi->GPY->RisingEdge()) {
-		arm->DartPosition(630);
-		shooterRun = true;
-		tankRun = false;
-		shooterSpeed = prefs->GetFloat("ShooterSpeed");
-		feederSpeed = prefs->GetFloat("FeederSpeed");
-		}
-
-	if(oi->GPLT->RisingEdge()) {
-		arm->DartPosition(838);
-		tankRun = true;
-	}
-
-	if(fabs(oi->getGamepad()->GetRawAxis(5)) > .05) {
-		arm->DartSpeedControl(oi->getGamepad()->GetRawAxis(5));
-		dartSpeed = true;
-	}
-	else if(dartSpeed) {
-		arm->DartSetToCurrent();
-		dartSpeed = false;
-	}
+/*********Climber*********/
 
 	if(oi->getGamepad()->GetPOV() == 0) {
 		arm->ClimbExtend();
@@ -183,53 +143,63 @@ void Robot::TeleopPeriodic() {
 		arm->ClimbRetract();
 	}
 
+
+/*********Shooter/Arm*********/
+	if(oi->GPA->RisingEdge() || oi->DR3->RisingEdge()) {
+		arm->PickupPosition();
+		tankRun = false;
+	}
+
 	if(oi->GPB->RisingEdge()) {
-		shooterRun = !shooterRun;
-		shooterSpeed = prefs->GetFloat("ShooterSpeed");
-		feederSpeed = prefs->GetFloat("FeederSpeed");
-
+		arm->ToggleShooterRun();
+		arm->SetShooterSpeed(prefs->GetFloat("ShooterSpeed"),prefs->GetFloat("FeederSpeed"));
 	}
 
-	if(shooterRun && (oi->GPRT->RisingEdge() || oi->DR1->RisingEdge())) {
-		firing = true;
-		arm->Fire(true);
-		fireTime = GetClock();
+	if(oi->GPX->RisingEdge()) {
+		arm->ShooterLow();
+		arm->SetShooterSpeed(prefs->GetFloat("ShooterSpeed"),prefs->GetFloat("FeederSpeed"));
+		tankRun = false;
 	}
 
-	if(firing && ((fireTime + 1) < GetClock())) {
-		firing = false;
-		arm->Fire(false);
-		shooterRun = false;
-		arm->DartPosition(838);
+	if(oi->GPY->RisingEdge()) {
+		arm->ShooterHigh();
+		arm->SetShooterSpeed(prefs->GetFloat("ShooterSpeed"),prefs->GetFloat("FeederSpeed"));
+		tankRun = false;
+	}
+
+	if(oi->GPLT->RisingEdge()) {
+		arm->TravelPosition();
+		tankRun = true;
+	}
+
+	if(oi->GPRT->RisingEdge() || oi->DR1->RisingEdge()) {
+		arm->Fire();
 	}
 
 	if(oi->DR2->RisingEdge()) {
-		lowFiring = true;
-		arm->Fire(true);
-		shooterRun = true;
-		shooterSpeed = -13500;
-		feederSpeed = 1.0;
-		beaterBarSpeed = 1.0;
-		lowFireTime = GetClock();
+		arm->LowFire();
+		arm->SetShooterSpeed(0,1.0);
 	}
 
-	if(lowFiring && ((lowFireTime + 1 < GetClock())) ) {
-		lowFiring = false;
-		arm->Fire(false);
-		shooterRun = false;
+/********Dart Open Loop*******/
+	if(fabs(oi->getGamepad()->GetRawAxis(5)) > .05) {
+		arm->DartSpeedControl(oi->getGamepad()->GetRawAxis(5));
+		dartSpeed = true;
 	}
 
-
-	if (!lowFiring) {
-		beaterBarSpeed = oi->getGamepad()->GetRawAxis(1);
+	else if(dartSpeed) {
+		arm->DartSetToCurrent();
+		dartSpeed = false;
 	}
 
-	arm->RunShooter(shooterRun, shooterSpeed,feederSpeed);
+/*******Arm Managers********/
+	arm->ShooterManager();
+	arm->FireManager();
+	arm->DartManager();
 
-	arm->BeaterBar(beaterBarSpeed);
 
-	arm->DartMonitor();
-
+/********Beater Bar********/
+	arm->BeaterBar(oi->getGamepad()->GetRawAxis(1));
 }
 
 void Robot::TestPeriodic() {

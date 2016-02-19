@@ -54,20 +54,15 @@ private:
 	double RLOffset;
 	double RROffset;
 	bool prevTrigger;
-	Preferences* prefs;
 	RAWCConstants* File;
 	void SystemSMDB();
 	void DriveBaseSMDB();
 	bool dartOpen;
 	bool dartSpeed;
-	bool shooterRun;
 	bool tankRun;
-	bool firing;
-	double fireTime;
-	bool lowFiring;
-	double lowFireTime;
 	float shooterSpeed;
 	float feederSpeed;
 	float beaterBarSpeed;
+	Preferences* prefs;
 };
 #endif
