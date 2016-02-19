@@ -192,7 +192,8 @@ std::vector<std::string> Arm::GetHeaders() {
 }
 
 void Arm::Log(std::ofstream &outstream) {
-		outstream	<< dartLeft->GetPosition() << ','
+		outstream	<< ','
+					<< dartLeft->GetPosition() << ','
 					<< dartRight->GetPosition() << ','
 					<< shooterWheel->GetSpeed();
 }

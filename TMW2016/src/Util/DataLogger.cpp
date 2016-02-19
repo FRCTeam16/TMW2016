@@ -48,7 +48,7 @@ DataLogger::DataLogger(std::shared_ptr<DriveBase> driveBase_, std::shared_ptr<Ar
 	std::for_each(imu_data.begin(), imu_data.end(), [this](HeaderFnPair &p){ outstream << ',' << p.first; });
 
 	// Wheel Headers
-	outstream	<< "FL Volt,FL Value,"
+	outstream	<< ",FL Volt,FL Value,"
 				<< "FR Volt,FR Value,"
 				<< "RL Volt,RL Value,"
 				<< "RR Volt,RR Value";
@@ -73,7 +73,7 @@ DataLogger::~DataLogger() {
 void DataLogger::Log() {
 	// Time Header
 	std::time_t t = std::time(nullptr);
-	outstream << t << ',';
+	outstream << t;
 
 	// IMU Headers
 	std::for_each(imu_data.begin(), imu_data.end(), [this](HeaderFnPair &p){ outstream << ',' << p.second();});
