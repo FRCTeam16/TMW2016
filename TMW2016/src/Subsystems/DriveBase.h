@@ -14,6 +14,7 @@
 #include "Commands/Subsystem.h"
 #include "WPILib.h"
 #include "AHRS.h"
+#include "CrabSpeed.h"
 
 /**
  *
@@ -146,11 +147,9 @@ public:
 	void SetFRTurns(int val);
 	void SetRLTurns(int val);
 	void SetRRTurns(int val);
+	CrabSpeed *CrabSpeedTwist;
 	PIDController *DriveControlTwist;
-	PIDController *DriveControlUS;
 	AHRS *imu;
-	SerialPort *serialport;
-	uint8_t USAdress;
 	void TestDrive(float first);
 	void SMDB();
 

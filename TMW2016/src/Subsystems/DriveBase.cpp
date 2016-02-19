@@ -77,8 +77,6 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	cRLVolt=0;
 	cRRVolt=0;
 	DP=0;
-	DriveControlTwist=0;
-	DriveControlUS=0;
 	FL=0;
 	FLRatio=0;
 	FRRatio=0;
@@ -92,18 +90,22 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	RLRatio=0;
 	RR=0;
 	RRRatio=0;
-	serialport=0;
 	thetaFL=0;
 	thetaRL=0;
 	thetaFR=0;
 	thetaRR=0;
 	thetaRC=0;
-	USAdress=0;
 	W=0;
 	X=0;
 	Z=0;
 
-
+	CrabSpeedTwist = new CrabSpeed();
+    DriveControlTwist = new PIDController(.035, 0, .1, imu, CrabSpeedTwist, 0.02);
+	DriveControlTwist->SetContinuous(true);
+	DriveControlTwist->SetAbsoluteTolerance(2.0);
+	DriveControlTwist->Enable();
+	DriveControlTwist->SetOutputRange(-.5, .5);
+	DriveControlTwist->SetInputRange(-180, 180);
 }
 
 void DriveBase::InitDefaultCommand() {

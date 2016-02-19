@@ -43,6 +43,12 @@ void Robot::RobotInit() {
 		prefs->PutFloat("ShooterSpeed",15000);
 	if(!prefs->ContainsKey("FeederSeed"))
 		prefs->PutFloat("FeederSpeed", -1.0);
+	if(!prefs->ContainsKey("TwistP"))
+		prefs->PutFloat("TwistP",.035);
+	if(!prefs->ContainsKey("TwistI"))
+		prefs->PutFloat("TwistI",0);
+	if(!prefs->ContainsKey("TwistD"))
+		prefs->PutFloat("TwistD",0.02);
 	File = RAWCConstants::getInstance();
 	driveBase->SetOffsets(File->getValueForKey("FLOff"), File->getValueForKey("FROff"), File->getValueForKey("RLOff"), File->getValueForKey("RROff"));
 	dartOpen = false;
@@ -51,6 +57,11 @@ void Robot::RobotInit() {
 	tankRun = false;
 	firing = false;
 	fireTime = 0;
+	lowFiring = false;
+	lowFireTime = 0;
+	shooterSpeed = 0;
+	feederSpeed = 0;
+	beaterBarSpeed = 0;
   }
 
 /**
@@ -65,7 +76,6 @@ void Robot::DisabledPeriodic() {
 	Scheduler::GetInstance()->Run();
 	driveBase->SMDB();
 	arm->SMDB();
-
 }
 
 void Robot::AutonomousInit() {
@@ -84,6 +94,7 @@ void Robot::TeleopInit() {
 	// these lines or comment it out.
 	if (autonomousCommand.get() != nullptr)
 		autonomousCommand->Cancel();
+	driveBase->DriveControlTwist->SetPID(prefs->GetFloat("TwistP"),prefs->GetFloat("TwistI"),prefs->GetFloat("TwistD"));
 }
 
 void Robot::TeleopPeriodic() {
@@ -92,24 +103,20 @@ void Robot::TeleopPeriodic() {
 	driveBase->SMDB();
 	arm->SMDB();
 
-	prevTrigger = oi->getDriverRight()->GetRawButton(1);
-
-
-//	prevTrigger = oi->getDriverRight()->GetRawButton(1);
-	if(oi->getDriverLeft()->GetRawButton(1))
+	if(oi->DL1->Pressed())
 		driveBase->Lock();
-
-	else if(oi->getDriverRight()->GetRawButton(1))
-	{
-		driveBase->Crab(0,-oi->getJoystickY(),0,true);
+	else if(oi->DL4->Pressed()) {
+		driveBase->DriveControlTwist->SetSetpoint(90);
+		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
-//	else if (oi->getDriverLeft()->GetRawButton(2))
-//	{
-//		driveBase->Steer(oi->getLeftJoystickXRadians(),oi->getJoystickY(),.5);
-//	}
-//		else if (oi->getDriverLeft()->GetRawButton(3)) {
-//			driveBase->Steer(3.14159,oi->getDriverLeft()->GetX(),2.1);
-//		}
+	else if(oi->DL5->Pressed()) {
+		driveBase->DriveControlTwist->SetSetpoint(-90);
+		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+	}
+	else if(oi->DL3->Pressed()) {
+		driveBase->DriveControlTwist->SetSetpoint(0);
+		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+	}
 	else
 	{
 		driveBase->Crab(oi->getJoystickTwist(),-oi->getJoystickY(),oi->getJoystickX(),true);
@@ -142,12 +149,16 @@ void Robot::TeleopPeriodic() {
 		arm->DartPosition(720);
 		shooterRun = true;
 		tankRun = false;
+		shooterSpeed = prefs->GetFloat("ShooterSpeed");
+		feederSpeed = prefs->GetFloat("FeederSpeed");
 	}
 
 	if(oi->GPY->RisingEdge()) {
 		arm->DartPosition(630);
 		shooterRun = true;
 		tankRun = false;
+		shooterSpeed = prefs->GetFloat("ShooterSpeed");
+		feederSpeed = prefs->GetFloat("FeederSpeed");
 		}
 
 	if(oi->GPLT->RisingEdge()) {
@@ -174,9 +185,12 @@ void Robot::TeleopPeriodic() {
 
 	if(oi->GPB->RisingEdge()) {
 		shooterRun = !shooterRun;
+		shooterSpeed = prefs->GetFloat("ShooterSpeed");
+		feederSpeed = prefs->GetFloat("FeederSpeed");
+
 	}
 
-	if(shooterRun && (oi->GPRT->RisingEdge() || oi->driverFire->RisingEdge())) {
+	if(shooterRun && (oi->GPRT->RisingEdge() || oi->DR1->RisingEdge())) {
 		firing = true;
 		arm->Fire(true);
 		fireTime = GetClock();
@@ -189,9 +203,30 @@ void Robot::TeleopPeriodic() {
 		arm->DartPosition(838);
 	}
 
-	arm->RunShooter(shooterRun, prefs->GetFloat("ShooterSpeed"),prefs->GetFloat("FeederSpeed"));
+	if(oi->DR2->RisingEdge()) {
+		lowFiring = true;
+		arm->Fire(true);
+		shooterRun = true;
+		shooterSpeed = -13500;
+		feederSpeed = 1.0;
+		beaterBarSpeed = 1.0;
+		lowFireTime = GetClock();
+	}
 
-	arm->BeaterBar(oi->getGamepad()->GetRawAxis(1));
+	if(lowFiring && ((lowFireTime + 1 < GetClock())) ) {
+		lowFiring = false;
+		arm->Fire(false);
+		shooterRun = false;
+	}
+
+
+	if (!lowFiring) {
+		beaterBarSpeed = oi->getGamepad()->GetRawAxis(1);
+	}
+
+	arm->RunShooter(shooterRun, shooterSpeed,feederSpeed);
+
+	arm->BeaterBar(beaterBarSpeed);
 
 	arm->DartMonitor();
 

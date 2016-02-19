@@ -41,13 +41,36 @@ public:
 		double getJoystickY();
 		double getLeftJoystickXRadians();
 		double getScaledJoystick (double value, double scaling);
-		BSButton* driverFire;
 		BSButton* GPX;
 		BSButton* GPY;
 		BSButton* GPA;
 		BSButton* GPB;
 		BSButton* GPLT;
 		BSButton* GPRT;
+		BSButton* DL1;
+		BSButton* DL2;
+		BSButton* DL3;
+		BSButton* DL4;
+		BSButton* DL5;
+		BSButton* DL6;
+		BSButton* DL7;
+		BSButton* DL8;
+		BSButton* DL9;
+		BSButton* DL10;
+		BSButton* DL11;
+		BSButton* DL12;
+		BSButton* DR1;
+		BSButton* DR2;
+		BSButton* DR3;
+		BSButton* DR4;
+		BSButton* DR5;
+		BSButton* DR6;
+		BSButton* DR7;
+		BSButton* DR8;
+		BSButton* DR9;
+		BSButton* DR10;
+		BSButton* DR11;
+		BSButton* DR12;
 };
 
 #endif

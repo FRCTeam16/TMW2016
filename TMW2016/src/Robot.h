@@ -63,6 +63,11 @@ private:
 	bool shooterRun;
 	bool tankRun;
 	bool firing;
-	float fireTime;
+	double fireTime;
+	bool lowFiring;
+	double lowFireTime;
+	float shooterSpeed;
+	float feederSpeed;
+	float beaterBarSpeed;
 };
 #endif
