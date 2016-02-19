@@ -147,8 +147,9 @@ public:
 	void SetFRTurns(int val);
 	void SetRLTurns(int val);
 	void SetRRTurns(int val);
-	CrabSpeed *CrabSpeedTwist;
-	PIDController *DriveControlTwist;
+	PIDController *DriveControlUS;
+	std::unique_ptr<CrabSpeed> CrabSpeedTwist;
+	std::unique_ptr<PIDController> DriveControlTwist;
 	AHRS *imu;
 	void TestDrive(float first);
 	void SMDB();

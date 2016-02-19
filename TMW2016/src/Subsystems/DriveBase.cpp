@@ -77,6 +77,7 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	cRLVolt=0;
 	cRRVolt=0;
 	DP=0;
+	DriveControlUS=0;
 	FL=0;
 	FLRatio=0;
 	FRRatio=0;
@@ -99,8 +100,10 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	X=0;
 	Z=0;
 
-	CrabSpeedTwist = new CrabSpeed();
-    DriveControlTwist = new PIDController(.035, 0, .1, imu, CrabSpeedTwist, 0.02);
+	CrabSpeedTwist.reset(new CrabSpeed());
+	// autonomous values:
+	// 	DriveControlTwist.reset(new PIDController(0.01, 0, 0.05, imu, crabSpeedTwist.get(), 0.02));
+    DriveControlTwist.reset(new PIDController(.035, 0, .1, imu, CrabSpeedTwist.get(), 0.02));
 	DriveControlTwist->SetContinuous(true);
 	DriveControlTwist->SetAbsoluteTolerance(2.0);
 	DriveControlTwist->Enable();

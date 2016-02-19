@@ -51,6 +51,8 @@ void Robot::RobotInit() {
 		prefs->PutFloat("TwistD",0.02);
 	File = RAWCConstants::getInstance();
 	driveBase->SetOffsets(File->getValueForKey("FLOff"), File->getValueForKey("FROff"), File->getValueForKey("RLOff"), File->getValueForKey("RROff"));
+	automan.reset(new AutoManager());
+	dataLogger.reset(new DataLogger(driveBase, arm, oi.get()));
 	dartOpen = false;
 	dartSpeed = false;
 	shooterRun = false;
@@ -79,12 +81,14 @@ void Robot::DisabledPeriodic() {
 }
 
 void Robot::AutonomousInit() {
-	if (autonomousCommand.get() != nullptr)
-		autonomousCommand->Start();
+	cout << "Robot::AutonomousInit\n";
+	automan->Init();
+	cout << "Robot::AutonomousInit COMPLETE\n";
 }
 
 void Robot::AutonomousPeriodic() {
-	Scheduler::GetInstance()->Run();
+	LogData();
+	automan->Periodic();
 }
 
 void Robot::TeleopInit() {
@@ -98,6 +102,7 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
+	LogData();
 	Scheduler::GetInstance()->Run();
 
 	driveBase->SMDB();
@@ -234,6 +239,31 @@ void Robot::TeleopPeriodic() {
 
 void Robot::TestPeriodic() {
 	lw->Run();
+}
+
+void Robot::LogData() {
+//	if (++logCounter >= LOG_FREQ) {
+		dataLogger->Log();
+//		logCounter = 0;
+//	}
+
+	//	cout << "ACC: " << driveBase->imu->GetWorldLinearAccelX() << '\t'
+//			<< driveBase->imu->GetWorldLinearAccelY() << '\t'
+//			<< driveBase->imu->GetWorldLinearAccelZ() << '\t';
+
+//	cout << "Roll: " << driveBase->imu->GetRoll() << '\t';
+
+
+//	cout << "Yaw" << driveBase->imu->GetYaw() << '\n';
+//	cout << "Pitch" << driveBase->imu->GetPitch() << '\n';
+//	cout << "Roll" << driveBase->imu->GetRoll() << '\n';
+//	cout << "Altitude" << driveBase->imu->GetAltitude() << '\n';
+//	cout << "Compass" << driveBase->imu->GetCompassHeading() << '\n';
+//	cout << "Angle" << driveBase->imu->GetAngle() << '\n';
+//	cout << "DisplacementX" << driveBase->imu->GetDisplacementX() << '\n';
+//	cout << "DisplacementY" << driveBase->imu->GetDisplacementY() << '\n';
+//	cout << "DisplacementZ" << driveBase->imu->GetDisplacementZ() << '\n';
+
 }
 
 START_ROBOT_CLASS(Robot);

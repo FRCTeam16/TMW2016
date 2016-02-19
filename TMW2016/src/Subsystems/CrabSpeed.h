@@ -7,7 +7,8 @@ class CrabSpeed : public PIDOutput
 {
 public:
 	CrabSpeed();
-	 void PIDWrite(float Output);
+	virtual ~CrabSpeed() {};
+	void PIDWrite(float Output) override;
 	float Get();
 	
 private:
