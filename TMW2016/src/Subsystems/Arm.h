@@ -60,6 +60,7 @@ public:
 	int GetCorrectedDartDifference();
 	void SetDartOffset(int offset);
 	void DartMonitor();
+	bool DartInPosition(const int position) const;
 	void ClimbExtend();
 	void ClimbRetract();
 	void RunShooter(bool run, float shooterSpeed, float feederSpeed);

@@ -16,16 +16,21 @@ typedef struct Wheel {
 	const std::shared_ptr<AnalogInput> position;
 	const std::shared_ptr<CANTalon> steer;
 	const std::shared_ptr<PIDController> pid;
+	const std::shared_ptr<CANTalon> drive;
 
 	Wheel(const std::shared_ptr<AnalogInput> &position_,
 		  const std::shared_ptr<CANTalon> &steer_,
-	      const std::shared_ptr<PIDController> &pid_) :
-	    	  position(position_), steer(steer_), pid(pid_) {}
+	      const std::shared_ptr<PIDController> &pid_,
+		  const std::shared_ptr<CANTalon> &drive_) :
+	    	  position(position_), steer(steer_), pid(pid_), drive(drive_) {}
 } Wheel;
+
+enum DataLoggerMode { kAutonomous, kTeleop };
 
 class DataLogger {
 public:
-	DataLogger(std::shared_ptr<DriveBase> driveBase_,
+	DataLogger(DataLoggerMode dataLoggerMode,
+			   std::shared_ptr<DriveBase> driveBase_,
 			   std::shared_ptr<Arm> arm_,
 			   OI *oi_);
 	virtual ~DataLogger();
@@ -38,8 +43,8 @@ private:
 	std::shared_ptr<DriveBase> driveBase;
 	std::shared_ptr<Arm> arm;
 	OI* oi;
-	const std::string fileName;
 	std::ofstream outstream;
+	bool initialized;
 };
 
 

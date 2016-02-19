@@ -28,13 +28,6 @@ bool TimedCrab::operator ()(World *world) {
 
 // --------------------------------------------------------------------------//
 
-//bool ParallelStep::operator ()(World *world) {
-//	std::remove_if(steps.begin(), steps.end(), [&](Step &step){ return step.operator ()(world); });
-//	return steps.empty();
-//}
-
-// --------------------------------------------------------------------------//
-
 bool ForwardWithArm::operator ()(World *world) {
 	if (startTime < 0) {
 		startTime = world->GetClock();
@@ -91,17 +84,38 @@ bool ForwardWithArmAndRoll::operator ()(World *world) {
 
 bool ForwardCheckRoll::operator ()(World *world) {
 	cout << "ForwardCheckRoll()\n";
+	const float roll = Robot::driveBase->imu->GetRoll();
 
-	if (++loopCounter > MAX_LOOPS) {
-		assert(false && " Aborting");
-		return true;
-	}
+
+	/*
+	 * After we start obstacle
+	 * try for 2 seconds
+	 * if we haven't started going down, then retry
+	 *
+	 *
+	 */
+
+	// Retry check / safety exit
+//	if (startedObstacle && ++loopCounter > MAX_LOOPS ) {
+//		if (++retryLoops > MAX_LOOPS) {
+//			assert(false && " Aborting");
+//		} else {
+//			// attempt to move backwards off of obstacle
+//			Robot::driveBase->Crab(0.0, -speed, 0.0, true);
+//
+//			// We think we moved off, reset counters
+//			loopCounter = 0;
+//			retryLoops = 0;
+//		}
+//	} else {
+//
+//	}
+
 
 	if (!running) {
 		running = true;
 		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
 	}
-	const float roll = Robot::driveBase->imu->GetRoll();
 
 	if (roll < 0) {
 		hitNegative = true;
@@ -164,13 +178,9 @@ bool SetArmPosition::operator()(World *world) {
 		cerr << "Aborting SetArmPosition\n";
 		return true;
 	}
-
-	const int currentPosition = Robot::arm->GetDartPosition();
-	const int armsDifferences = Robot::arm->GetCorrectedDartDifference();
-
-	if (armsDifferences == 0 && currentPosition == targetPosition) {
+	if (Robot::arm->DartInPosition(targetPosition)) {
 		return true;
-	} else if (!running && currentPosition != targetPosition) {
+	} else if (!running) {
 		running = true;
 		Robot::arm->DartPosition(targetPosition);
 	}

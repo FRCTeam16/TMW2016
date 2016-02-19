@@ -134,6 +134,10 @@ void Arm::DartMonitor() {
 	}
 }
 
+bool Arm::DartInPosition(const int position) const {
+	return (dartLeft->GetPosition() == position) && ((dartRight->GetPosition()+dartOffset) == position);
+}
+
 int Arm::GetCurrentDartDifference() {
 	return dartRight->GetPosition() - dartLeft->GetPosition();
 }
@@ -187,14 +191,35 @@ void Arm::SMDB() {
 
 std::vector<std::string> Arm::GetHeaders() {
 	return std::vector<std::string> {
-		"Left Dart Position","Right Dart Position","Shooter Wheel Speed"
+		"Left Dart Position", "Left Dart Volt", "Left Dart Current",
+		"Right Dart Position","Right Dart Volt", "Right Dart Current",
+		"Shooter Wheel Speed", "Shooter Wheel Volt", "Shooter Wheel Current"
+		"Feeder Wheel Speed", "Feeder Wheel Volt", "Feeder Wheel Current",
+		"Beater Wheel Speed", "Beater Wheel Volt", "Beater Wheel Current",
+		"Fire Status",
+		"Climb Left Status",
+		"Climb Right Status"
 	};
 }
 
 void Arm::Log(std::ofstream &outstream) {
-		outstream	<< ','
-					<< dartLeft->GetPosition() << ','
-					<< dartRight->GetPosition() << ','
-					<< shooterWheel->GetSpeed();
+		outstream	<< ',' << dartLeft->GetPosition()
+					<< ',' << dartLeft->GetOutputVoltage()
+					<< ',' << dartLeft->GetOutputCurrent()
+					<< ',' << dartRight->GetPosition()
+					<< ',' << dartRight->GetOutputVoltage()
+					<< ',' << dartRight->GetOutputCurrent()
+					<< ',' << shooterWheel->GetSpeed()
+					<< ',' << shooterWheel->GetOutputVoltage()
+					<< ',' << shooterWheel->GetOutputCurrent()
+					<< ',' << feederWheel->GetSpeed()
+					<< ',' << feederWheel->GetOutputVoltage()
+					<< ',' << feederWheel->GetOutputCurrent()
+					<< ',' << beaterBar->GetSpeed()
+					<< ',' << beaterBar->GetOutputVoltage()
+					<< ',' << beaterBar->GetOutputCurrent()
+					<< ',' << fire->Get()
+					<< ',' << climbLeft->Get()
+					<< ',' << climbRight->Get();
 }
 

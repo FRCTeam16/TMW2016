@@ -78,7 +78,7 @@ private:
 
 	void LogData();
 	int logCounter = 0;			// simple counting to control log frequency
-	const int LOG_FREQ = 50;
+	const int LOG_FREQ = 12;
 
 };
 #endif

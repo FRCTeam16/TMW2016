@@ -52,7 +52,6 @@ void Robot::RobotInit() {
 	File = RAWCConstants::getInstance();
 	driveBase->SetOffsets(File->getValueForKey("FLOff"), File->getValueForKey("FROff"), File->getValueForKey("RLOff"), File->getValueForKey("RROff"));
 	automan.reset(new AutoManager());
-	dataLogger.reset(new DataLogger(driveBase, arm, oi.get()));
 	dartOpen = false;
 	dartSpeed = false;
 	shooterRun = false;
@@ -71,7 +70,7 @@ void Robot::RobotInit() {
  * You can use it to reset subsystems before shutting down.
  */
 void Robot::DisabledInit(){
-
+	cout << "Robot::DisabledInit";
 }
 
 void Robot::DisabledPeriodic() {
@@ -82,16 +81,19 @@ void Robot::DisabledPeriodic() {
 
 void Robot::AutonomousInit() {
 	cout << "Robot::AutonomousInit\n";
+	dataLogger.reset(new DataLogger(kAutonomous, driveBase, arm, oi.get()));
 	automan->Init();
 	cout << "Robot::AutonomousInit COMPLETE\n";
 }
 
 void Robot::AutonomousPeriodic() {
+	// TODO: Put some indicator of current robot state
 	LogData();
 	automan->Periodic();
 }
 
 void Robot::TeleopInit() {
+	dataLogger.reset(new DataLogger(kTeleop, driveBase, arm, oi.get()));
 	// This makes sure that the autonomous stops running when
 	// teleop starts running. If you want the autonomous to
 	// continue until interrupted by another command, remove
@@ -242,10 +244,10 @@ void Robot::TestPeriodic() {
 }
 
 void Robot::LogData() {
-//	if (++logCounter >= LOG_FREQ) {
+	if (dataLogger.get() != nullptr && ++logCounter >= LOG_FREQ) {
 		dataLogger->Log();
-//		logCounter = 0;
-//	}
+		logCounter = 0;
+	}
 
 	//	cout << "ACC: " << driveBase->imu->GetWorldLinearAccelX() << '\t'
 //			<< driveBase->imu->GetWorldLinearAccelY() << '\t'

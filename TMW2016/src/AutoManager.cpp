@@ -28,7 +28,8 @@ AutoManager::AutoManager():
 	//
 	cout << "AutoManager::AutoManager start..";
 	strategies.push_back(std::unique_ptr<Strategy>{new OuterworkAndShootStrategy(new NoOpStrategy())});
-	strategies.push_back(std::unique_ptr<Strategy>{new OuterworkAndShootStrategy(new LowBarStrategy(0.2))});
+//	strategies.push_back(std::unique_ptr<Strategy>{new OuterworkAndShootStrategy(new LowBarStrategy(0.2))});		OLD
+	strategies.push_back(std::unique_ptr<Strategy>{new OuterworkAndShootStrategy(new LowBarStrategy())});
 	strategies.push_back(std::unique_ptr<Strategy>{new OuterworkAndShootStrategy(new RoughTerrainStrategy())});
 
 	Strategy *noop = strategies[0].get();
@@ -39,8 +40,8 @@ AutoManager::AutoManager():
 	strategyLookup.insert(std::make_pair(LowBar, lowbar));
 	strategyLookup.insert(std::make_pair(Portcullis, noop));
 	strategyLookup.insert(std::make_pair(ChevalDeFrise, noop));
-	strategyLookup.insert(std::make_pair(Moat, noop));
-	strategyLookup.insert(std::make_pair(Ramparts, noop));
+	strategyLookup.insert(std::make_pair(Moat, roughTerrain));
+	strategyLookup.insert(std::make_pair(Ramparts, roughTerrain));
 	strategyLookup.insert(std::make_pair(Drawbridge, noop));
 	strategyLookup.insert(std::make_pair(SallyPort, noop));
 	strategyLookup.insert(std::make_pair(RockWall, roughTerrain));

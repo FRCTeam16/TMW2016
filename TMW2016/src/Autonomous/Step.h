@@ -80,8 +80,9 @@ public:
 	ForwardCheckRoll(float speed_ = 0.75) : speed(speed_) {}
 	bool operator()(World *world) override;
 private:
-	const int MAX_LOOPS = 250;
+	const int MAX_LOOPS = 25;
 	int loopCounter = 0;
+	int retryLoops = 0;
 	const float speed;
 	bool running = false;
 	bool startedObstacle = false;

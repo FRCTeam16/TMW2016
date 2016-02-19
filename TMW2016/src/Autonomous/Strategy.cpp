@@ -81,8 +81,7 @@ void ShootingStrategy::Init() {
 	locationSteps[3] = {
 				new BlindSetArmPosition(710),
 				new ControlShooterMotors(true),
-				new TimedCrab(0.5, 0.0, 0.30, 0.0),
-				new TimedCrab(0.1, 60.0, 0.0, 0.0),
+				new TimedCrab(1.0, 0.0, 0.30, 0.0),
 				new ShootBall(),
 				new ControlShooterMotors(false)
 	};
