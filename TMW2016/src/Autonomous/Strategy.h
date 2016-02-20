@@ -38,6 +38,7 @@ public:
 	virtual ~StepStrategy() {}
 	virtual bool Run(World *world) override;
 protected:
+	void Drive(const CrabInfo *crab);
 	std::vector<std::unique_ptr<Step>> steps;
 	unsigned int currentStep = 0;
 };
@@ -57,16 +58,5 @@ private:
 };
 
 // --------------------------------------------------------------------------//
-
-
-class ShootingStrategy : public Strategy {
-public:
-	void Init() override;
-	virtual bool Run(World *world) override;
-private:
-	std::vector<Step*> locationSteps[6];			// TODO: Can we use safer pointer here
-	unsigned int currentStep = 0;
-};
-
 
 #endif /* SRC_AUTONOMOUS_STRATEGY_H_ */

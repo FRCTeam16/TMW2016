@@ -9,14 +9,39 @@
 #include "World.h"
 #include <vector>
 
+struct CrabInfo {
+	float twist		= 0.0;
+	float yspeed	= 0.0;
+	float xspeed	= 0.0;
+	bool gyro = true;
+
+	void Stop() {
+		twist  = 0.0;
+		yspeed = 0.0;
+		xspeed = 0.0;
+	}
+
+	void Update(const float twist_, const float yspeed_, const float xspeed_, const bool gyro_) {
+		twist = twist_;
+		yspeed = yspeed_;
+		xspeed = xspeed_;
+		gyro = gyro_;
+	}
+};
+
 class Step {
 public:
 	Step() {};
 	virtual ~Step() {};
 	virtual bool operator()(World *world) = 0;
+	const CrabInfo* GetCrabInfo() { return crab.get(); }
 protected:
+	std::unique_ptr<CrabInfo> crab;
 	std::shared_ptr<DriveBase> driveBase;
 };
+
+
+
 
 // --------------------------------------------------------------------------//
 

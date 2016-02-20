@@ -19,9 +19,10 @@ bool TimedCrab::operator ()(World *world) {
 	cout << world->GetClock() << ':' << startTime << ':' << targetTime << (world->GetClock() - startTime) << '\n';
 
 	if (world->GetClock() - startTime < targetTime) {
-		Robot::driveBase->Crab(Robot::driveBase->CrabSpeedTwist->Get(), ySpeed, xSpeed, true);
+		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), ySpeed, xSpeed, true);
 		return false;
 	} else {
+		crab->Stop();
 		return true;
 	}
 }
@@ -37,9 +38,10 @@ bool ForwardWithArm::operator ()(World *world) {
 	const float speed = 0.75 * (forward ? 1 : -1);
 
 	if (world->GetClock() - startTime < targetTime) {
-		Robot::driveBase->Crab(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
+		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
 		return false;
 	} else {
+		crab->Stop();
 		return true;
 	}
 }
@@ -74,10 +76,11 @@ bool ForwardWithArmAndRoll::operator ()(World *world) {
 	SmartDashboard::PutNumber("Quiet Count", quietCount);
 
 	if (quietCount > 5) {
-		Robot::driveBase->Crab(Robot::driveBase->CrabSpeedTwist->Get(), 0, 0.0, true);
+		// We have passed obstacle
+		crab->Stop();
 		return true;
 	} else {
-		Robot::driveBase->Crab(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
+		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
 		return false;
 	}
 }
@@ -133,10 +136,10 @@ bool ForwardCheckRoll::operator ()(World *world) {
 	SmartDashboard::PutNumber("Quiet Count", quietCount);
 
 	if (quietCount > 5) {
-		Robot::driveBase->Crab(Robot::driveBase->CrabSpeedTwist->Get(), 0, 0.0, true);
+		crab->Stop();
 		return true;
 	} else {
-		Robot::driveBase->Crab(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
+		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
 		return false;
 	}
 }
@@ -156,12 +159,11 @@ bool Turn::operator()(World *world) {
 				Robot::driveBase->CrabSpeedTwist->Get());
 
 	if (fabs(Robot::driveBase->DriveControlTwist->GetError()) < 3) {
+		crab->Stop();
 		cout << "Exiting Turn\n";
 		return true;
 	} else {
-		Robot::driveBase->Crab(
-				Robot::driveBase->CrabSpeedTwist->Get(),
-				0.0, 0.0, true);
+		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), 0.0, 0.0, true);
 		return false;
 	}
 }

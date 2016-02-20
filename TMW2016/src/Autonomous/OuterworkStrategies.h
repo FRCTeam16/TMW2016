@@ -8,18 +8,6 @@
 #include "Strategy.h"
 #include <map>
 
-//class LowBarStrategy : public Strategy {
-//public:
-//	LowBarStrategy(double armDelay_);
-//	void Init() override;
-//	bool Run(World *world) override;
-//private:
-//	std::unique_ptr<Step> forwardStep;
-//	std::unique_ptr<Step> armStep;
-//	double startTime = -1;
-//	const double armDelay;
-//};
-
 class LowBarStrategy : public StepStrategy {
 public:
 	void Init() override;

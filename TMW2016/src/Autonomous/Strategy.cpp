@@ -3,6 +3,7 @@
  */
 
 #include "Strategy.h"
+#include "ShootingStrategy.h"
 
 
 // --------------------------------------------------------------------------//
@@ -15,12 +16,19 @@ bool StepStrategy::Run(World *world) {
 		return true;
 	}
 
-	bool stepComplete = steps[currentStep]->operator ()(world);
+	Step* step = steps[currentStep].get();
+	bool stepComplete = step->operator ()(world);
+	Drive(step->GetCrabInfo());
+
 	if (stepComplete) {
 		currentStep++;
 		cout << "Advancing to Step: " << currentStep << '\n';
 	}
 	return false;
+}
+
+void StepStrategy::Drive(const CrabInfo *crab) {
+	driveBase->Crab(crab->twist, crab->yspeed, crab->xspeed, crab->gyro);
 }
 
 // --------------------------------------------------------------------------//
@@ -60,59 +68,5 @@ bool OuterworkAndShootStrategy::Run(World *world) {
 // --------------------------------------------------------------------------//
 
 
-void ShootingStrategy::Init() {
-	locationSteps[0] = {};
-	locationSteps[1] = {
-			new BlindSetArmPosition(710),
-			new ControlShooterMotors(true),
-			new TimedCrab(3, 60.0, 0.30, 0.0),
-			new TimedCrab(0.5, 60.0, 0.0, 0.0),
-			new ShootBall(),
-			new ControlShooterMotors(false)
-	};
-	locationSteps[2] = {
-				new BlindSetArmPosition(710),
-				new ControlShooterMotors(true),
-				new TimedCrab(3, 60.0, 0.30, 0.0),
-				new TimedCrab(0.5, 60.0, 0.0, 0.0),
-				new ShootBall(),
-				new ControlShooterMotors(false)
-	};
-	locationSteps[3] = {
-				new BlindSetArmPosition(710),
-				new ControlShooterMotors(true),
-				new TimedCrab(1.0, 0.0, 0.30, 0.0),
-				new ShootBall(),
-				new ControlShooterMotors(false)
-	};
-	locationSteps[4] = {
-				new BlindSetArmPosition(710),
-				new ControlShooterMotors(true),
-				new TimedCrab(0.5, 0.0, 0.30, 0.0),
-				new TimedCrab(0.1, 60.0, 0.0, 0.0),
-				new ShootBall(),
-				new ControlShooterMotors(false)
-	};
-	locationSteps[5] = {
-				new BlindSetArmPosition(710),
-				new ControlShooterMotors(true),
-				new TimedCrab(3, -60.0, 0.30, 0.0),
-				new TimedCrab(0.1, 60.0, 0.0, 0.0),
-				new ShootBall(),
-				new ControlShooterMotors(false)
-	};
-}
 
-bool ShootingStrategy::Run(World *world) {
-	const std::vector<Step*> steps = locationSteps[world->GetStartingPosition()];
-	if (currentStep >= steps.size()) {
-		return true;
-	}
-	const bool stepComplete = steps[currentStep]->operator ()(world);
-	if (stepComplete) {
-			currentStep++;
-			cout << "Advancing to Step: " << currentStep << '\n';
-	}
-	return false;
-}
 
