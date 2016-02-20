@@ -12,6 +12,7 @@
 #ifndef ARM_H
 #define ARM_H
 
+
 #include "Commands/Subsystem.h"
 #include "WPILib.h"
 #include "../RAWCConstants.h"
@@ -48,6 +49,10 @@ private:
 	double fireTime;
 	bool lowFiring;
 	double lowFireTime;
+	const int highShooter = 630;
+	const int lowShooter = 720;
+	const int pickup = 940;
+	const int travel = 838;
 
 public:
 	Arm();

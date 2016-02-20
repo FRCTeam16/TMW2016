@@ -171,20 +171,20 @@ void Arm::BeaterBar(float speed) {
 
 
 void Arm::ShooterHigh() {
-	DartPosition(630);
+	DartPosition(highShooter);
 	shooterRun = true;
 }
 void Arm::ShooterLow() {
-	DartPosition(720);
+	DartPosition(lowShooter);
 	shooterRun = true;
 
 }
 void Arm::PickupPosition() {
-	DartPosition(940);
+	DartPosition(pickup);
 	shooterRun = false;
 }
 void Arm::TravelPosition() {
-	DartPosition(838);
+	DartPosition(travel);
 
 }
 
