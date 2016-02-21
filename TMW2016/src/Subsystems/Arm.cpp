@@ -45,9 +45,10 @@ Arm::Arm() : Subsystem("Arm") {
     dartLeft->ConfigLimitMode(CANSpeedController::kLimitMode_SoftPositionLimits);
     dartLeft->ConfigSoftPositionLimits(972,0);
     dartLeft->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
-    dartLeft->SetP(100);
-    dartLeft->SetI(0);
-    dartLeft->SetD(0);
+    dartLeft->SetPID(100,0,0);
+//    dartLeft->SetP(100);
+//    dartLeft->SetI(0);
+//    dartLeft->SetD(0);
 
     dartRight->SetFeedbackDevice(CANTalon::AnalogPot);
     dartRight->SetControlMode(CANTalon::kPosition);
@@ -55,15 +56,19 @@ Arm::Arm() : Subsystem("Arm") {
     dartRight->ConfigLimitMode(CANSpeedController::kLimitMode_SoftPositionLimits);
     dartRight->ConfigSoftPositionLimits(972 + dartOffset,0);
     dartRight->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
+    dartRight->SetPID(100,0,0);
+/*
     dartRight->SetP(100);
     dartRight->SetI(0);
     dartRight->SetD(0);
+*/
 
 
     shooterWheel->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
     shooterWheel->SetFeedbackDevice(CANTalon::EncRising);
 	shooterWheel->SetControlMode(CANTalon::kSpeed);
 	shooterWheel->ConfigEncoderCodesPerRev(3);
+	shooterWheel->SetVoltageRampRate(24);
 
 	shooterWheel->SetP(18);
 	shooterWheel->SetI(0);
