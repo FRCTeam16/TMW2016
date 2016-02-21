@@ -73,7 +73,7 @@ public:
 	int GetCurrentDartDifference();
 	int GetCorrectedDartDifference();
 	void SetDartOffset(int offset);
-	bool DartInPosition(const int position) const;
+	bool DartInPosition() const;
 	void ClimbExtend();
 	void ClimbRetract();
 	void RunShooter(bool run);

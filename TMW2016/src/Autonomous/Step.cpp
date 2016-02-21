@@ -16,7 +16,6 @@ bool TimedCrab::operator ()(World *world) {
 		startTime = world->GetClock();
 		Robot::driveBase->DriveControlTwist->SetSetpoint(targetAngle);
 	}
-	cout << world->GetClock() << ':' << startTime << ':' << targetTime << (world->GetClock() - startTime) << '\n';
 
 	if (world->GetClock() - startTime < targetTime) {
 		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), ySpeed, xSpeed, true);
@@ -180,14 +179,29 @@ bool SetArmPosition::operator()(World *world) {
 		cerr << "Aborting SetArmPosition\n";
 		return true;
 	}
-	if (Robot::arm->DartInPosition(targetPosition)) {
-		return true;
-	} else if (!running) {
+
+	if (!running) {
 		running = true;
-		Robot::arm->DartPosition(targetPosition);
+		switch(position) {
+		case Position::Custom:
+			Robot::arm->DartPosition(customTarget);
+			break;
+		case Position::Pickup:
+			Robot::arm->PickupPosition();
+			break;
+		case Position::Travel:
+			Robot::arm->TravelPosition();
+			break;
+		}
 	}
-	return false;
+
+	if (wait) {
+		return Robot::arm->DartInPosition();
+	} else {
+		return true;
+	}
 }
+
 
 // --------------------------------------------------------------------------//
 
@@ -223,6 +237,7 @@ bool ShootBall::operator()(World *world) {
 	} else if (currentTime - startTime > fireWait) {
 		Robot::arm->FireManager();
 		return true;
-
+	} else {
+		return false;
 	}
 }
