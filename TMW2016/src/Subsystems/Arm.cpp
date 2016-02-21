@@ -87,6 +87,8 @@ Arm::Arm() : Subsystem("Arm") {
 	lowFiring = false;
 	lowFireTime = 0;
 
+	dartOutputUnlimited = false;
+
 }
 
 
@@ -145,6 +147,11 @@ int Arm::GetCorrectedDartDifference() {
 
 void Arm::SetDartOffset(int offset) {
 	dartOffset = offset;
+}
+
+void Arm::UnlimitDartOutput(bool unlimit) {
+
+	dartOutputUnlimited = unlimit;
 }
 
 void Arm::ClimbExtend() {
@@ -245,26 +252,32 @@ void Arm::FireManager() {
 }
 
 void Arm::DartManager() {
-	if(GetCorrectedDartDifference() > 5) { //right dart is lower than left
-		if(dartLeft->Get() > 0) { //going down
-			dartRight->ConfigPeakOutputVoltage(2,dartMaxReverse);
-		}
-		if(dartLeft->Get() < 0) { //going up
-			dartLeft->ConfigPeakOutputVoltage(dartMaxForward,-1);
-		}
-	}
-
-	else if(GetCorrectedDartDifference() < -5) { //left dart lower than right
-		if(dartLeft->Get() > 0) { //going down
-			dartLeft->ConfigPeakOutputVoltage(2,dartMaxReverse);
-		}
-		if(dartLeft->Get() < 0) { //going up
-			dartRight->ConfigPeakOutputVoltage(dartMaxForward,-1);
-		}
+	if(dartOutputUnlimited) {
+		dartLeft->ConfigPeakOutputVoltage(12, -12);
+		dartRight->ConfigPeakOutputVoltage(12, -12);
 	}
 	else {
-		dartLeft->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
-		dartRight->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
+		if(GetCorrectedDartDifference() > 5) { //right dart is lower than left
+			if(dartLeft->Get() > 0) { //going down
+				dartRight->ConfigPeakOutputVoltage(2,dartMaxReverse);
+			}
+			if(dartLeft->Get() < 0) { //going up
+				dartLeft->ConfigPeakOutputVoltage(dartMaxForward,-1);
+			}
+		}
+
+		else if(GetCorrectedDartDifference() < -5) { //left dart lower than right
+			if(dartLeft->Get() > 0) { //going down
+				dartLeft->ConfigPeakOutputVoltage(2,dartMaxReverse);
+			}
+			if(dartLeft->Get() < 0) { //going up
+				dartRight->ConfigPeakOutputVoltage(dartMaxForward,-1);
+			}
+		}
+		else {
+			dartLeft->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
+			dartRight->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
+		}
 	}
 }
 

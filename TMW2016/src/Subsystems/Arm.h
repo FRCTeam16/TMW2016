@@ -50,6 +50,8 @@ private:
 	bool lowFiring;
 	double lowFireTime;
 
+	bool dartOutputUnlimited;
+
 	const int highShooter = 630;
 	const int lowShooter = 720;
 	const int pickup = 940;
@@ -71,6 +73,7 @@ public:
 	int GetCurrentDartDifference();
 	int GetCorrectedDartDifference();
 	void SetDartOffset(int offset);
+	void UnlimitDartOutput(bool unlimit);
 	void ClimbExtend();
 	void ClimbRetract();
 	void RunShooter(bool run);

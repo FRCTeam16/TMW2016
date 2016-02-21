@@ -47,6 +47,8 @@ public:
 		BSButton* GPB;
 		BSButton* GPLT;
 		BSButton* GPRT;
+		BSButton* GPBack;
+		BSButton* GPStart;
 		BSButton* DL1;
 		BSButton* DL2;
 		BSButton* DL3;
