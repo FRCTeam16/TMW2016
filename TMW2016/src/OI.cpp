@@ -45,6 +45,8 @@ OI::OI() {
 	GPY = new BSButton(gamepad, 4);
 	GPLT = new BSButton(gamepad, 5);
 	GPRT = new BSButton(gamepad, 6);
+	GPBack = new BSButton(gamepad, 7);
+	GPStart = new BSButton (gamepad, 8);
 	DL1 = new BSButton(driverLeft,1);
 	DL2 = new BSButton(driverLeft,2);
 	DL3 = new BSButton(driverLeft,3);

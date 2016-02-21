@@ -10,7 +10,6 @@
 
 
 
-
 #include "Arm.h"
 #include "../RobotMap.h"
 #include <fstream>
@@ -46,9 +45,12 @@ Arm::Arm() : Subsystem("Arm") {
     dartLeft->ConfigLimitMode(CANSpeedController::kLimitMode_SoftPositionLimits);
     dartLeft->ConfigSoftPositionLimits(972,0);
     dartLeft->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
-    dartLeft->SetP(100);
-    dartLeft->SetI(0);
-    dartLeft->SetD(0);
+//    dartLeft->SetPID(100,0,0);
+    CANSpeedController *cspL = dynamic_cast<CANSpeedController*>(dartLeft.get());
+    cspL->SetPID(100,0,0);
+//    dartLeft->SetP(100);
+//    dartLeft->SetI(0);
+//    dartLeft->SetD(0);
 
     dartRight->SetFeedbackDevice(CANTalon::AnalogPot);
     dartRight->SetControlMode(CANTalon::kPosition);
@@ -56,15 +58,21 @@ Arm::Arm() : Subsystem("Arm") {
     dartRight->ConfigLimitMode(CANSpeedController::kLimitMode_SoftPositionLimits);
     dartRight->ConfigSoftPositionLimits(972 + dartOffset,0);
     dartRight->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
+//    dartRight->SetPID(100,0,0);
+    CANSpeedController *cspR = dynamic_cast<CANSpeedController*>(dartRight.get());
+	cspR->SetPID(100,0,0);
+/*
     dartRight->SetP(100);
     dartRight->SetI(0);
     dartRight->SetD(0);
+*/
 
 
     shooterWheel->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
     shooterWheel->SetFeedbackDevice(CANTalon::EncRising);
 	shooterWheel->SetControlMode(CANTalon::kSpeed);
 	shooterWheel->ConfigEncoderCodesPerRev(3);
+	shooterWheel->SetVoltageRampRate(24);
 
 	shooterWheel->SetP(18);
 	shooterWheel->SetI(0);
@@ -82,6 +90,8 @@ Arm::Arm() : Subsystem("Arm") {
 	fireTime = 0;
 	lowFiring = false;
 	lowFireTime = 0;
+
+	dartOutputUnlimited = false;
 
 }
 
@@ -110,6 +120,12 @@ void Arm::DartPosition(int pos) {
 	dartLeft->Set(pos);
 	dartRight->Set(pos+dartOffset);
 }
+
+bool Arm::DartInPosition() const {
+	return (dartLeft->Get() == dartLeft->GetSetpoint()) &&
+			(dartRight->Get() == dartRight->GetSetpoint());
+}
+
 
 void Arm::DartSetToCurrent() {
 	DartPosition(dartLeft->GetPosition());
@@ -143,10 +159,14 @@ void Arm::SetDartOffset(int offset) {
 	dartOffset = offset;
 }
 
+void Arm::UnlimitDartOutput(bool unlimit) {
 
-bool Arm::DartInPosition() const {
-	return (dartLeft->Get() == dartLeft->GetSetpoint()) &&
-			(dartRight->Get() == dartRight->GetSetpoint());
+	dartOutputUnlimited = unlimit;
+
+	if(unlimit)
+		comp->Stop();
+	else
+		comp->Start();
 }
 
 void Arm::ClimbExtend() {
@@ -247,26 +267,32 @@ void Arm::FireManager() {
 }
 
 void Arm::DartManager() {
-	if(GetCorrectedDartDifference() > 5) { //right dart is lower than left
-		if(dartLeft->Get() > 0) { //going down
-			dartRight->ConfigPeakOutputVoltage(2,dartMaxReverse);
-		}
-		if(dartLeft->Get() < 0) { //going up
-			dartLeft->ConfigPeakOutputVoltage(dartMaxForward,-1);
-		}
-	}
-
-	else if(GetCorrectedDartDifference() < -5) { //left dart lower than right
-		if(dartLeft->Get() > 0) { //going down
-			dartLeft->ConfigPeakOutputVoltage(2,dartMaxReverse);
-		}
-		if(dartLeft->Get() < 0) { //going up
-			dartRight->ConfigPeakOutputVoltage(dartMaxForward,-1);
-		}
+	if(dartOutputUnlimited) {
+		dartLeft->ConfigPeakOutputVoltage(12, -12);
+		dartRight->ConfigPeakOutputVoltage(12, -12);
 	}
 	else {
-		dartLeft->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
-		dartRight->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
+		if(GetCorrectedDartDifference() > 5) { //right dart is lower than left
+			if(dartLeft->Get() > 0) { //going down
+				dartRight->ConfigPeakOutputVoltage(2,dartMaxReverse);
+			}
+			if(dartLeft->Get() < 0) { //going up
+				dartLeft->ConfigPeakOutputVoltage(dartMaxForward,-1);
+			}
+		}
+
+		else if(GetCorrectedDartDifference() < -5) { //left dart lower than right
+			if(dartLeft->Get() > 0) { //going down
+				dartLeft->ConfigPeakOutputVoltage(2,dartMaxReverse);
+			}
+			if(dartLeft->Get() < 0) { //going up
+				dartRight->ConfigPeakOutputVoltage(dartMaxForward,-1);
+			}
+		}
+		else {
+			dartLeft->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
+			dartRight->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
+		}
 	}
 }
 
@@ -277,6 +303,7 @@ void Arm::SMDB() {
 	SmartDashboard::PutNumber("Shooter Amps", shooterWheel->GetOutputCurrent());
 	SmartDashboard::PutNumber("Feeder Amps", feederWheel->GetOutputCurrent());
 	SmartDashboard::PutNumber("DartPosition", dartLeft->GetPosition());
+	SmartDashboard::PutNumber("CorrectedDartDifference", GetCorrectedDartDifference());
 }
 
 std::vector<std::string> Arm::GetHeaders() {

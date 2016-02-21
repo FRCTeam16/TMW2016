@@ -199,6 +199,9 @@ void Robot::TeleopPeriodic() {
 		dartSpeed = false;
 	}
 
+	arm->UnlimitDartOutput(oi->GPBack->Pressed());
+
+
 /*******Arm Managers********/
 	arm->ShooterManager();
 	arm->FireManager();
