@@ -39,22 +39,49 @@ Arm::Arm() : Subsystem("Arm") {
     dartMaxReverse = -12;
 	File = RAWCConstants::getInstance();
 	dartOffset = File->getValueForKey("DartOffset");
-    dartLeft->SetFeedbackDevice(CANTalon::AnalogPot);
-    dartRight->SetFeedbackDevice(CANTalon::AnalogPot);
+
+	dartLeft->SetFeedbackDevice(CANTalon::AnalogPot);
     dartLeft->SetControlMode(CANTalon::kPosition);
-    dartRight->SetControlMode(CANTalon::kPosition);
+    dartLeft->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+    dartLeft->ConfigLimitMode(CANSpeedController::kLimitMode_SoftPositionLimits);
     dartLeft->ConfigSoftPositionLimits(972,0);
-    dartLeft->ConfigSoftPositionLimits(972 + dartOffset,0);
     dartLeft->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
+    dartLeft->SetP(100);
+    dartLeft->SetI(0);
+    dartLeft->SetD(0);
+
+    dartRight->SetFeedbackDevice(CANTalon::AnalogPot);
+    dartRight->SetControlMode(CANTalon::kPosition);
+    dartRight->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+    dartRight->ConfigLimitMode(CANSpeedController::kLimitMode_SoftPositionLimits);
+    dartRight->ConfigSoftPositionLimits(972 + dartOffset,0);
     dartRight->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
-	shooterWheel->SetFeedbackDevice(CANTalon::EncRising);
+    dartRight->SetP(100);
+    dartRight->SetI(0);
+    dartRight->SetD(0);
+
+
+    shooterWheel->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+    shooterWheel->SetFeedbackDevice(CANTalon::EncRising);
 	shooterWheel->SetControlMode(CANTalon::kSpeed);
 	shooterWheel->ConfigEncoderCodesPerRev(3);
 
-	shooterWheel->SetP(15);
+	shooterWheel->SetP(18);
 	shooterWheel->SetI(0);
 	shooterWheel->SetD(0);
-	shooterWheel->SetF(12);
+	shooterWheel->SetF(13);
+
+	feederWheel->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+	beaterBar->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+
+	shooterSpeed = 0;
+	feederSpeed = 0;
+	shooterRun = false;
+
+	firing = false;
+	fireTime = 0;
+	lowFiring = false;
+	lowFireTime = 0;
 
 }
 
@@ -84,14 +111,8 @@ void Arm::DartPosition(int pos) {
 	dartRight->Set(pos+dartOffset);
 }
 
-int Arm::GetDartPosition() const {
-	// Returns "main" dart position
-	return dartLeft->Get();
-}
-
 void Arm::DartSetToCurrent() {
 	DartPosition(dartLeft->GetPosition());
-
 }
 
 void Arm::DartOpenLoop(float speed) {
@@ -110,7 +131,121 @@ void Arm::DartSpeedControl(float speed) {
 	dartRight->Set(dartLeft->GetPosition()+dartOffset);
 }
 
-void Arm::DartMonitor() {
+int Arm::GetCurrentDartDifference() {
+	return dartRight->GetPosition() - dartLeft->GetPosition();
+}
+
+int Arm::GetCorrectedDartDifference() {
+	return (dartRight->GetPosition() - dartOffset) - dartLeft->GetPosition();
+}
+
+void Arm::SetDartOffset(int offset) {
+	dartOffset = offset;
+}
+
+
+bool Arm::DartInPosition(const int position) const {
+	return (dartLeft->GetPosition() == position) && ((dartRight->GetPosition()+dartOffset) == position);
+}
+
+void Arm::ClimbExtend() {
+	if(dartLeft->GetPosition() < extendLimit) {
+		climbLeft->Set(true);
+		climbRight->Set(true);
+	}
+}
+
+void Arm::ClimbRetract() {
+	climbLeft->Set(false);
+	climbRight->Set(false);
+}
+
+
+void Arm::RunShooter(bool run) {
+	shooterRun = run;
+}
+
+void Arm::ToggleShooterRun() {
+	shooterRun = !shooterRun;
+}
+
+void Arm::Fire() {
+	if(shooterRun) {
+	firing = true;
+	fireTime = GetClock();
+	fire->Set(true);
+	}
+}
+
+void Arm::LowFire() {
+	lowFiring = true;
+	lowFireTime = GetClock();
+	shooterRun = true;
+	fire->Set(true);
+}
+
+void Arm::BeaterBar(float speed) {
+	if(!lowFiring) {
+		beaterBar->Set(speed);
+	}
+	else {
+		beaterBar->Set(1.0);
+	}
+
+}
+
+
+void Arm::ShooterHigh() {
+	DartPosition(highShooter);
+	shooterRun = true;
+}
+void Arm::ShooterLow() {
+	DartPosition(lowShooter);
+	shooterRun = true;
+
+}
+void Arm::PickupPosition() {
+	DartPosition(pickup);
+	shooterRun = false;
+}
+void Arm::TravelPosition() {
+	DartPosition(travel);
+
+}
+
+void Arm::SetShooterSpeed(float ShooterSpeed, float FeederSpeed) {
+	shooterSpeed = ShooterSpeed;
+	feederSpeed = FeederSpeed;
+}
+void Arm::ShooterManager() {
+	if(shooterRun) {
+	shooterWheel->Set(shooterSpeed);
+		feederWheel->Set(feederSpeed);
+		comp->Stop();
+	}
+	else {
+		shooterWheel->Set(0);
+		feederWheel->Set(0);
+		comp->Start();
+		}
+}
+
+void Arm::FireManager() {
+	if(firing && ((fireTime + 1) < GetClock())) {
+		firing = false;
+		fire->Set(false);
+		shooterRun = false;
+		DartPosition(838);
+	}
+
+	if(lowFiring && ((lowFireTime + 1 < GetClock()))) {
+		lowFiring = false;
+		fire->Set(false);
+		shooterRun = false;
+	}
+}
+
+void Arm::DartManager() {
 	if(GetCorrectedDartDifference() > 5) { //right dart is lower than left
 		if(dartLeft->Get() > 0) { //going down
 			dartRight->ConfigPeakOutputVoltage(2,dartMaxReverse);
@@ -134,52 +269,6 @@ void Arm::DartMonitor() {
 	}
 }
 
-bool Arm::DartInPosition(const int position) const {
-	return (dartLeft->GetPosition() == position) && ((dartRight->GetPosition()+dartOffset) == position);
-}
-
-int Arm::GetCurrentDartDifference() {
-	return dartRight->GetPosition() - dartLeft->GetPosition();
-}
-
-int Arm::GetCorrectedDartDifference() {
-	return (dartRight->GetPosition() - dartOffset) - dartLeft->GetPosition();
-}
-
-void Arm::SetDartOffset(int offset) {
-	dartOffset = offset;
-}
-
-void Arm::ClimbExtend() {
-	climbLeft->Set(true);
-	climbRight->Set(true);
-}
-
-void Arm::ClimbRetract() {
-	climbLeft->Set(false);
-	climbRight->Set(false);
-}
-
-void Arm::RunShooter(bool run, float shooterSpeed, float feederSpeed) {
-	if(run) {
-		shooterWheel->Set(shooterSpeed);
-		feederWheel->Set(feederSpeed);
-		comp->Stop();
-	}
-	else {
-		shooterWheel->Set(0);
-		feederWheel->Set(0);
-		comp->Start();
-		}
-}
-
-void Arm::Fire(bool value) {
-	fire->Set(value);
-}
-
-void Arm::BeaterBar(float speed) {
-	beaterBar->Set(speed);
-}
 
 void Arm::SMDB() {
 	SmartDashboard::PutNumber("DartOffset", dartOffset);

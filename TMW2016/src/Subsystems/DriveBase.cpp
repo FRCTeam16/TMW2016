@@ -77,7 +77,6 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	cRLVolt=0;
 	cRRVolt=0;
 	DP=0;
-	DriveControlUS=0;
 	FL=0;
 	FLRatio=0;
 	FRRatio=0;
@@ -100,15 +99,22 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	X=0;
 	Z=0;
 
-	CrabSpeedTwist.reset(new CrabSpeed());
-	// autonomous values:
-	DriveControlTwist.reset(new PIDController(0.01, 0, 0.05, imu, CrabSpeedTwist.get(), 0.02));
-    //DriveControlTwist.reset(new PIDController(.035, 0, .1, imu, CrabSpeedTwist.get(), 0.02));
+	CrabSpeedTwist = new CrabSpeed();
+    DriveControlTwist = new PIDController(.01, 0, .05, imu, CrabSpeedTwist, 0.02);
 	DriveControlTwist->SetContinuous(true);
 	DriveControlTwist->SetAbsoluteTolerance(2.0);
 	DriveControlTwist->Enable();
 	DriveControlTwist->SetOutputRange(-.5, .5);
 	DriveControlTwist->SetInputRange(-180, 180);
+
+	frontLeftSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+	frontLeftDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+	frontRightSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+	frontRightDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+	rearLeftSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+	rearLeftDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+	rearRightSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+	rearRightDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
 }
 
 void DriveBase::InitDefaultCommand() {
@@ -498,4 +504,10 @@ void DriveBase::SMDB() {
 	SmartDashboard::PutNumber("RearLeftPost", rearLeftPos->GetAverageVoltage());
 	SmartDashboard::PutNumber("Yaw", imu->GetYaw());
 	SmartDashboard::PutNumber("Angle", imu->GetAngle());
+	SmartDashboard::PutNumber("FrontLeftDriveCurrent", frontLeftDrive->GetOutputCurrent());
+	SmartDashboard::PutNumber("FrontRightDriveCurrent", frontRightDrive->GetOutputCurrent());
+	SmartDashboard::PutNumber("RearLeftDriveCurrent", rearLeftDrive->GetOutputCurrent());
+	SmartDashboard::PutNumber("RearRightDriveCurrent", rearRightDrive->GetOutputCurrent());
+	SmartDashboard::PutNumber("LeftTankDriveCurrent", tankLeft->GetOutputCurrent());
+	SmartDashboard::PutNumber("RightTankDriveCurrent", tankRight->GetOutputCurrent());
 }

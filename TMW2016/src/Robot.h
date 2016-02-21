@@ -58,7 +58,6 @@ private:
 	double RLOffset;
 	double RROffset;
 	bool prevTrigger;
-	Preferences* prefs;
 	RAWCConstants* File;
 	void SystemSMDB();
 	void DriveBaseSMDB();
@@ -66,15 +65,11 @@ private:
 	std::shared_ptr<DataLogger> dataLogger;
 	bool dartOpen;
 	bool dartSpeed;
-	bool shooterRun;
 	bool tankRun;
-	bool firing;
-	double fireTime;
-	bool lowFiring;
-	double lowFireTime;
 	float shooterSpeed;
 	float feederSpeed;
 	float beaterBarSpeed;
+	Preferences* prefs;
 
 	void LogData();
 	int logCounter = 0;			// simple counting to control log frequency
