@@ -200,9 +200,11 @@ ControlShooterMotors::ControlShooterMotors(bool enable_) : enable(enable_) {
 
 bool ControlShooterMotors::operator()(World *world) {
 	if (enable) {
-		Robot::arm->RunShooter(true, shooterSpeed, feederSpeed);
+		Robot::arm->SetShooterSpeed(shooterSpeed, feederSpeed);
+		Robot::arm->ShooterManager();
 	} else {
-		Robot::arm->RunShooter(false, 0.0, 0.0);
+		Robot::arm->RunShooter(false);
+		Robot::arm->ShooterManager();
 	}
 	return true;
 }
@@ -215,13 +217,12 @@ bool ShootBall::operator()(World *world) {
 	}
 
 	if (!hasFired) {
-		Robot::arm->Fire(true);
+		Robot::arm->Fire();
 		hasFired = true;
-	} else {
-		if (currentTime - startTime > fireWait) {
-			Robot::arm->Fire(false);
-			return true;
-		}
+		return false;
+	} else if (currentTime - startTime > fireWait) {
+		Robot::arm->FireManager();
+		return true;
+
 	}
-	return false;
 }

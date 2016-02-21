@@ -16,11 +16,7 @@
 #include "AHRS.h"
 #include "CrabSpeed.h"
 
-/**
- *
- *
- * @author ExampleAuthor
- */
+
 class DriveBase: public Subsystem {
 private:
 

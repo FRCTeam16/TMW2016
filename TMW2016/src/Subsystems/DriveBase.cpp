@@ -99,8 +99,8 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	X=0;
 	Z=0;
 
-	CrabSpeedTwist = new CrabSpeed();
-    DriveControlTwist = new PIDController(.01, 0, .05, imu, CrabSpeedTwist, 0.02);
+	CrabSpeedTwist.reset(new CrabSpeed());
+	DriveControlTwist.reset(new PIDController(.01, 0, .05, imu, CrabSpeedTwist.get(), 0.02));
 	DriveControlTwist->SetContinuous(true);
 	DriveControlTwist->SetAbsoluteTolerance(2.0);
 	DriveControlTwist->Enable();
