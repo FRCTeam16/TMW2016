@@ -87,46 +87,49 @@ bool ForwardWithArmAndRoll::operator ()(World *world) {
 bool ForwardCheckRoll::operator ()(World *world) {
 	cout << "ForwardCheckRoll()\n";
 	const float roll = Robot::driveBase->imu->GetRoll();
-
-
-	/*
-	 * After we start obstacle
-	 * try for 2 seconds
-	 * if we haven't started going down, then retry
-	 *
-	 *
-	 */
-
-	// Retry check / safety exit
-//	if (startedObstacle && ++loopCounter > MAX_LOOPS ) {
-//		if (++retryLoops > MAX_LOOPS) {
-//			assert(false && " Aborting");
-//		} else {
-//			// attempt to move backwards off of obstacle
-//			Robot::driveBase->Crab(0.0, -speed, 0.0, true);
-//
-//			// We think we moved off, reset counters
-//			loopCounter = 0;
-//			retryLoops = 0;
-//		}
-//	} else {
-//
-//	}
-
+	const double currentTime = world->GetClock();
 
 	if (!running) {
 		running = true;
 		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
+		startTime = currentTime;
 	}
 
-	if (roll < 0) {
-		hitNegative = true;
+	if (++loopCounter > MAX_LOOPS) {
+		cerr << "Aborting due to timeout of loops\n";
+		// TODO: Just stop and exit
+		return true;
 	}
 
+
+	//
+	// Retry handling
+	//
+	if (running && !hitNegative && (currentTime - startTime) > MAX_TRY_TIME) {
+		// we have not hit the negative slope, but we've been trying for two seconds
+		// we can check for a negative retryStartTime to see if we've retried before
+		inRetry = true;
+		retryStartTime = currentTime;
+	}
+	if (inRetry) {
+		if (currentTime - retryStartTime < MAX_TRY_TIME) {
+			crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), -speed, 0.0, true);
+			return false;
+		} else {
+			inRetry = false;
+			return false;
+		}
+	}
+
+	//
+	// Normal Operations
+	//
 	if (!startedObstacle && roll > 5.0) {
 		startedObstacle = true;
 	}
-
+	if (roll < 0) {
+		hitNegative = true;
+	}
 	if (startedObstacle && hitNegative && roll > 0.0) {
 		quietCount++;
 	}
@@ -192,6 +195,15 @@ bool SetArmPosition::operator()(World *world) {
 		case Position::Travel:
 			Robot::arm->TravelPosition();
 			break;
+		case Position::ShooterLow:
+			Robot::arm->ShooterLow();
+			break;
+		case Position::ShooterHigh:
+			Robot::arm->ShooterHigh();
+			break;
+		default:
+			std::cerr << "Unrecognized position requested: " << static_cast<int>(position) << ", aborting!\n";
+			return true;
 		}
 	}
 
@@ -215,10 +227,8 @@ ControlShooterMotors::ControlShooterMotors(bool enable_) : enable(enable_) {
 bool ControlShooterMotors::operator()(World *world) {
 	if (enable) {
 		Robot::arm->SetShooterSpeed(shooterSpeed, feederSpeed);
-		Robot::arm->ShooterManager();
 	} else {
 		Robot::arm->RunShooter(false);
-		Robot::arm->ShooterManager();
 	}
 	return true;
 }
@@ -235,7 +245,6 @@ bool ShootBall::operator()(World *world) {
 		hasFired = true;
 		return false;
 	} else if (currentTime - startTime > fireWait) {
-		Robot::arm->FireManager();
 		return true;
 	} else {
 		return false;

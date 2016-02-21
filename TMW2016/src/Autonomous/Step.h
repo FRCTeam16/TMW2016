@@ -105,14 +105,20 @@ public:
 	ForwardCheckRoll(float speed_ = 0.75) : speed(speed_) {}
 	bool operator()(World *world) override;
 private:
-	const int MAX_LOOPS = 25;
+	const int MAX_LOOPS = 150;
 	int loopCounter = 0;
-	int retryLoops = 0;
+
+	const double MAX_TRY_TIME = 2.0;
+	double startTime = -1;
+
 	const float speed;
 	bool running = false;
 	bool startedObstacle = false;
 	bool hitNegative = false;
 	int quietCount = 0;
+
+	bool inRetry = false;
+	float retryStartTime = -1;
 };
 
 // --------------------------------------------------------------------------//
@@ -164,7 +170,7 @@ private:
 
 class SetArmPosition : public Step {
 public:
-	enum struct Position { Custom, Pickup, Travel };
+	enum struct Position { Custom, Pickup, Travel, ShooterLow, ShooterHigh };
 	SetArmPosition(Position pos_, bool wait_):
 		position(pos_), wait(wait_), customTarget(-1) {}
 	SetArmPosition(int targetPosition_, bool wait_):
