@@ -105,14 +105,20 @@ public:
 	ForwardCheckRoll(float speed_ = 0.75) : speed(speed_) {}
 	bool operator()(World *world) override;
 private:
-	const int MAX_LOOPS = 25;
+	const int MAX_LOOPS = 150;
 	int loopCounter = 0;
-	int retryLoops = 0;
+
+	const double MAX_TRY_TIME = 2.0;
+	double startTime = -1;
+
 	const float speed;
 	bool running = false;
 	bool startedObstacle = false;
 	bool hitNegative = false;
 	int quietCount = 0;
+
+	bool inRetry = false;
+	float retryStartTime = -1;
 };
 
 // --------------------------------------------------------------------------//
@@ -160,15 +166,23 @@ public:
 private:
 	const int targetPosition;
 };
+
+
 class SetArmPosition : public Step {
 public:
-	SetArmPosition(int pos_) : running(false), targetPosition(pos_) {}
+	enum struct Position { Custom, Pickup, Travel, ShooterLow, ShooterHigh };
+	SetArmPosition(Position pos_, bool wait_):
+		position(pos_), wait(wait_), customTarget(-1) {}
+	SetArmPosition(int targetPosition_, bool wait_):
+			position(Position::Custom), wait(wait_), customTarget(targetPosition_) {}
 	bool operator()(World *world) override;
 private:
+	const Position position;
+	const bool wait;
+	const int customTarget;
 	const int MAX_LOOPS = 500;	// 10 seconds
 	int loopCounter = 0;
-	bool running;
-	const int targetPosition;
+	bool running = false;
 };
 
 #endif /* SRC_AUTONOMOUS_STEP_H_ */

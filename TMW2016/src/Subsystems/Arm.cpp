@@ -144,8 +144,9 @@ void Arm::SetDartOffset(int offset) {
 }
 
 
-bool Arm::DartInPosition(const int position) const {
-	return (dartLeft->GetPosition() == position) && ((dartRight->GetPosition()+dartOffset) == position);
+bool Arm::DartInPosition() const {
+	return (dartLeft->Get() == dartLeft->GetSetpoint()) &&
+			(dartRight->Get() == dartRight->GetSetpoint());
 }
 
 void Arm::ClimbExtend() {

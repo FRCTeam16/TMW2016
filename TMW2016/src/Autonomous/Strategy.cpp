@@ -4,6 +4,7 @@
 
 #include "Strategy.h"
 #include "ShootingStrategy.h"
+#include "../Robot.h"
 
 
 // --------------------------------------------------------------------------//
@@ -18,13 +19,22 @@ bool StepStrategy::Run(World *world) {
 
 	Step* step = steps[currentStep].get();
 	bool stepComplete = step->operator ()(world);
-	Drive(step->GetCrabInfo());
+
+
 
 	if (stepComplete) {
 		currentStep++;
 		cout << "Advancing to Step: " << currentStep << '\n';
 	}
 	return false;
+}
+
+void StepStrategy::RunPeriodicManagers(const CrabInfo *crab) {
+	// Must fire every invocation
+	Drive(crab);
+	Robot::arm->DartManager();
+	Robot::arm->FireManager();
+	Robot::arm->ShooterManager();
 }
 
 void StepStrategy::Drive(const CrabInfo *crab) {

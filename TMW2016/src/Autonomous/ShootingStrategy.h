@@ -8,7 +8,7 @@
 #include "Strategy.h"
 #include "Step.h"
 
-class ShootingStrategy : public Strategy {
+class ShootingStrategy : public StepStrategy {
 public:
 	void Init() override;
 	virtual bool Run(World *world) override;

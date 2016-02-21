@@ -39,6 +39,7 @@ public:
 	virtual bool Run(World *world) override;
 protected:
 	void Drive(const CrabInfo *crab);
+	void RunPeriodicManagers(const CrabInfo *crab);
 	std::vector<std::unique_ptr<Step>> steps;
 	unsigned int currentStep = 0;
 };
