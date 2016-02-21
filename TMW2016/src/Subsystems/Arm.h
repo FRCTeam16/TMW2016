@@ -49,10 +49,13 @@ private:
 	double fireTime;
 	bool lowFiring;
 	double lowFireTime;
+
 	const int highShooter = 630;
 	const int lowShooter = 720;
 	const int pickup = 940;
 	const int travel = 838;
+	const int extendPosition = 300;
+	const int extendLimit = 550;
 
 public:
 	Arm();

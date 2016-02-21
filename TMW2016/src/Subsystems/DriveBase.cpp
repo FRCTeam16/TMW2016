@@ -106,6 +106,15 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	DriveControlTwist->Enable();
 	DriveControlTwist->SetOutputRange(-.5, .5);
 	DriveControlTwist->SetInputRange(-180, 180);
+
+	frontLeftSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+	frontLeftDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+	frontRightSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+	frontRightDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+	rearLeftSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+	rearLeftDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+	rearRightSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+	rearRightDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
 }
 
 void DriveBase::InitDefaultCommand() {

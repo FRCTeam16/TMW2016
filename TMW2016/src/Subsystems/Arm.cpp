@@ -38,15 +38,30 @@ Arm::Arm() : Subsystem("Arm") {
     dartMaxReverse = -12;
 	File = RAWCConstants::getInstance();
 	dartOffset = File->getValueForKey("DartOffset");
-    dartLeft->SetFeedbackDevice(CANTalon::AnalogPot);
-    dartRight->SetFeedbackDevice(CANTalon::AnalogPot);
+
+	dartLeft->SetFeedbackDevice(CANTalon::AnalogPot);
     dartLeft->SetControlMode(CANTalon::kPosition);
-    dartRight->SetControlMode(CANTalon::kPosition);
+    dartLeft->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+    dartLeft->ConfigLimitMode(CANSpeedController::kLimitMode_SoftPositionLimits);
     dartLeft->ConfigSoftPositionLimits(972,0);
-    dartLeft->ConfigSoftPositionLimits(972 + dartOffset,0);
     dartLeft->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
+    dartLeft->SetP(100);
+    dartLeft->SetI(0);
+    dartLeft->SetD(0);
+
+    dartRight->SetFeedbackDevice(CANTalon::AnalogPot);
+    dartRight->SetControlMode(CANTalon::kPosition);
+    dartRight->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
+    dartRight->ConfigLimitMode(CANSpeedController::kLimitMode_SoftPositionLimits);
+    dartRight->ConfigSoftPositionLimits(972 + dartOffset,0);
     dartRight->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
-	shooterWheel->SetFeedbackDevice(CANTalon::EncRising);
+    dartRight->SetP(100);
+    dartRight->SetI(0);
+    dartRight->SetD(0);
+
+
+    shooterWheel->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+    shooterWheel->SetFeedbackDevice(CANTalon::EncRising);
 	shooterWheel->SetControlMode(CANTalon::kSpeed);
 	shooterWheel->ConfigEncoderCodesPerRev(3);
 
@@ -54,6 +69,9 @@ Arm::Arm() : Subsystem("Arm") {
 	shooterWheel->SetI(0);
 	shooterWheel->SetD(0);
 	shooterWheel->SetF(13);
+
+	feederWheel->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+	beaterBar->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
 
 	shooterSpeed = 0;
 	feederSpeed = 0;
@@ -94,7 +112,6 @@ void Arm::DartPosition(int pos) {
 
 void Arm::DartSetToCurrent() {
 	DartPosition(dartLeft->GetPosition());
-
 }
 
 void Arm::DartOpenLoop(float speed) {
@@ -126,8 +143,10 @@ void Arm::SetDartOffset(int offset) {
 }
 
 void Arm::ClimbExtend() {
-	climbLeft->Set(true);
-	climbRight->Set(true);
+	if(dartLeft->GetPosition() < extendLimit) {
+		climbLeft->Set(true);
+		climbRight->Set(true);
+	}
 }
 
 void Arm::ClimbRetract() {
@@ -243,6 +262,7 @@ void Arm::DartManager() {
 		dartRight->ConfigPeakOutputVoltage(dartMaxForward,dartMaxReverse);
 	}
 }
+
 
 void Arm::SMDB() {
 	SmartDashboard::PutNumber("DartOffset", dartOffset);
