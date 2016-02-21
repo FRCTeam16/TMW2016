@@ -27,45 +27,41 @@ AutoManager::AutoManager():
 	// Initialize strategies and commands
 	//
 	cout << "AutoManager::AutoManager start..";
-	strategies.push_back(std::unique_ptr<Strategy>{new OuterworkAndShootStrategy(new NoOpStrategy())});
-//	strategies.push_back(std::unique_ptr<Strategy>{new OuterworkAndShootStrategy(new LowBarStrategy(0.2))});		OLD
-	strategies.push_back(std::unique_ptr<Strategy>{new OuterworkAndShootStrategy(new LowBarStrategy())});
-	strategies.push_back(std::unique_ptr<Strategy>{new OuterworkAndShootStrategy(new RoughTerrainStrategy())});
 
-	Strategy *noop = strategies[0].get();
-	Strategy *lowbar = strategies[1].get();
-	Strategy *roughTerrain = strategies[2].get();
+	Strategy *noop = new OuterworkAndShootStrategy(new NoOpStrategy());
+	Strategy *lowbar = new OuterworkAndShootStrategy(new LowBarStrategy());
+	Strategy *roughTerrain = new OuterworkAndShootStrategy(new RoughTerrainStrategy());
 
 	// Map Defenses to Strategies
-	strategyLookup.insert(std::make_pair(LowBar, lowbar));
-	strategyLookup.insert(std::make_pair(Portcullis, noop));
+	strategyLookup.insert(std::make_pair(LowBar, 		lowbar));
+	strategyLookup.insert(std::make_pair(Portcullis, 	noop));
 	strategyLookup.insert(std::make_pair(ChevalDeFrise, noop));
-	strategyLookup.insert(std::make_pair(Moat, roughTerrain));
-	strategyLookup.insert(std::make_pair(Ramparts, roughTerrain));
-	strategyLookup.insert(std::make_pair(Drawbridge, noop));
-	strategyLookup.insert(std::make_pair(SallyPort, noop));
-	strategyLookup.insert(std::make_pair(RockWall, roughTerrain));
-	strategyLookup.insert(std::make_pair(RoughTerrain, roughTerrain));
+	strategyLookup.insert(std::make_pair(Moat, 			roughTerrain));
+	strategyLookup.insert(std::make_pair(Ramparts, 		roughTerrain));
+	strategyLookup.insert(std::make_pair(Drawbridge, 	noop));
+	strategyLookup.insert(std::make_pair(SallyPort, 	noop));
+	strategyLookup.insert(std::make_pair(RockWall, 		roughTerrain));
+	strategyLookup.insert(std::make_pair(RoughTerrain,	roughTerrain));
 	currentStrategy = noop;
 
 	//
 	// Initialize Sendable Objects and Dashboard
 	//
-	defense->AddDefault("1: LowBar", (void*) LowBar);
-	defense->AddObject("A: Portcullis", (void*) Portcullis);
-	defense->AddObject("A: ChevalDeFrise", (void*) ChevalDeFrise);
-	defense->AddObject("B: Moat", (void*) Moat);
-	defense->AddObject("B: Ramparts", (void*) Ramparts);
-	defense->AddObject("C: Drawbridge", (void*) Drawbridge);
-	defense->AddObject("C: SallyPort", (void*) SallyPort);
-	defense->AddObject("D: RockWall", (void*) RockWall);
-	defense->AddObject("D: RoughTerrain", (void*) RoughTerrain);
+	defense->AddDefault("1: LowBar", 		(void*) LowBar);
+	defense->AddObject("A: Portcullis", 	(void*) Portcullis);
+	defense->AddObject("A: ChevalDeFrise", 	(void*) ChevalDeFrise);
+	defense->AddObject("B: Moat", 			(void*) Moat);
+	defense->AddObject("B: Ramparts", 		(void*) Ramparts);
+	defense->AddObject("C: Drawbridge", 	(void*) Drawbridge);
+	defense->AddObject("C: SallyPort", 		(void*) SallyPort);
+	defense->AddObject("D: RockWall", 		(void*) RockWall);
+	defense->AddObject("D: RoughTerrain", 	(void*) RoughTerrain);
 
 	position->AddDefault("1", (void*) 1);
-	position->AddObject("2", (void*) 2);
-	position->AddObject("3", (void*) 3);
-	position->AddObject("4", (void*) 4);
-	position->AddObject("5", (void*) 5);
+	position->AddObject("2",  (void*) 2);
+	position->AddObject("3",  (void*) 3);
+	position->AddObject("4",  (void*) 4);
+	position->AddObject("5",  (void*) 5);
 
 	SmartDashboard::PutData(AUTO_POSITION, position.get());
 	SmartDashboard::PutData(AUTO_DEFENSE, defense.get());
@@ -76,7 +72,7 @@ AutoManager::AutoManager():
 void AutoManager::Init() {
 	cout << "AutoManager::Init\n";
 	// Read state of world information from driver station
-	int startingDefenseIdx = (int) defense->GetSelected();
+	const int startingDefenseIdx = (int) defense->GetSelected();
 	const int startingPosition = (int)(position->GetSelected());
 
 	cout << "Starting Defense Idx: " << startingDefenseIdx << '\n';

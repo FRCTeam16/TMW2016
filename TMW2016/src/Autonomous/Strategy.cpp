@@ -19,8 +19,7 @@ bool StepStrategy::Run(World *world) {
 
 	Step* step = steps[currentStep].get();
 	bool stepComplete = step->operator ()(world);
-
-
+	RunPeriodicManagers(step->GetCrabInfo());
 
 	if (stepComplete) {
 		currentStep++;
@@ -31,21 +30,17 @@ bool StepStrategy::Run(World *world) {
 
 void StepStrategy::RunPeriodicManagers(const CrabInfo *crab) {
 	// Must fire every invocation
-	Drive(crab);
+	Robot::driveBase->Crab(crab->twist, crab->yspeed, crab->xspeed, crab->gyro);
 	Robot::arm->DartManager();
 	Robot::arm->FireManager();
 	Robot::arm->ShooterManager();
-}
-
-void StepStrategy::Drive(const CrabInfo *crab) {
-	driveBase->Crab(crab->twist, crab->yspeed, crab->xspeed, crab->gyro);
 }
 
 // --------------------------------------------------------------------------//
 
 
 bool NoOpStrategy::Run(World *world) {
-	cout << "NoOpStrategy exiting\n";
+	cout << "NoOpStrategy::Run\n";
 	return true;
 }
 
@@ -66,8 +61,8 @@ bool OuterworkAndShootStrategy::Run(World *world) {
 		outerworkComplete = outerworkStrategy->Run(world);
 		return false;	// always return false to trigger shooting strategy run
 	} else {
-		if (firstShooting) {
-			firstShooting = false;
+		if (firstTimeShooting) {
+			firstTimeShooting = false;
 			shootingStrategy->Init();
 		}
 		return shootingStrategy->Run(world);

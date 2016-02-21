@@ -16,10 +16,6 @@ public:
 	virtual ~Strategy() {};
 	virtual void Init() {};
 	virtual bool Run(World *world) = 0;
-protected:
-	std::shared_ptr<DriveBase> driveBase;
-private:
-
 };
 
 class NoOpStrategy : public Strategy {
@@ -38,7 +34,6 @@ public:
 	virtual ~StepStrategy() {}
 	virtual bool Run(World *world) override;
 protected:
-	void Drive(const CrabInfo *crab);
 	void RunPeriodicManagers(const CrabInfo *crab);
 	std::vector<std::unique_ptr<Step>> steps;
 	unsigned int currentStep = 0;
@@ -55,7 +50,7 @@ private:
 	std::unique_ptr<Strategy> shootingStrategy;
 	bool outerworkComplete = false;
 	bool firstOuterwork = true;
-	bool firstShooting = true;
+	bool firstTimeShooting = true;
 };
 
 // --------------------------------------------------------------------------//
