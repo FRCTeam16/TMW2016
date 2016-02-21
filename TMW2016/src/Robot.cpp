@@ -192,10 +192,7 @@ void Robot::TeleopPeriodic() {
 		dartSpeed = false;
 	}
 
-	if(oi->GPBack->RisingEdge())
-		arm->UnlimitDartOutput(true);
-	if(oi->GPBack->FallingEdge())
-		arm->UnlimitDartOutput(false);
+	arm->UnlimitDartOutput(oi->GPBack->Pressed());
 
 
 /*******Arm Managers********/

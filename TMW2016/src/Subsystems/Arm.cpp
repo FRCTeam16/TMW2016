@@ -152,6 +152,11 @@ void Arm::SetDartOffset(int offset) {
 void Arm::UnlimitDartOutput(bool unlimit) {
 
 	dartOutputUnlimited = unlimit;
+
+	if(unlimit)
+		comp->Stop();
+	else
+		comp->Start();
 }
 
 void Arm::ClimbExtend() {
@@ -288,4 +293,5 @@ void Arm::SMDB() {
 	SmartDashboard::PutNumber("Shooter Amps", shooterWheel->GetOutputCurrent());
 	SmartDashboard::PutNumber("Feeder Amps", feederWheel->GetOutputCurrent());
 	SmartDashboard::PutNumber("DartPosition", dartLeft->GetPosition());
+	SmartDashboard::PutNumber("CorrectedDartDifference", GetCorrectedDartDifference());
 }
