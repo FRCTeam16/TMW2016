@@ -34,9 +34,9 @@ public:
 	Step() {};
 	virtual ~Step() {};
 	virtual bool operator()(World *world) = 0;
-	const CrabInfo* GetCrabInfo() { return crab.get(); }
+	const CrabInfo* GetCrabInfo() { return crab; }
 protected:
-	std::unique_ptr<CrabInfo> crab;
+	CrabInfo * crab = new CrabInfo();
 	std::shared_ptr<DriveBase> driveBase;
 };
 

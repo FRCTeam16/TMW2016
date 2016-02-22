@@ -8,30 +8,35 @@ void ShootingStrategy::Init() {
 	locationSteps[0] = {};
 	locationSteps[1] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterLow, false),
+			new ControlShooterMotors(true),
 			new TimedCrab(3, 60.0, 0.30, 0.0),
 			new ShootBall(),
 			new ControlShooterMotors(false)
 	};
 	locationSteps[2] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterLow, false),
+			new ControlShooterMotors(true),
 			new TimedCrab(3, 60.0, 0.30, 0.0),
 			new ShootBall(),
 			new ControlShooterMotors(false)
 	};
 	locationSteps[3] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterLow, false),
+			new ControlShooterMotors(true),
 			new TimedCrab(1.0, 0.0, 0.30, 0.0),
 			new ShootBall(),
 			new ControlShooterMotors(false)
 	};
 	locationSteps[4] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterLow, false),
+			new ControlShooterMotors(true),
 			new TimedCrab(0.5, 0.0, -0.30, 0.0),
 			new ShootBall(),
 			new ControlShooterMotors(false)
 	};
 	locationSteps[5] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterLow, false),
+			new ControlShooterMotors(true),
 			new TimedCrab(3, -60.0, 0.30, 0.0),
 			new ShootBall(),
 			new ControlShooterMotors(false)

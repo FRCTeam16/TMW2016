@@ -18,9 +18,12 @@ bool TimedCrab::operator ()(World *world) {
 	}
 
 	if (world->GetClock() - startTime < targetTime) {
+		cout << "Setting crab movement information\n";
 		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), ySpeed, xSpeed, true);
+		cout << "FINISHED Setting crab movement information\n";
 		return false;
 	} else {
+		cout << "TimedCrab::Stop\n";
 		crab->Stop();
 		return true;
 	}
@@ -208,6 +211,7 @@ bool SetArmPosition::operator()(World *world) {
 	}
 
 	if (wait) {
+		cout << "Waiting for DART...";
 		return Robot::arm->DartInPosition();
 	} else {
 		return true;

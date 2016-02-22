@@ -30,7 +30,11 @@ bool StepStrategy::Run(World *world) {
 
 void StepStrategy::RunPeriodicManagers(const CrabInfo *crab) {
 	// Must fire every invocation
+	cout << "RunPeriodicManager\n";
+	cout << crab->twist << " : " << crab->yspeed << "\n";
 	Robot::driveBase->Crab(crab->twist, crab->yspeed, crab->xspeed, crab->gyro);
+	Robot::driveBase->tankLeft->Set(crab->yspeed);
+	Robot::driveBase->tankRight->Set(crab->yspeed);
 	Robot::arm->DartManager();
 	Robot::arm->FireManager();
 	Robot::arm->ShooterManager();

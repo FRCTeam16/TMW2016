@@ -47,7 +47,7 @@ Arm::Arm() : Subsystem("Arm") {
     dartLeft->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
 //    dartLeft->SetPID(100,0,0);
     CANSpeedController *cspL = dynamic_cast<CANSpeedController*>(dartLeft.get());
-    cspL->SetPID(100,0,0);
+    cspL->SetPID(10,0,0);
 //    dartLeft->SetP(100);
 //    dartLeft->SetI(0);
 //    dartLeft->SetD(0);
@@ -60,7 +60,7 @@ Arm::Arm() : Subsystem("Arm") {
     dartRight->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
 //    dartRight->SetPID(100,0,0);
     CANSpeedController *cspR = dynamic_cast<CANSpeedController*>(dartRight.get());
-	cspR->SetPID(100,0,0);
+	cspR->SetPID(10,0,0);
 /*
     dartRight->SetP(100);
     dartRight->SetI(0);
@@ -122,8 +122,9 @@ void Arm::DartPosition(int pos) {
 }
 
 bool Arm::DartInPosition() const {
-	return (dartLeft->Get() == dartLeft->GetSetpoint()) &&
-			(dartRight->Get() == dartRight->GetSetpoint());
+	const float leftDelta = fabs(dartLeft->Get() - dartLeft->GetSetpoint());
+	const float rightDelta = fabs(dartRight->Get() - dartRight->GetSetpoint());
+	return (leftDelta < 4 && rightDelta < 4);
 }
 
 
