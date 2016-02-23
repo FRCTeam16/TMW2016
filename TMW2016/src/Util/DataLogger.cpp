@@ -107,8 +107,8 @@ void DataLogger::Log() {
 	// Tank
 	outstream	<< ',' << driveBase->tankLeft->GetOutputVoltage()
 				<< ',' << driveBase->tankLeft->GetOutputCurrent()
-				<< ',' << driveBase->tankLeft->GetOutputVoltage()
-				<< ',' << driveBase->tankLeft->GetOutputCurrent();
+				<< ',' << driveBase->tankRight->GetOutputVoltage()
+				<< ',' << driveBase->tankRight->GetOutputCurrent();
 
 	// Arm
 	arm->Log(outstream);

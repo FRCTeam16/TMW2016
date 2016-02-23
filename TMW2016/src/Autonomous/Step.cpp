@@ -132,6 +132,7 @@ bool ForwardCheckRoll::operator ()(World *world) {
 	}
 	if (roll < 0) {
 		hitNegative = true;
+		quietCount = 0;	// reset quiet count
 	}
 	if (startedObstacle && hitNegative && roll > 0.0) {
 		quietCount++;

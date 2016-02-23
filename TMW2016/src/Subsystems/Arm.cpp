@@ -311,7 +311,7 @@ std::vector<std::string> Arm::GetHeaders() {
 	return std::vector<std::string> {
 		"Left Dart Position", "Left Dart Volt", "Left Dart Current",
 		"Right Dart Position","Right Dart Volt", "Right Dart Current",
-		"Shooter Wheel Speed", "Shooter Wheel Volt", "Shooter Wheel Current"
+		"Shooter Wheel Speed", "Shooter Wheel Volt", "Shooter Wheel Current",
 		"Feeder Wheel Speed", "Feeder Wheel Volt", "Feeder Wheel Current",
 		"Beater Wheel Speed", "Beater Wheel Volt", "Beater Wheel Current",
 		"Fire Status",
