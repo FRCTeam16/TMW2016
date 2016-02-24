@@ -47,10 +47,7 @@ Arm::Arm() : Subsystem("Arm") {
     dartLeft->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
 //    dartLeft->SetPID(100,0,0);
     CANSpeedController *cspL = dynamic_cast<CANSpeedController*>(dartLeft.get());
-    cspL->SetPID(100,0,0);
-//    dartLeft->SetP(100);
-//    dartLeft->SetI(0);
-//    dartLeft->SetD(0);
+    cspL->SetPID(30,0,0);
 
     dartRight->SetFeedbackDevice(CANTalon::AnalogPot);
     dartRight->SetControlMode(CANTalon::kPosition);
@@ -60,12 +57,7 @@ Arm::Arm() : Subsystem("Arm") {
     dartRight->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
 //    dartRight->SetPID(100,0,0);
     CANSpeedController *cspR = dynamic_cast<CANSpeedController*>(dartRight.get());
-	cspR->SetPID(100,0,0);
-/*
-    dartRight->SetP(100);
-    dartRight->SetI(0);
-    dartRight->SetD(0);
-*/
+	cspR->SetPID(30,0,0);
 
 
     shooterWheel->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
@@ -170,6 +162,7 @@ void Arm::UnlimitDartOutput(bool unlimit) {
 }
 
 void Arm::ClimbExtend() {
+	DartPosition(extendLimit-10);
 	if(dartLeft->GetPosition() < extendLimit) {
 		climbLeft->Set(true);
 		climbRight->Set(true);
@@ -256,7 +249,7 @@ void Arm::FireManager() {
 		firing = false;
 		fire->Set(false);
 		shooterRun = false;
-		DartPosition(838);
+//		DartPosition(838);
 	}
 
 	if(lowFiring && ((lowFireTime + 1 < GetClock()))) {
