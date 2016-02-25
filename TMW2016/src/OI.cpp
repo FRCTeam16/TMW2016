@@ -119,19 +119,19 @@ double OI::getJoystickMagnitude() {
 			return driverRight->GetMagnitude();
 }
 double OI::getJoystickTwist() {
-	if(fabs(driverLeft->GetX()) < .1)
+	if(fabs(driverLeft->GetX()) < 0.1)
 			return 0;
 	else
 		return driverLeft->GetX()/2;
 }
 double OI::getJoystickX() {
-	if (fabs(driverRight->GetX()) < 0)
+	if (fabs(driverRight->GetX()) < 0.1)
 		return 0;
 	else
 		return driverRight->GetX();
 }
 double OI::getJoystickY() {
-	if (fabs(driverRight->GetY()) < 0)
+	if (fabs(driverRight->GetY()) < 0.1)
 		return 0;
 	else
 		return driverRight->GetY();

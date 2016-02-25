@@ -22,10 +22,11 @@ public:
 	void Init();
 	void Periodic();
 private:
-	std::unique_ptr<World> world;
-	std::shared_ptr<DriveBase> driveBase;
 	std::unique_ptr<SendableChooser> position;
 	std::unique_ptr<SendableChooser> defense;
+	std::unique_ptr<SendableChooser> targetGoal;
+	std::unique_ptr<World> world;
+	std::shared_ptr<DriveBase> driveBase;
 	typedef enum outerworks {LowBar, Portcullis, ChevalDeFrise, Moat, Ramparts, Drawbridge, SallyPort, RockWall, RoughTerrain} outerworks;
 	std::string outerworksLookup[];
 	std::map<outerworks, Strategy*> strategyLookup;

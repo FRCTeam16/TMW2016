@@ -22,20 +22,22 @@ AutoManager::AutoManager():
 		world(new World()),
 		driveBase(Robot::driveBase),
 		position(new SendableChooser()),
-		defense(new SendableChooser()) {
+		defense(new SendableChooser()),
+		targetGoal(new SendableChooser()) {
 	//
 	// Initialize strategies and commands
 	//
-	cout << "AutoManager::AutoManager start..";
+	cout << "AutoManager::AutoManager start..\n";
 
 	Strategy *noop = new OuterworkAndShootStrategy(new NoOpStrategy());
 	Strategy *lowbar = new OuterworkAndShootStrategy(new LowBarStrategy());
 	Strategy *roughTerrain = new OuterworkAndShootStrategy(new RoughTerrainStrategy());
+	Strategy *chevalDeFrise = new OuterworkAndShootStrategy(new ChevalDeFriseStrategy());
 
 	// Map Defenses to Strategies
 	strategyLookup.insert(std::make_pair(LowBar, 		lowbar));
 	strategyLookup.insert(std::make_pair(Portcullis, 	noop));
-	strategyLookup.insert(std::make_pair(ChevalDeFrise, noop));
+	strategyLookup.insert(std::make_pair(ChevalDeFrise, chevalDeFrise));
 	strategyLookup.insert(std::make_pair(Moat, 			roughTerrain));
 	strategyLookup.insert(std::make_pair(Ramparts, 		roughTerrain));
 	strategyLookup.insert(std::make_pair(Drawbridge, 	noop));
@@ -63,9 +65,15 @@ AutoManager::AutoManager():
 	position->AddObject("4",  (void*) 4);
 	position->AddObject("5",  (void*) 5);
 
+//	targetGoal->AddDefault("1", (void*) 1);
+//	targetGoal->AddObject("2",  (void*) 2);
+//	targetGoal->AddObject("3",  (void*) 3);
+//	targetGoal->AddObject("4",  (void*) 4);
+//	targetGoal->AddObject("5",  (void*) 5);
+
 	SmartDashboard::PutData(AUTO_POSITION, position.get());
 	SmartDashboard::PutData(AUTO_DEFENSE, defense.get());
-	cout << "AutoManager::AutoManager complete";
+	cout << "AutoManager::AutoManager complete\n";
 }
 
 
@@ -73,8 +81,9 @@ void AutoManager::Init() {
 	cout << "AutoManager::Init\n";
 	// Read state of world information from driver station
 	const int startingDefenseIdx = (int) defense->GetSelected();
-	const int startingPosition = (int)(position->GetSelected());
+	const int startingPosition 	 = (int) position->GetSelected();
 
+	//
 	cout << "Starting Defense Idx: " << startingDefenseIdx << '\n';
 	cout << "Starting Position   : " << startingPosition << '\n';
 	outerworks startingDefense = static_cast<outerworks>(startingDefenseIdx);

@@ -47,7 +47,7 @@ Arm::Arm() : Subsystem("Arm") {
     dartLeft->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
 //    dartLeft->SetPID(100,0,0);
     CANSpeedController *cspL = dynamic_cast<CANSpeedController*>(dartLeft.get());
-    cspL->SetPID(10,0,0);
+    cspL->SetPID(30,0,0);
 //    dartLeft->SetP(100);
 //    dartLeft->SetI(0);
 //    dartLeft->SetD(0);
@@ -60,7 +60,7 @@ Arm::Arm() : Subsystem("Arm") {
     dartRight->ConfigPeakOutputVoltage(dartMaxForward, dartMaxReverse);
 //    dartRight->SetPID(100,0,0);
     CANSpeedController *cspR = dynamic_cast<CANSpeedController*>(dartRight.get());
-	cspR->SetPID(10,0,0);
+	cspR->SetPID(30,0,0);
 /*
     dartRight->SetP(100);
     dartRight->SetI(0);
@@ -122,9 +122,12 @@ void Arm::DartPosition(int pos) {
 }
 
 bool Arm::DartInPosition() const {
+	const int deltaThreshold = 10;
 	const float leftDelta = fabs(dartLeft->Get() - dartLeft->GetSetpoint());
 	const float rightDelta = fabs(dartRight->Get() - dartRight->GetSetpoint());
-	return (leftDelta < 4 && rightDelta < 4);
+	cout << "Left : " << dartLeft->Get() << " Target: " << dartLeft->GetSetpoint() << " Delta: " << leftDelta << '\n';
+	cout << "Right: " << dartRight->Get() << " Target: " << dartRight->GetSetpoint() << " Delta: " << rightDelta << '\n';
+	return (leftDelta < deltaThreshold && rightDelta < deltaThreshold);
 }
 
 
@@ -196,6 +199,8 @@ void Arm::Fire() {
 	firing = true;
 	fireTime = GetClock();
 	fire->Set(true);
+	} else {
+		cout << "*** Fire requested but shooter was not running ***\n";
 	}
 }
 
@@ -250,6 +255,12 @@ void Arm::ShooterManager() {
 		feederWheel->Set(0);
 		comp->Start();
 		}
+}
+
+bool Arm::ShooterWheelsAtSpeed() const {
+	const int shooterThreshold = 1500;
+	const float shooterDelta = fabs(shooterWheel->Get() - shooterWheel->GetSetpoint());
+	return shooterDelta < shooterThreshold;
 }
 
 void Arm::FireManager() {

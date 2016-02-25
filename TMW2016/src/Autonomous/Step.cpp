@@ -18,79 +18,27 @@ bool TimedCrab::operator ()(World *world) {
 	}
 
 	if (world->GetClock() - startTime < targetTime) {
-		cout << "Setting crab movement information\n";
 		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), ySpeed, xSpeed, true);
-		cout << "FINISHED Setting crab movement information\n";
 		return false;
 	} else {
-		cout << "TimedCrab::Stop\n";
 		crab->Stop();
 		return true;
 	}
 }
+
 
 // --------------------------------------------------------------------------//
 
-bool ForwardWithArm::operator ()(World *world) {
-	if (startTime < 0) {
-		startTime = world->GetClock();
-		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
-		Robot::arm->DartPosition(armTarget);
-	}
-	const float speed = 0.75 * (forward ? 1 : -1);
-
-	if (world->GetClock() - startTime < targetTime) {
-		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
-		return false;
-	} else {
-		crab->Stop();
-		return true;
-	}
-}
-
-// --------------------------------------------------------------------------//
-
-/**
- * Test detecting stop point with roll axis detection
- */
-bool ForwardWithArmAndRoll::operator ()(World *world) {
-	if (!running) {
-		running = true;
-		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
-		Robot::arm->DartPosition(armTarget);
-	}
-	const float speed = 0.75;
-	const float roll = Robot::driveBase->imu->GetRoll();
-
-	if (roll < 0) {
-		hitNegative = true;
-	}
-
-	if (!startedObstacle && roll > 5.0) {
-		startedObstacle = true;
-	}
-
-	if (startedObstacle && hitNegative && roll > 0.0) {
-		quietCount++;
-	}
-
-	SmartDashboard::PutBoolean("Obstacle Started", startedObstacle);
-	SmartDashboard::PutNumber("Quiet Count", quietCount);
-
-	if (quietCount > 5) {
-		// We have passed obstacle
-		crab->Stop();
-		return true;
-	} else {
-		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
-		return false;
-	}
-}
-
-bool ForwardCheckRoll::operator ()(World *world) {
-	cout << "ForwardCheckRoll()\n";
-	const float roll = Robot::driveBase->imu->GetRoll();
+bool TraverseObstacleWithGyro::operator ()(World *world) {
+	cout << "TraverseObstacleWithGyro()\n";
+	const float pitch = Robot::driveBase->imu->GetRoll();
 	const double currentTime = world->GetClock();
+
+	cout << "currentTime: " << currentTime << '\n';
+	cout << "startTime  : " << startTime << '\n';
+	cout << "negativeCounter: " << negativeCounter << '\n';
+	cout << "startedObstacle: " << startedObstacle << '\n';
+	cout << "hitNegative    : " << hitNegative << '\n';
 
 	if (!running) {
 		running = true;
@@ -100,26 +48,28 @@ bool ForwardCheckRoll::operator ()(World *world) {
 
 	if (++loopCounter > MAX_LOOPS) {
 		cerr << "Aborting due to timeout of loops\n";
-		// TODO: Just stop and exit
-		return true;
+		// TODO: Just stop
+		crab->Stop();
+		return false;
 	}
-
 
 	//
 	// Retry handling
 	//
-	if (running && !hitNegative && (currentTime - startTime) > MAX_TRY_TIME) {
-		// we have not hit the negative slope, but we've been trying for two seconds
+	if (running && !inRetry && !hitNegative && (currentTime - startTime) > MAX_TRY_TIME) {
+		// we have not hit the negative slope, but we've been trying for our max try time
 		// we can check for a negative retryStartTime to see if we've retried before
 		inRetry = true;
 		retryStartTime = currentTime;
 	}
 	if (inRetry) {
-		if (currentTime - retryStartTime < MAX_TRY_TIME) {
+		if ((currentTime - retryStartTime) < MAX_RETRY_TIME) {
+			// Attempt to move straight backwards
 			crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), -speed, 0.0, true);
 			return false;
 		} else {
 			inRetry = false;
+			startTime = currentTime;	// reset our timer for advancing
 			return false;
 		}
 	}
@@ -127,14 +77,21 @@ bool ForwardCheckRoll::operator ()(World *world) {
 	//
 	// Normal Operations
 	//
-	if (!startedObstacle && roll > 5.0) {
+	if (!startedObstacle && pitch > 5.0) {
 		startedObstacle = true;
+		startTime = currentTime;	// As soon as we start the obstacle, start our timer for attempting to cross it
 	}
-	if (roll < 0) {
-		hitNegative = true;
+	if (pitch < 4.0) {
+		if (++negativeCounter >= NEGATIVE_COUNTER_TARGET) {
+			cout << "**** HIT NEGATIVE ***";
+			hitNegative = true;
+		}
 		quietCount = 0;	// reset quiet count
 	}
-	if (startedObstacle && hitNegative && roll > 0.0) {
+	if (!hitNegative && pitch > 0.0) {
+		negativeCounter = 0;
+	}
+	if (startedObstacle && hitNegative && pitch > 0.0) {
 		quietCount++;
 	}
 
@@ -154,7 +111,7 @@ bool ForwardCheckRoll::operator ()(World *world) {
 // --------------------------------------------------------------------------//
 
 bool Turn::operator()(World *world) {
-	cout << "Running Turn\n";
+	cout << "Turn()\n";
 	if (firstRun) {
 		firstRun = false;
 		Robot::driveBase->DriveControlTwist->SetSetpoint(angle);
@@ -176,12 +133,8 @@ bool Turn::operator()(World *world) {
 
 // --------------------------------------------------------------------------//
 
-bool BlindSetArmPosition::operator()(World *world) {
-	Robot::arm->DartPosition(targetPosition);
-	return true;
-}
-
 bool SetArmPosition::operator()(World *world) {
+	cout << "SetArmPosition\n";
 	if (++loopCounter > MAX_LOOPS) {
 		cerr << "Aborting SetArmPosition\n";
 		return true;
@@ -230,6 +183,7 @@ ControlShooterMotors::ControlShooterMotors(bool enable_) : enable(enable_) {
 }
 
 bool ControlShooterMotors::operator()(World *world) {
+	cout << "ControlShooterMotors()\n";
 	if (enable) {
 		Robot::arm->SetShooterSpeed(shooterSpeed, feederSpeed);
 	} else {
@@ -240,18 +194,29 @@ bool ControlShooterMotors::operator()(World *world) {
 
 
 bool ShootBall::operator()(World *world) {
+	cout << "ShootBall()\n";
 	const double currentTime = world->GetClock();
 	if (startTime < 0) {
 		startTime = currentTime;
 	}
 
-	if (!hasFired) {
+	if (waitForShooterWheels) {
+		if (!Robot::arm->ShooterWheelsAtSpeed()) {
+			cout << "Waiting for wheels\n";
+			return false;
+		}
+	}
+
+	const bool dartInPosition = Robot::arm->DartInPosition();
+	if (!hasFired && dartInPosition) {
+		cout << " !!!!! FIRING !!!!!\n";
 		Robot::arm->Fire();
 		hasFired = true;
 		return false;
-	} else if (currentTime - startTime > fireWait) {
+	} else if (hasFired && (currentTime - startTime) > fireWait) {
 		return true;
 	} else {
+		cout << "Dart in position? " << dartInPosition << '\n';
 		return false;
 	}
 }

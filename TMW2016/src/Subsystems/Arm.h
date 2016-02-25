@@ -90,6 +90,7 @@ public:
 	void TravelPosition();
 	void SetShooterSpeed(float ShooterSpeed, float FeederSpeed);
 	void ShooterManager();
+	bool ShooterWheelsAtSpeed() const;
 	void FireManager();
 	void DartManager();
 	void SMDB();

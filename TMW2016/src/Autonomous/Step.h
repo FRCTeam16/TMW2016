@@ -74,46 +74,24 @@ private:
 
 // --------------------------------------------------------------------------//
 
-class ForwardWithArm : public Step {
+class TraverseObstacleWithGyro : public Step {
 public:
-	ForwardWithArm(float time_, bool forward_ = true) : targetTime(time_), forward(forward_) {}
-	bool operator()(World *world) override;
-private:
-	float startTime = -1;
-	const float targetTime;
-	bool forward;
-	const float armTarget = 838;
-};
-
-
-class ForwardWithArmAndRoll : public Step {
-public:
-	ForwardWithArmAndRoll() {}
-	bool operator()(World *world) override;
-private:
-	bool running = false;
-	const float armTarget = 838;
-	bool startedObstacle = false;
-	bool hitNegative = false;
-	int quietCount = 0;
-};
-
-
-
-class ForwardCheckRoll : public Step {
-public:
-	ForwardCheckRoll(float speed_ = 0.75) : speed(speed_) {}
+	TraverseObstacleWithGyro(float speed_ = 0.75) : speed(speed_) {}
 	bool operator()(World *world) override;
 private:
 	const int MAX_LOOPS = 150;
 	int loopCounter = 0;
 
 	const double MAX_TRY_TIME = 2.0;
+	const double MAX_RETRY_TIME = 2.0;
 	double startTime = -1;
 
 	const float speed;
 	bool running = false;
 	bool startedObstacle = false;
+
+	const int NEGATIVE_COUNTER_TARGET = 5;	// how many loops to detect nefative movement
+	int negativeCounter = 0;
 	bool hitNegative = false;
 	int quietCount = 0;
 
@@ -148,9 +126,10 @@ private:
 
 class ShootBall : public Step {
 public:
-	ShootBall() {};
+	ShootBall(bool waitForShooterWheels_= true) : waitForShooterWheels(waitForShooterWheels_) {};
 	bool operator()(World *world) override;
 private:
+	const bool waitForShooterWheels;
 	const float fireWait = 1.0;
 	double startTime = -1;
 	bool hasFired = false;
@@ -158,15 +137,6 @@ private:
 };
 
 // --------------------------------------------------------------------------//
-
-class BlindSetArmPosition : public Step {
-public:
-	BlindSetArmPosition(int pos_) : targetPosition(pos_) {}
-	bool operator()(World *world) override;
-private:
-	const int targetPosition;
-};
-
 
 class SetArmPosition : public Step {
 public:

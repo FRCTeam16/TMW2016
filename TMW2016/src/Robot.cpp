@@ -76,6 +76,7 @@ void Robot::DisabledPeriodic() {
 
 void Robot::AutonomousInit() {
 	cout << "Robot::AutonomousInit\n";
+	// TODO: recreate automanager
 	dataLogger.reset(new DataLogger(kAutonomous, driveBase, arm, oi.get()));
 	automan->Init();
 	cout << "Robot::AutonomousInit COMPLETE\n";

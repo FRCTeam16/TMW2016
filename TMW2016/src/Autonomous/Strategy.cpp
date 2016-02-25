@@ -6,14 +6,16 @@
 #include "ShootingStrategy.h"
 #include "../Robot.h"
 
+#include <iomanip>
 
 // --------------------------------------------------------------------------//
-
+static CrabInfo * STOP = new CrabInfo();
 
 bool StepStrategy::Run(World *world) {
 	cout << "StepStrategy::Invoke\n";
 	// All work is finished in this strategy
 	if (currentStep >= steps.size()) {
+		RunPeriodicManagers(STOP);	// FIXME: memory leak?
 		return true;
 	}
 
@@ -31,7 +33,10 @@ bool StepStrategy::Run(World *world) {
 void StepStrategy::RunPeriodicManagers(const CrabInfo *crab) {
 	// Must fire every invocation
 	cout << "RunPeriodicManager\n";
-	cout << crab->twist << " : " << crab->yspeed << "\n";
+	cout 	<< "twist: " << setw(5) << crab->twist
+			<< "  yspeed: " << setw(5) << crab->yspeed
+			<< "  xspeed: " << setw(5) << crab->xspeed
+			<< "\n";
 	Robot::driveBase->Crab(crab->twist, crab->yspeed, crab->xspeed, crab->gyro);
 	Robot::driveBase->tankLeft->Set(crab->yspeed);
 	Robot::driveBase->tankRight->Set(crab->yspeed);
@@ -69,7 +74,11 @@ bool OuterworkAndShootStrategy::Run(World *world) {
 			firstTimeShooting = false;
 			shootingStrategy->Init();
 		}
-		return shootingStrategy->Run(world);
+		bool runningShooterComplete = shootingStrategy->Run(world);
+		if (runningShooterComplete) {
+			RunPeriodicManagers(STOP);	// FIXME: memory leak?
+		}
+		return runningShooterComplete;
 	}
 }
 
