@@ -147,7 +147,7 @@ void Robot::TeleopPeriodic() {
 		arm->ClimbExtend();
 	}
 
-	if(oi->getGamepad()->GetPOV() == 180) {
+	if(oi->getGamepad()->GetPOV() == 180 || oi->DR4->RisingEdge()) {
 		arm->ClimbRetract();
 	}
 
