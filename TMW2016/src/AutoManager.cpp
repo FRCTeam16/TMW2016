@@ -17,22 +17,29 @@
 
 static const std::string AUTO_POSITION = "Auto Position";
 static const std::string AUTO_DEFENSE = "Auto Defense";
+static const std::string AUTO_TARGET = "Auto Target Goal";
 
-AutoManager::AutoManager():
-		world(new World()),
-		driveBase(Robot::driveBase),
+static const std::string AUTO_INIT_CONFIG_ERROR = "Auto Config Error";
+
+typedef std::shared_ptr<Strategy> SharedStrategyPtr;
+
+AutoManager::AutoManager(const VisionServer *visionServer_):
 		position(new SendableChooser()),
 		defense(new SendableChooser()),
-		targetGoal(new SendableChooser()) {
+		target(new SendableChooser()),
+		world(new World()),
+		visionServer(visionServer_),
+		driveBase(Robot::driveBase) {
 	//
 	// Initialize strategies and commands
 	//
 	cout << "AutoManager::AutoManager start..\n";
 
-	Strategy *noop = new OuterworkAndShootStrategy(new NoOpStrategy());
-	Strategy *lowbar = new OuterworkAndShootStrategy(new LowBarStrategy());
-	Strategy *roughTerrain = new OuterworkAndShootStrategy(new RoughTerrainStrategy());
-	Strategy *chevalDeFrise = new OuterworkAndShootStrategy(new ChevalDeFriseStrategy());
+
+	std::shared_ptr<Strategy> noop { new OuterworkAndShootStrategy(new NoOpStrategy()) };
+	std::shared_ptr<Strategy> lowbar { new OuterworkAndShootStrategy(new LowBarStrategy()) };
+	std::shared_ptr<Strategy> roughTerrain { new OuterworkAndShootStrategy(new RoughTerrainStrategy()) };
+	std::shared_ptr<Strategy> chevalDeFrise { new OuterworkAndShootStrategy(new ChevalDeFriseStrategy()) };
 
 	// Map Defenses to Strategies
 	strategyLookup.insert(std::make_pair(LowBar, 		lowbar));
@@ -44,7 +51,7 @@ AutoManager::AutoManager():
 	strategyLookup.insert(std::make_pair(SallyPort, 	noop));
 	strategyLookup.insert(std::make_pair(RockWall, 		roughTerrain));
 	strategyLookup.insert(std::make_pair(RoughTerrain,	roughTerrain));
-	currentStrategy = noop;
+	currentStrategy = noop.get();
 
 	//
 	// Initialize Sendable Objects and Dashboard
@@ -65,14 +72,13 @@ AutoManager::AutoManager():
 	position->AddObject("4",  (void*) 4);
 	position->AddObject("5",  (void*) 5);
 
-//	targetGoal->AddDefault("1", (void*) 1);
-//	targetGoal->AddObject("2",  (void*) 2);
-//	targetGoal->AddObject("3",  (void*) 3);
-//	targetGoal->AddObject("4",  (void*) 4);
-//	targetGoal->AddObject("5",  (void*) 5);
+	target->AddDefault("1", (void*) 1);
+	target->AddObject("2",  (void*) 2);
+	target->AddObject("3",  (void*) 3);
 
 	SmartDashboard::PutData(AUTO_POSITION, position.get());
 	SmartDashboard::PutData(AUTO_DEFENSE, defense.get());
+	SmartDashboard::PutData(AUTO_TARGET, target.get());
 	cout << "AutoManager::AutoManager complete\n";
 }
 
@@ -82,15 +88,24 @@ void AutoManager::Init() {
 	// Read state of world information from driver station
 	const int startingDefenseIdx = (int) defense->GetSelected();
 	const int startingPosition 	 = (int) position->GetSelected();
+	const int targetGoal		 = (int) target->GetSelected();
 
-	//
 	cout << "Starting Defense Idx: " << startingDefenseIdx << '\n';
 	cout << "Starting Position   : " << startingPosition << '\n';
-	outerworks startingDefense = static_cast<outerworks>(startingDefenseIdx);
+	cout << "Starting Target     : " << targetGoal << '\n';
 
+	// TODO: Add precondition state checks to prevent starting at 1 and shooting at 3, for example
+	if ((startingPosition <= 2 && targetGoal != 1) ||
+			(startingPosition >= 4 && targetGoal != 3)) {
+		std::cout << "Auto init config error, invalid start and target\n";
+		SmartDashboard::PutString(AUTO_INIT_CONFIG_ERROR, "Invalid starting position and target goal combination");
+	}
+
+	// Lookup strategy for starting outerwork defense
+	outerworks startingDefense = static_cast<outerworks>(startingDefenseIdx);
 	auto iterator = strategyLookup.find(startingDefense);
 	if (iterator != strategyLookup.end()) {
-		currentStrategy = iterator->second;
+		currentStrategy = iterator->second.get();
 		currentStrategy->Init();
 	} else {
 		// ERROR
@@ -98,7 +113,7 @@ void AutoManager::Init() {
 	}
 
 	// Initialize world state with initial information
-	world->Init(startingPosition);
+	world->Init(startingPosition, targetGoal);
 
 	// Initialize sensors
 	driveBase->imu->ZeroYaw();
@@ -108,6 +123,6 @@ void AutoManager::Init() {
 
 void AutoManager::Periodic() {
 	assert(currentStrategy != nullptr && "No strategy currently set");
-	world->Update();
+	world->Update(visionServer->GetVisionData());
 	currentStrategy->Run(world.get());
 }

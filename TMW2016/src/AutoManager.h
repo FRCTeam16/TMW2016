@@ -14,23 +14,25 @@
 
 #include "Autonomous/Strategy.h"
 #include "Autonomous/World.h"
+#include "Vision/VisionServer.h"
 
 class AutoManager {
 public:
-	AutoManager();
+	AutoManager(const VisionServer *visionServer);
 	virtual ~AutoManager() {};
 	void Init();
 	void Periodic();
 private:
 	std::unique_ptr<SendableChooser> position;
 	std::unique_ptr<SendableChooser> defense;
-	std::unique_ptr<SendableChooser> targetGoal;
+	std::unique_ptr<SendableChooser> target;
 	std::unique_ptr<World> world;
-	std::shared_ptr<DriveBase> driveBase;
 	typedef enum outerworks {LowBar, Portcullis, ChevalDeFrise, Moat, Ramparts, Drawbridge, SallyPort, RockWall, RoughTerrain} outerworks;
 	std::string outerworksLookup[];
-	std::map<outerworks, Strategy*> strategyLookup;
+	std::map<outerworks, std::shared_ptr<Strategy>> strategyLookup;
 	Strategy* currentStrategy;
+	const VisionServer* visionServer;
+	std::shared_ptr<DriveBase> driveBase;
 };
 
 #endif /* AUTOMANAGER_H_ */

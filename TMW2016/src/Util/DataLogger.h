@@ -9,6 +9,7 @@
 #include "../Subsystems/Arm.h"
 #include "../Subsystems/DriveBase.h"
 #include "../OI.h"
+#include "../Vision/VisionServer.h"
 #include <fstream>
 #include <vector>
 
@@ -32,7 +33,8 @@ public:
 	DataLogger(DataLoggerMode dataLoggerMode,
 			   std::shared_ptr<DriveBase> driveBase_,
 			   std::shared_ptr<Arm> arm_,
-			   OI *oi_);
+			   OI *oi_,
+			   VisionServer* visionServer_);
 	virtual ~DataLogger();
 	void Log();
 protected:
@@ -43,6 +45,7 @@ private:
 	std::shared_ptr<DriveBase> driveBase;
 	std::shared_ptr<Arm> arm;
 	OI* oi;
+	VisionServer* visionServer;
 	std::ofstream outstream;
 	bool initialized;
 };

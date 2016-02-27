@@ -51,13 +51,14 @@ void Robot::RobotInit() {
 		prefs->PutFloat("TwistD",0.02);
 	File = RAWCConstants::getInstance();
 	driveBase->SetOffsets(File->getValueForKey("FLOff"), File->getValueForKey("FROff"), File->getValueForKey("RLOff"), File->getValueForKey("RROff"));
-	automan.reset(new AutoManager());
 	dartOpen = false;
 	dartSpeed = false;
 	tankRun = false;
 	shooterSpeed = 0;
 	feederSpeed = 0;
 	beaterBarSpeed = 0;
+
+	visionServer.reset(new VisionServer(5800));
   }
 
 /**
@@ -76,8 +77,8 @@ void Robot::DisabledPeriodic() {
 
 void Robot::AutonomousInit() {
 	cout << "Robot::AutonomousInit\n";
-	// TODO: recreate automanager
-	dataLogger.reset(new DataLogger(kAutonomous, driveBase, arm, oi.get()));
+	automan.reset(new AutoManager(visionServer.get()));
+	dataLogger.reset(new DataLogger(kAutonomous, driveBase, arm, oi.get(), visionServer.get()));
 	automan->Init();
 	cout << "Robot::AutonomousInit COMPLETE\n";
 }
@@ -89,7 +90,7 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-	dataLogger.reset(new DataLogger(kTeleop, driveBase, arm, oi.get()));
+	dataLogger.reset(new DataLogger(kTeleop, driveBase, arm, oi.get(), visionServer.get()));
 	// This makes sure that the autonomous stops running when
 	// teleop starts running. If you want the autonomous to
 	// continue until interrupted by another command, remove

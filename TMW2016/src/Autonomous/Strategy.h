@@ -34,6 +34,7 @@ public:
 	virtual ~StepStrategy() {}
 	virtual bool Run(World *world) override;
 protected:
+	const std::unique_ptr<CrabInfo> STOP { new CrabInfo() };
 	void RunPeriodicManagers(const CrabInfo *crab);
 	std::vector<std::unique_ptr<Step>> steps;
 	unsigned int currentStep = 0;

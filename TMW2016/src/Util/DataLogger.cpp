@@ -9,8 +9,12 @@
 
 typedef std::pair<string, std::function<float()>> HeaderFnPair;
 
-DataLogger::DataLogger(DataLoggerMode dataLoggerMode, std::shared_ptr<DriveBase> driveBase_, std::shared_ptr<Arm> arm_, OI *oi_) :
-		driveBase(driveBase_), arm(arm_), oi(oi_)
+DataLogger::DataLogger(DataLoggerMode dataLoggerMode,
+					  std::shared_ptr<DriveBase> driveBase_,
+					  std::shared_ptr<Arm> arm_,
+					  OI *oi_,
+					  VisionServer *visionServer_) :
+		driveBase(driveBase_), arm(arm_), oi(oi_), visionServer(visionServer_)
 {
 	std::string basename;
 	switch(dataLoggerMode) {
@@ -76,6 +80,9 @@ DataLogger::DataLogger(DataLoggerMode dataLoggerMode, std::shared_ptr<DriveBase>
 	std::for_each(armHeaders.begin(), armHeaders.end(),
 			[this](std::string &str){ this->outstream << ',' << str; });
 
+	// Vision Headers
+	outstream << ",vision.x,vision.y,vision.angle,vision.width";
+
 	// Finish header
 	outstream	<< '\n';
 	outstream.flush();
@@ -112,6 +119,13 @@ void DataLogger::Log() {
 
 	// Arm
 	arm->Log(outstream);
+
+	// Vision Headers
+	const VisionData v = visionServer->GetVisionData();
+	outstream	<< ',' << v.xposition
+				<< ',' << v.yposition
+				<< ',' << v.tilt_angle
+				<< ',' << v.width;
 
 
 	outstream << '\n';

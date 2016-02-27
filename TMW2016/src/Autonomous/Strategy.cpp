@@ -9,13 +9,12 @@
 #include <iomanip>
 
 // --------------------------------------------------------------------------//
-static CrabInfo * STOP = new CrabInfo();
 
 bool StepStrategy::Run(World *world) {
 	cout << "StepStrategy::Invoke\n";
 	// All work is finished in this strategy
 	if (currentStep >= steps.size()) {
-		RunPeriodicManagers(STOP);	// FIXME: memory leak?
+		RunPeriodicManagers(STOP.get());
 		return true;
 	}
 
@@ -33,7 +32,7 @@ bool StepStrategy::Run(World *world) {
 void StepStrategy::RunPeriodicManagers(const CrabInfo *crab) {
 	// Must fire every invocation
 	cout << "RunPeriodicManager\n";
-	cout 	<< "twist: " << setw(5) << crab->twist
+	cout 	<< "\ttwist: " << setw(5) << crab->twist
 			<< "  yspeed: " << setw(5) << crab->yspeed
 			<< "  xspeed: " << setw(5) << crab->xspeed
 			<< "\n";
@@ -55,10 +54,9 @@ bool NoOpStrategy::Run(World *world) {
 
 // --------------------------------------------------------------------------//
 
-OuterworkAndShootStrategy::OuterworkAndShootStrategy(Strategy *outerworkStrategy_) {
-	outerworkStrategy.reset(outerworkStrategy_);
-	shootingStrategy.reset(new ShootingStrategy());
-}
+OuterworkAndShootStrategy::OuterworkAndShootStrategy(Strategy *outerworkStrategy_) :
+	outerworkStrategy { outerworkStrategy_ },
+	shootingStrategy { new ShootingStrategy() } {}
 
 bool OuterworkAndShootStrategy::Run(World *world) {
 	cout << "OuterworkAndShootStrategy base\n";
@@ -76,7 +74,7 @@ bool OuterworkAndShootStrategy::Run(World *world) {
 		}
 		bool runningShooterComplete = shootingStrategy->Run(world);
 		if (runningShooterComplete) {
-			RunPeriodicManagers(STOP);	// FIXME: memory leak?
+			RunPeriodicManagers(STOP.get());
 		}
 		return runningShooterComplete;
 	}
