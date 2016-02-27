@@ -86,6 +86,7 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {
 	// TODO: Put some indicator of current robot state
 	LogData();
+	visionServer->SMDB();
 	automan->Periodic();
 }
 
@@ -102,6 +103,7 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 	LogData();
+	visionServer->SMDB();
 	Scheduler::GetInstance()->Run();
 
 	driveBase->SMDB();
