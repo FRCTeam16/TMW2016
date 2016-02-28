@@ -49,6 +49,12 @@ void Robot::RobotInit() {
 		prefs->PutFloat("TwistI",0);
 	if(!prefs->ContainsKey("TwistD"))
 		prefs->PutFloat("TwistD",0.02);
+
+	// Vision PID
+	if (!prefs->ContainsKey("VisionXP")) { prefs->PutFloat("VixionXP", 1.0); }
+	if (!prefs->ContainsKey("VisionXI")) { prefs->PutFloat("VixionXI", 0.0); }
+	if (!prefs->ContainsKey("VisionXD")) { prefs->PutFloat("VixionXD", 0.0); }
+
 	File = RAWCConstants::getInstance();
 	driveBase->SetOffsets(File->getValueForKey("FLOff"), File->getValueForKey("FROff"), File->getValueForKey("RLOff"), File->getValueForKey("RROff"));
 	dartOpen = false;
@@ -59,6 +65,7 @@ void Robot::RobotInit() {
 	beaterBarSpeed = 0;
 
 	visionServer.reset(new VisionServer(5800));
+	automan.reset(new AutoManager(visionServer.get()));
   }
 
 /**
@@ -73,6 +80,7 @@ void Robot::DisabledPeriodic() {
 	Scheduler::GetInstance()->Run();
 	driveBase->SMDB();
 	arm->SMDB();
+	visionServer->SMDB();
 }
 
 void Robot::AutonomousInit() {
@@ -86,6 +94,7 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {
 	// TODO: Put some indicator of current robot state
 	LogData();
+	visionServer->SMDB();
 	automan->Periodic();
 }
 
@@ -102,6 +111,7 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 	LogData();
+	visionServer->SMDB();
 	Scheduler::GetInstance()->Run();
 
 	driveBase->SMDB();

@@ -14,6 +14,7 @@ public:
 	VisionServer(const int port);
 	virtual ~VisionServer();
 	VisionData GetVisionData() const;
+	void SMDB();
 private:
 	std::unique_ptr<Task> server;
 	std::unique_ptr<VisionDataParser> parser;

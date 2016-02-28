@@ -19,20 +19,29 @@ private:
 	double adjustedValue = 0;
 };
 
+class SearchForGoal : public Step {
+public:
+	SearchForGoal(float timeout_, float speed_, float minTime_=0) :
+		timeout(timeout_), speed(speed_), minTime(minTime_) {}
+	virtual ~SearchForGoal() {}
+	bool operator()(World *world) override;
+	float CalculateDriveAngle(const int ops, const int goal);
+private:
+	const float timeout;
+	const float speed;
+	const float minTime;	// the minimum amount of time to run
+	float startTime = -1;
+};
+
 class AlignWithGoal : public Step {
 public:
-	AlignWithGoal(float timeout_, float angle, float yspeed_, float xspeed_, float threshold_);
+	AlignWithGoal(float timeout_);
 	virtual ~AlignWithGoal() {}
 	bool operator()(World *world) override;
 private:
 	const float timeout;
-	const float targetAngle;
-	const float ySpeed;
-	const float xSpeed;
-	const float threshold = 0.0;
 	std::unique_ptr<VisionPIDAdapter> pidXAdapter;
 	std::unique_ptr<PIDController> pidX;
-	bool detectedGoal = false;
 	float startTime = -1;
 
 };

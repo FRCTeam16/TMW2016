@@ -36,4 +36,8 @@ int World::GetStartingPosition() const {
 	return startingPosition;
 }
 
+int World::GetTargetGoal() const {
+	return targetGoal;
+}
+
 

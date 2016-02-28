@@ -16,5 +16,6 @@ DebugVisionStrategy::~DebugVisionStrategy() {
 
 void DebugVisionStrategy::Init() {
 	// timeout, angle, xpseed, yspeed, threshold
-	steps.push_back(std::unique_ptr<Step>(new AlignWithGoal(2, 0.0, 0.3, 0.30, 3.0)));
+	steps.push_back(std::unique_ptr<Step>(new SearchForGoal(2, 0.3)));
+	steps.push_back(std::unique_ptr<Step>(new AlignWithGoal(3)));
 }
