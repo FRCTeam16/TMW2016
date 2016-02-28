@@ -43,15 +43,16 @@ float SearchForGoal::CalculateDriveAngle(const int pos, const int goal) {
 	float dxGoal = 7.5; // additional distance in x after the start of the goal
 	float dyGoal = 13; // additional distance in y after the start of the goal
 	float dxDefense = 24 + (pos-1)*53; //distance in x of the final robot position after crossing the defense
-	float dyDefense = 1350; //distance in y of the final robot position after crossing the defense
+	float dyDefense = 156; //distance in y of the final robot position after crossing the defense (not 135)
 	float dx = 0;
 	float dy = 0;
 
+	const float PI_3 = M_PI / 3;
 	if(goal == 1) {
 		dxGoal = 7.5;
 		dyGoal = 13;
-		dx = dxGoalFromWall + dxGoal - dShoot*sin(60) - dxDefense;
-		dy = dyDefense - (dyGoal+dShoot*cos(60));
+		dx = dxGoalFromWall + dxGoal - dShoot*sin(PI_3) - dxDefense;
+		dy = dyDefense - (dyGoal+dShoot*cos(PI_3));
 	}
 	if (goal == 2) {
 		dxGoal = 30;
@@ -62,10 +63,11 @@ float SearchForGoal::CalculateDriveAngle(const int pos, const int goal) {
 	if(goal == 3) {
 		dxGoal = 52.5;
 		dyGoal = 13;
-		dx = dxGoalFromWall + dxGoal + dShoot*sin(60) - dxDefense;
-		dy = dyDefense - (dyGoal+dShoot*cos(60));
+		dx = dxGoalFromWall + dxGoal + dShoot*sin(PI_3) - dxDefense;
+		dy = dyDefense - (dyGoal+dShoot*cos(PI_3));
 	}
-	return atan2(dy,dx);
+	cout << "dx: " << dx << " dy: " << dy << endl;
+	return atan2(dx,dy);
 }
 
 //--------------------------------------------------------------------------//

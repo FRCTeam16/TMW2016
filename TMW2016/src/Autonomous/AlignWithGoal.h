@@ -25,7 +25,7 @@ public:
 		timeout(timeout_), speed(speed_), minTime(minTime_) {}
 	virtual ~SearchForGoal() {}
 	bool operator()(World *world) override;
-	float CalculateDriveAngle(const int ops, const int goal);
+	static float CalculateDriveAngle(const int pos, const int goal);
 private:
 	const float timeout;
 	const float speed;
