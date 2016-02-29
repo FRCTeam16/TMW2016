@@ -149,17 +149,14 @@ void Robot::TeleopPeriodic() {
 
 	if(tankRun) {
 		if(fabs(driveBase->imu->GetYaw())>90) {
-			driveBase->tankLeft->Set(oi->getDriverRight()->GetRawAxis(1));
-			driveBase->tankRight->Set(oi->getDriverRight()->GetRawAxis(1));
+			driveBase->RunTanks(oi->getDriverRight()->GetRawAxis(1));
 		}
 		else {
-			driveBase->tankLeft->Set(-oi->getDriverRight()->GetRawAxis(1));
-			driveBase->tankRight->Set(-oi->getDriverRight()->GetRawAxis(1));
+			driveBase->RunTanks(-oi->getDriverRight()->GetRawAxis(1));
 		}
 	}
 	else {
-		driveBase->tankLeft->Set(0);
-		driveBase->tankRight->Set(0);
+		driveBase->RunTanks(0);
 	}
 
 

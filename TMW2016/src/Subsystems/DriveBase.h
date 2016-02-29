@@ -97,6 +97,18 @@ private:
 	float cRLVolt;
 	float cRRVolt;
 
+	int FLHotCount;
+	int FRHotCount;
+	int RLHotCount;
+	int RRHotCount;
+	int driveLimit;
+	int coolCount;
+
+	int tankLeftHotCount;
+	int tankRightHotCount;
+	int tankDriveLimit;
+	int tankCoolCount;
+
 	double CorrectSteerSetpoint(double setpoint);
 	void SetSteerSetpoint(float setpoint, std::shared_ptr<AnalogInput> actual, float offset, std::shared_ptr<PIDController> PIDCon, std::shared_ptr<CANTalon> steer, int turns, int &inv, bool UseShortcut);
 	void SetDriveSpeed(float FLSpeed, float FRSpeed, float RLSpeed, float RRSpeed);
@@ -143,7 +155,7 @@ public:
 	void SetFRTurns(int val);
 	void SetRLTurns(int val);
 	void SetRRTurns(int val);
-	PIDController *DriveControlUS;
+	void RunTanks(float speed);
 	std::unique_ptr<CrabSpeed> CrabSpeedTwist;
 	std::unique_ptr<PIDController> DriveControlTwist;
 	AHRS *imu;
