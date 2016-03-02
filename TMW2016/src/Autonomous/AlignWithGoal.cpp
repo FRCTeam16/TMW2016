@@ -73,7 +73,7 @@ float SearchForGoal::CalculateDriveAngle(const int pos, const int goal) {
 //--------------------------------------------------------------------------//
 
 
-AlignWithGoal::AlignWithGoal(float timeout_) :timeout(timeout_), pidXAdapter(new VisionPIDAdapter())
+AlignWithGoal::AlignWithGoal(float timeout_, float speed_) :timeout(timeout_), speed(speed_), pidXAdapter(new VisionPIDAdapter())
 {
 	Preferences *prefs = Preferences::GetInstance();
 	pidX.reset(new PIDController(
@@ -84,9 +84,9 @@ AlignWithGoal::AlignWithGoal(float timeout_) :timeout(timeout_), pidXAdapter(new
 				pidXAdapter.get(),
 				0.2));
 	pidX->SetSetpoint(0.0);
-	pidX->SetContinuous(true);
-	pidX->SetOutputRange(-0.3, 0.3);
-	pidX->SetInputRange(-160, 160);
+	pidX->SetContinuous(false);
+	pidX->SetOutputRange(-speed, speed);	// output motor speeds
+	pidX->SetInputRange(-160, 160);			// size of input image
 	pidX->Enable();
 }
 
@@ -103,18 +103,18 @@ bool AlignWithGoal::operator()(World *world) {
 		return false;
 	}
 
-	const VisionData &vd = world->GetVisionData();
+	const VisionData vd = world->GetVisionData();
 	const bool detectedGoal = vd.HasData();
 	const int xthreshold = 5;
 
-	// Blind searching for goal using default movement
+	// Verify goal is visible
 	if (!detectedGoal) {
 		cout << "AlignWithGoal: No goal visible, stopping...\n";
 		crab->Stop();
 		return false;
 	} else {
 		// We've detected goal
-		const float currentX = pidXAdapter->PIDGet();
+		const float currentX = vd.xposition;
 		pidXAdapter->Update(currentX);
 		if (fabs(currentX) < xthreshold) {
 			std::cout << "AlignWithGoal: Goal aligned!\n";
@@ -123,7 +123,7 @@ bool AlignWithGoal::operator()(World *world) {
 		} else {
 			const float targetAngle = Robot::driveBase->imu->GetYaw();
 			const float radians = targetAngle * M_PI / 180.0;
-			const float magnitude = pidXAdapter->PIDGet();
+			const float magnitude = pidXAdapter->GetOutputValue();
 			cout << "AlignWithGoal adjusting position [" << currentX << " -> speed: " << magnitude << "...\n";
 			const float x = magnitude * sin(radians);
 			const float y = magnitude * cos(radians);
@@ -144,7 +144,11 @@ double VisionPIDAdapter::PIDGet() {
 }
 
 void VisionPIDAdapter::PIDWrite(float output) {
-	adjustedValue = output;
+	outputValue = output;
+}
+
+double VisionPIDAdapter::GetOutputValue() {
+	return outputValue;
 }
 
 //--------------------------------------------------------------------------//

@@ -18,35 +18,35 @@ void ShootingStrategy::Init() {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true),
 			new SearchForGoal(3, 0.3),
-			new AlignWithGoal(3),
+			new AlignWithGoal(3, 0.3),
 			new ShootBall()
 	};
 	locationSteps[2] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true),
 			new SearchForGoal(2, 0.3),
-			new AlignWithGoal(2),
+			new AlignWithGoal(2, 0.3),
 			new ShootBall()
 	};
 	locationSteps[3] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true),
 			new SearchForGoal(2, 0.3),
-			new AlignWithGoal(1.0),
+			new AlignWithGoal(1.0, 0.3),
 			new ShootBall()
 	};
 	locationSteps[4] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true),
 			new SearchForGoal(2, 0.3),
-			new AlignWithGoal(0.5),
+			new AlignWithGoal(0.5, 0.3),
 			new ShootBall()
 	};
 	locationSteps[5] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true),
 			new SearchForGoal(2, 0.3),
-			new AlignWithGoal(2),
+			new AlignWithGoal(2, 0.3),
 			new ShootBall()
 	};
 }

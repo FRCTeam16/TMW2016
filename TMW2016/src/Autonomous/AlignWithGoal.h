@@ -12,11 +12,12 @@ public:
 	VisionPIDAdapter() {}
 	virtual ~VisionPIDAdapter() {};
 	void Update(const float value);
-	double PIDGet() override;
-	void PIDWrite(float output) override;
+	double PIDGet() override;					// used as PID sensor source
+	void PIDWrite(float output) override;		// used as PID sensor output
+	double GetOutputValue();
 private:
 	double inputValue = 0;
-	double adjustedValue = 0;
+	double outputValue = 0;
 };
 
 class SearchForGoal : public Step {
@@ -35,11 +36,12 @@ private:
 
 class AlignWithGoal : public Step {
 public:
-	AlignWithGoal(float timeout_);
+	AlignWithGoal(float timeout_, float speed_);
 	virtual ~AlignWithGoal() {}
 	bool operator()(World *world) override;
 private:
 	const float timeout;
+	const float speed;
 	std::unique_ptr<VisionPIDAdapter> pidXAdapter;
 	std::unique_ptr<PIDController> pidX;
 	float startTime = -1;
