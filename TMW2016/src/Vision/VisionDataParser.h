@@ -26,7 +26,7 @@ public:
     void AddRawData(const char* buffer, const int nchars);
     VisionData GetVisionData();
 private:
-    void SetVisionData(const VisionData& vd);
+    void SetVisionData(const VisionData vd);
     void ProcessDataFrame();
     void Reset();
 

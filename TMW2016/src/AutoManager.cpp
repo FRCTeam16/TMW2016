@@ -11,6 +11,7 @@
 #include "AutoManager.h"
 #include "Autonomous/Strategy.h"
 #include "Autonomous/OuterworkStrategies.h"
+#include "Autonomous/DebugVisionStrategy.h"
 
 #include "WPILib.h"
 
@@ -40,6 +41,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	std::shared_ptr<Strategy> lowbar { new OuterworkAndShootStrategy(new LowBarStrategy()) };
 	std::shared_ptr<Strategy> roughTerrain { new OuterworkAndShootStrategy(new RoughTerrainStrategy()) };
 	std::shared_ptr<Strategy> chevalDeFrise { new OuterworkAndShootStrategy(new ChevalDeFriseStrategy()) };
+	std::shared_ptr<Strategy> debugVision { new DebugVisionStrategy() };
 
 	// Map Defenses to Strategies
 	strategyLookup.insert(std::make_pair(LowBar, 		lowbar));
@@ -51,6 +53,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	strategyLookup.insert(std::make_pair(SallyPort, 	noop));
 	strategyLookup.insert(std::make_pair(RockWall, 		roughTerrain));
 	strategyLookup.insert(std::make_pair(RoughTerrain,	roughTerrain));
+	strategyLookup.insert(std::make_pair(Debug,			debugVision));
 	currentStrategy = noop.get();
 
 	//
@@ -65,6 +68,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	defense->AddObject("C: SallyPort", 		(void*) SallyPort);
 	defense->AddObject("D: RockWall", 		(void*) RockWall);
 	defense->AddObject("D: RoughTerrain", 	(void*) RoughTerrain);
+	defense->AddObject("X: DebugVision", 	(void*) Debug);
 
 	position->AddDefault("1", (void*) 1);
 	position->AddObject("2",  (void*) 2);

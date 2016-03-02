@@ -20,6 +20,7 @@ public:
 	long GetRunCounter() const;					// number of times Run() is called
 	double GetClock() const;					// time elapsed since Init() in seconds
 	int GetStartingPosition() const;			// starting position of robot
+	int GetTargetGoal() const;					// target goal number
 	const VisionData& GetVisionData() const;	// vision information
 private:
 	long runCounter = 0;					// number of times periodic is called

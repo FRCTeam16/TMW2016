@@ -34,9 +34,9 @@ void VisionDataParser::AddRawData(const char* buffer, const int nchars) {
             if (parsing) {
                 ProcessDataFrame();
             } else {
+            	Reset();
                 std::cerr << "Parser State Error: Detected end frame while not parsing, discarding previous contents\n";
             }
-            Reset();
         } else if (buffer[i] == NO_DATA) {
             if (parsing) {
                 std::cerr << "Parser State Error: Detected no data while reading a frame, discarding previous contents\n";
@@ -59,7 +59,7 @@ VisionData VisionDataParser::GetVisionData() {
 	return visionData;
 }
 
-void VisionDataParser::SetVisionData(const VisionData& vd) {
+void VisionDataParser::SetVisionData(const VisionData vd) {
 	visionData = vd;
 }
 

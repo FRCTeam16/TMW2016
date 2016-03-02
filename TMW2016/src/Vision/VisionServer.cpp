@@ -97,7 +97,7 @@ VisionData VisionServer::GetVisionData() const {
 }
 
 void VisionServer::SMDB() {
-	const VisionData &vd = GetVisionData();
+	const VisionData vd = GetVisionData();
 	SmartDashboard::PutNumber("Vision::X", vd.xposition);
 	SmartDashboard::PutNumber("Vision::Y", vd.yposition);
 	SmartDashboard::PutNumber("Vision::Angle", vd.tilt_angle);

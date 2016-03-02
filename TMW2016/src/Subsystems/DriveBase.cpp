@@ -99,6 +99,14 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	X=0;
 	Z=0;
 
+	FLHotCount = 0;
+	FRHotCount = 0;
+	RLHotCount = 0;
+	RRHotCount = 0;
+	driveLimit = 1.0;
+	coolCount = 0;
+
+
 	CrabSpeedTwist.reset(new CrabSpeed());
 	DriveControlTwist.reset(new PIDController(.01, 0, .05, imu, CrabSpeedTwist.get(), 0.02));
 	DriveControlTwist->SetContinuous(true);
@@ -474,18 +482,64 @@ void DriveBase::SetRRTurns(int val) {
 
 void DriveBase::SetDriveSpeed(float FLSpeed, float FRSpeed, float RLSpeed, float RRSpeed) {
 //applies inversion variables defined in SetSteerSetPoint function
-	if(driveFront) {
-		frontLeftDrive->Set(FLSpeed*FLInv);
-		frontRightDrive->Set(FRSpeed*FRInv);
-		rearLeftDrive->Set(RLSpeed*RLInv);
-		rearRightDrive->Set(RRSpeed*RRInv);
+	float driveOutLimit = 50;
+	int hotCountLimit = 100;
+	int coolCountLimit = 1000;
+	frontLeftDrive->GetOutputCurrent() > driveOutLimit ? FLHotCount++ : FLHotCount =0;
+	frontRightDrive->GetOutputCurrent() > driveOutLimit ? FRHotCount++ : FRHotCount =0;
+	rearLeftDrive->GetOutputCurrent() > driveOutLimit ? RLHotCount++ : RLHotCount =0;
+	rearRightDrive->GetOutputCurrent() > driveOutLimit ? RRHotCount++ : RRHotCount =0;
+
+	if ( FLHotCount == 0 && FRHotCount == 0 && RLHotCount == 0 && RRHotCount == 0) {
+		coolCount++;
 	}
 	else {
-		frontLeftDrive->Set(RRSpeed*FLInv);
-		frontRightDrive->Set(RLSpeed*FRInv);
-		rearLeftDrive->Set(FRSpeed*RLInv);
-		rearRightDrive->Set(FLSpeed*RRInv);
+		coolCount = 0;
 	}
+
+	if (FLHotCount > hotCountLimit || FRHotCount > hotCountLimit || RLHotCount > hotCountLimit || RRHotCount > hotCountLimit) {
+		driveLimit = .5;
+	}
+
+	if(coolCount > coolCountLimit) {
+		driveLimit = 1.0;
+	}
+
+	if(driveFront) {
+		frontLeftDrive->Set(FLSpeed*FLInv*driveLimit);
+		frontRightDrive->Set(FRSpeed*FRInv*driveLimit);
+		rearLeftDrive->Set(RLSpeed*RLInv*driveLimit);
+		rearRightDrive->Set(RRSpeed*RRInv*driveLimit);
+	}
+	else {
+		frontLeftDrive->Set(RRSpeed*FLInv*driveLimit);
+		frontRightDrive->Set(RLSpeed*FRInv*driveLimit);
+		rearLeftDrive->Set(FRSpeed*RLInv*driveLimit);
+		rearRightDrive->Set(FLSpeed*RRInv*driveLimit);
+	}
+
+	std::cout << "DriveLimit:" << driveLimit << " HotCounts:" << FLHotCount << "|" << FRHotCount << "|" << RLHotCount << "|" << RRHotCount << " CoolCount:" << coolCount << std::endl;
+}
+
+void DriveBase::RunTanks(float speed) {
+	float driveOutLimit = 50;
+	int hotCountLimit = 100;
+	int coolCountLimit = 1000;
+	tankLeft->GetOutputCurrent() > driveOutLimit ? tankLeftHotCount++ : tankLeftHotCount =0;
+	tankRight->GetOutputCurrent() > driveOutLimit ? tankRightHotCount++ : tankRightHotCount =0;
+
+	tankLeftHotCount == 0 && tankRightHotCount == 0 ? tankCoolCount++ : tankCoolCount = 0;
+
+	if (tankLeftHotCount > hotCountLimit || tankRightHotCount > hotCountLimit) {
+		tankDriveLimit = .5;
+	}
+
+	if(coolCount > coolCountLimit) {
+		tankDriveLimit = 1.0;
+	}
+
+	tankLeft->Set(speed*tankDriveLimit);
+	tankRight->Set(speed*tankDriveLimit);
 }
 void DriveBase::Lock() //locks wheels to prevent robot movement
 {
@@ -501,7 +555,6 @@ void DriveBase::TestDrive(float first) {
 }
 
 void DriveBase::SMDB() {
-	SmartDashboard::PutNumber("RearLeftPost", rearLeftPos->GetAverageVoltage());
 	SmartDashboard::PutNumber("Yaw", imu->GetYaw());
 	SmartDashboard::PutNumber("Angle", imu->GetAngle());
 	SmartDashboard::PutNumber("FrontLeftDriveCurrent", frontLeftDrive->GetOutputCurrent());
