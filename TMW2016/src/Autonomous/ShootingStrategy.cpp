@@ -52,6 +52,14 @@ void ShootingStrategy::Init() {
 }
 
 bool ShootingStrategy::Run(World *world) {
+	if (world->GetTargetGoal() == 4) {	// invalid goal, do nothing
+		cout << "Noop shooting strategy, stopping\n";
+//		CrabInfo* ci = new CrabInfo();
+		CrabInfo ci;
+		RunPeriodicManagers(&ci);
+		return true;
+	}
+
 	const std::vector<Step*> steps = locationSteps[world->GetStartingPosition()];
 	if (currentStep >= steps.size()) {
 		return true;

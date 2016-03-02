@@ -18,7 +18,7 @@
 
 static const std::string AUTO_POSITION = "Auto Position";
 static const std::string AUTO_DEFENSE = "Auto Defense";
-static const std::string AUTO_TARGET = "Auto Target Goal";
+static const std::string AUTO_TARGET = "Auto Goal";
 
 static const std::string AUTO_INIT_CONFIG_ERROR = "Auto Config Error";
 
@@ -37,7 +37,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	cout << "AutoManager::AutoManager start..\n";
 
 
-	std::shared_ptr<Strategy> noop { new OuterworkAndShootStrategy(new NoOpStrategy()) };
+	std::shared_ptr<Strategy> noop { new NoOpStrategy() };
 	std::shared_ptr<Strategy> lowbar { new OuterworkAndShootStrategy(new LowBarStrategy()) };
 	std::shared_ptr<Strategy> roughTerrain { new OuterworkAndShootStrategy(new RoughTerrainStrategy()) };
 	std::shared_ptr<Strategy> chevalDeFrise { new OuterworkAndShootStrategy(new ChevalDeFriseStrategy()) };
@@ -54,21 +54,23 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	strategyLookup.insert(std::make_pair(RockWall, 		roughTerrain));
 	strategyLookup.insert(std::make_pair(RoughTerrain,	roughTerrain));
 	strategyLookup.insert(std::make_pair(Debug,			debugVision));
+	strategyLookup.insert(std::make_pair(Noop,			noop));
 	currentStrategy = noop.get();
 
 	//
 	// Initialize Sendable Objects and Dashboard
 	//
 	defense->AddDefault("1: LowBar", 		(void*) LowBar);
-	defense->AddObject("A: Portcullis", 	(void*) Portcullis);
-	defense->AddObject("A: ChevalDeFrise", 	(void*) ChevalDeFrise);
+//	defense->AddObject("A: Portcullis", 	(void*) Portcullis);
+//	defense->AddObject("A: ChevalDeFrise", 	(void*) ChevalDeFrise);
 	defense->AddObject("B: Moat", 			(void*) Moat);
 	defense->AddObject("B: Ramparts", 		(void*) Ramparts);
-	defense->AddObject("C: Drawbridge", 	(void*) Drawbridge);
-	defense->AddObject("C: SallyPort", 		(void*) SallyPort);
+//	defense->AddObject("C: Drawbridge", 	(void*) Drawbridge);
+//	defense->AddObject("C: SallyPort", 		(void*) SallyPort);
 	defense->AddObject("D: RockWall", 		(void*) RockWall);
 	defense->AddObject("D: RoughTerrain", 	(void*) RoughTerrain);
 	defense->AddObject("X: DebugVision", 	(void*) Debug);
+	defense->AddObject("Z: Do Nothing", 	(void*) Noop);
 
 	position->AddDefault("1", (void*) 1);
 	position->AddObject("2",  (void*) 2);
@@ -79,6 +81,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	target->AddDefault("1", (void*) 1);
 	target->AddObject("2",  (void*) 2);
 	target->AddObject("3",  (void*) 3);
+	target->AddObject("ZStop After Outerworks", (void*) 4);
 
 	SmartDashboard::PutData(AUTO_POSITION, position.get());
 	SmartDashboard::PutData(AUTO_DEFENSE, defense.get());
@@ -99,10 +102,10 @@ void AutoManager::Init() {
 	cout << "Starting Target     : " << targetGoal << '\n';
 
 	// TODO: Add precondition state checks to prevent starting at 1 and shooting at 3, for example
-	if ((startingPosition <= 2 && targetGoal != 1) ||
+	if ((startingPosition <= 2 && targetGoal > 1) ||
 			(startingPosition >= 4 && targetGoal != 3)) {
 		std::cout << "Auto init config error, invalid start and target\n";
-		SmartDashboard::PutString(AUTO_INIT_CONFIG_ERROR, "Invalid starting position and target goal combination");
+		SmartDashboard::PutString(AUTO_INIT_CONFIG_ERROR, "Warning: Invalid starting position and target goal combination");
 	}
 
 	// Lookup strategy for starting outerwork defense

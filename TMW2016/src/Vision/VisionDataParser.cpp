@@ -33,6 +33,12 @@ void VisionDataParser::AddRawData(const char* buffer, const int nchars) {
         } else if (buffer[i] == END_FRAME) {
             if (parsing) {
                 ProcessDataFrame();
+
+                // TODO: Move to better place
+                data_frame.clear();             // clear state flags
+                data_frame.str(std::string());  // clear internal buffer
+                parsing = false;                // reset parsing flag
+
             } else {
             	Reset();
                 std::cerr << "Parser State Error: Detected end frame while not parsing, discarding previous contents\n";

@@ -22,15 +22,14 @@ private:
 
 class SearchForGoal : public Step {
 public:
-	SearchForGoal(float timeout_, float speed_, float minTime_=0) :
-		timeout(timeout_), speed(speed_), minTime(minTime_) {}
+	SearchForGoal(float timeout_, float speed_) :
+		timeout(timeout_), speed(speed_) {}
 	virtual ~SearchForGoal() {}
 	bool operator()(World *world) override;
 	static float CalculateDriveAngle(const int pos, const int goal);
 private:
 	const float timeout;
 	const float speed;
-	const float minTime;	// the minimum amount of time to run
 	float startTime = -1;
 };
 
@@ -45,6 +44,7 @@ private:
 	std::unique_ptr<VisionPIDAdapter> pidXAdapter;
 	std::unique_ptr<PIDController> pidX;
 	float startTime = -1;
+	int fineTuneCounter = 0;
 
 };
 

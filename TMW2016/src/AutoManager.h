@@ -27,7 +27,7 @@ private:
 	std::unique_ptr<SendableChooser> defense;
 	std::unique_ptr<SendableChooser> target;
 	std::unique_ptr<World> world;
-	typedef enum outerworks {LowBar, Portcullis, ChevalDeFrise, Moat, Ramparts, Drawbridge, SallyPort, RockWall, RoughTerrain, Debug} outerworks;
+	typedef enum outerworks {LowBar, Portcullis, ChevalDeFrise, Moat, Ramparts, Drawbridge, SallyPort, RockWall, RoughTerrain, Debug, Noop} outerworks;
 	std::string outerworksLookup[];
 	std::map<outerworks, std::shared_ptr<Strategy>> strategyLookup;
 	Strategy* currentStrategy;
