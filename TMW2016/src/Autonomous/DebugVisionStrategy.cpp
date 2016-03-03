@@ -6,16 +6,14 @@
 #include "AlignWithGoal.h"
 
 DebugVisionStrategy::DebugVisionStrategy() {
-	// TODO Auto-generated constructor stub
 
 }
 
 DebugVisionStrategy::~DebugVisionStrategy() {
-	// TODO Auto-generated destructor stub
 }
 
 void DebugVisionStrategy::Init() {
-	// timeout, angle, xpseed, yspeed, threshold
 	steps.push_back(std::unique_ptr<Step>(new SearchForGoal(7, 0.3)));
-	steps.push_back(std::unique_ptr<Step>(new AlignWithGoal(7, 0.3)));
+//	steps.push_back(std::unique_ptr<Step>(new AlignWithGoal(7, 0.3)));
+	steps.push_back(std::unique_ptr<Step>(new AlignWithGoalPID(7, 0.3)));
 }
