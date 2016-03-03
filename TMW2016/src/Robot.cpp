@@ -66,6 +66,7 @@ void Robot::RobotInit() {
 	beaterBarSpeed = 0;
 
 	visionServer.reset(new VisionServer(5800));
+	ledDisplay.reset(new LEDDisplay());
 	automan.reset(new AutoManager(visionServer.get()));
   }
 
@@ -75,16 +76,6 @@ void Robot::RobotInit() {
  */
 void Robot::DisabledInit(){
 	cout << "Robot::DisabledInit";
-	for (int i=0;i<100;i++) { cout  << '\n'; }
-	for (int pos=1;pos<=5;pos++) {
-		for (int t=1;t<=3;t++) {
-			cout << "P: " << pos
-					<< " T: " << t
-					<< " Angle: "
-					<< SearchForGoal::CalculateDriveAngle(pos,t) * 180 / M_PI
-					<< '\n';
-		}
-	}
 }
 
 void Robot::DisabledPeriodic() {
@@ -106,6 +97,7 @@ void Robot::AutonomousPeriodic() {
 	// TODO: Put some indicator of current robot state
 	LogData();
 	visionServer->SMDB();
+	ledDisplay->Update(visionServer->GetVisionData());
 	automan->Periodic();
 }
 
@@ -123,6 +115,7 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
 	LogData();
 	visionServer->SMDB();
+	ledDisplay->Update(visionServer->GetVisionData());
 	Scheduler::GetInstance()->Run();
 
 	driveBase->SMDB();

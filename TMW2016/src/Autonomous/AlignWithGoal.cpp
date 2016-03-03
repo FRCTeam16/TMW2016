@@ -95,6 +95,19 @@ float SearchForGoal::CalculateDriveAngle(const int pos, const int goal) {
 	return atan2(dx,dy);
 }
 
+void DebugDisplayCalculateDriveAngle() {
+	for (int i=0;i<100;i++) { cout  << '\n'; }
+	for (int pos=1;pos<=5;pos++) {
+		for (int t=1;t<=3;t++) {
+			cout << "P: " << pos
+					<< " T: " << t
+					<< " Angle: "
+					<< SearchForGoal::CalculateDriveAngle(pos,t) * 180 / M_PI
+					<< '\n';
+		}
+	}
+}
+
 //--------------------------------------------------------------------------//
 
 
