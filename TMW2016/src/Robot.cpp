@@ -89,6 +89,7 @@ void Robot::AutonomousInit() {
 	cout << "Robot::AutonomousInit\n";
 	automan.reset(new AutoManager(visionServer.get()));
 	dataLogger.reset(new DataLogger(kAutonomous, driveBase, arm, oi.get(), visionServer.get()));
+	Robot::driveBase->DriveControlTwist->SetOutputRange(-0.25, 0.25);
 	automan->Init();
 	cout << "Robot::AutonomousInit COMPLETE\n";
 }
@@ -110,6 +111,7 @@ void Robot::TeleopInit() {
 	if (autonomousCommand.get() != nullptr)
 		autonomousCommand->Cancel();
 	driveBase->DriveControlTwist->SetPID(prefs->GetFloat("TwistP"),prefs->GetFloat("TwistI"),prefs->GetFloat("TwistD"));
+	driveBase->DriveControlTwist->SetOutputRange(-.5, .5);
 }
 
 void Robot::TeleopPeriodic() {

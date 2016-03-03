@@ -52,7 +52,7 @@ void ShootingStrategy::Init() {
 }
 
 bool ShootingStrategy::Run(World *world) {
-	if (world->GetTargetGoal() == 4) {	// invalid goal, do nothing
+	if (world->GetTargetGoal() == 0) {	// invalid goal, do nothing
 		cout << "Noop shooting strategy, stopping\n";
 //		CrabInfo* ci = new CrabInfo();
 		CrabInfo ci;

@@ -81,7 +81,9 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	target->AddDefault("1", (void*) 1);
 	target->AddObject("2",  (void*) 2);
 	target->AddObject("3",  (void*) 3);
-	target->AddObject("ZStop After Outerworks", (void*) 4);
+	target->AddObject("Blind Left",  (void*) 4);
+	target->AddObject("Blind Right",  (void*) 5);
+	target->AddObject("ZStop After Outerworks", (void*) 0);
 
 	SmartDashboard::PutData(AUTO_POSITION, position.get());
 	SmartDashboard::PutData(AUTO_DEFENSE, defense.get());

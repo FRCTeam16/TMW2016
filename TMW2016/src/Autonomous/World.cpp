@@ -15,7 +15,7 @@ void World::Init(const int& startingPosition_, const int& targetGoal_) {
 
 
 void World::Update(const VisionData &visionData_) {
-	cout << "World::Update\n";
+//	cout << "World::Update\n";
 	visionData = visionData_;
 	runCounter++;
 }
