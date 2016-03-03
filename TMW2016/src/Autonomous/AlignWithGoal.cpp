@@ -299,7 +299,7 @@ float CalculateDriveAngle(const int pos, const int goal) {
 	float dxGoal = 7.5; // additional distance in x after the start of the goal
 	float dyGoal = 13; // additional distance in y after the start of the goal
 	float dxDefense = 24 + (pos-1)*53; //distance in x of the final robot position after crossing the defense
-	float dyDefense = 160; //distance in y of the final robot position after crossing the defense (not 135)
+	float dyDefense = 140; //distance in y of the final robot position after crossing the defense (not 135)
 	float dx = 0;
 	float dy = 0;
 

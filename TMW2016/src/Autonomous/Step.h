@@ -14,6 +14,7 @@ struct CrabInfo {
 	float yspeed	= 0.0;
 	float xspeed	= 0.0;
 	bool gyro = true;
+	bool lock = false;
 
 	void Stop() {
 		twist  = 0.0;
@@ -74,9 +75,16 @@ private:
 
 // --------------------------------------------------------------------------//
 
+class LockWheels : public Step {
+public:
+	bool operator()(World *world) override;
+};
+// --------------------------------------------------------------------------//
+
+
 class TraverseObstacleWithGyro : public Step {
 public:
-	TraverseObstacleWithGyro(float speed_ = 0.75) : speed(speed_) {}
+	TraverseObstacleWithGyro(float speed_ = 0.75, int negativeCounterTarget=5) : speed(speed_), NEGATIVE_COUNTER_TARGET(negativeCounterTarget ){}
 	bool operator()(World *world) override;
 private:
 	const int MAX_LOOPS = 150;
@@ -90,7 +98,7 @@ private:
 	bool running = false;
 	bool startedObstacle = false;
 
-	const int NEGATIVE_COUNTER_TARGET = 5;	// how many loops to detect nefative movement
+	const int NEGATIVE_COUNTER_TARGET;	// how many loops to detect negative movement
 	int negativeCounter = 0;
 	bool hitNegative = false;
 	int quietCount = 0;

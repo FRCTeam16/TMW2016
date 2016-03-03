@@ -40,6 +40,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	std::shared_ptr<Strategy> noop { new NoOpStrategy() };
 	std::shared_ptr<Strategy> lowbar { new OuterworkAndShootStrategy(new LowBarStrategy()) };
 	std::shared_ptr<Strategy> roughTerrain { new OuterworkAndShootStrategy(new RoughTerrainStrategy()) };
+	std::shared_ptr<Strategy> moat { new OuterworkAndShootStrategy(new MoatStrategy()) };
 	std::shared_ptr<Strategy> chevalDeFrise { new OuterworkAndShootStrategy(new ChevalDeFriseStrategy()) };
 	std::shared_ptr<Strategy> debugVision { new DebugVisionStrategy() };
 
@@ -47,7 +48,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	strategyLookup.insert(std::make_pair(LowBar, 		lowbar));
 	strategyLookup.insert(std::make_pair(Portcullis, 	noop));
 	strategyLookup.insert(std::make_pair(ChevalDeFrise, chevalDeFrise));
-	strategyLookup.insert(std::make_pair(Moat, 			roughTerrain));
+	strategyLookup.insert(std::make_pair(Moat, 			moat));
 	strategyLookup.insert(std::make_pair(Ramparts, 		roughTerrain));
 	strategyLookup.insert(std::make_pair(Drawbridge, 	noop));
 	strategyLookup.insert(std::make_pair(SallyPort, 	noop));

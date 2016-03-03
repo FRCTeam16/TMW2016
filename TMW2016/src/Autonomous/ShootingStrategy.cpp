@@ -12,55 +12,61 @@
  */
 
 void ShootingStrategy::Init() {
-	locationSteps[0] = {};
+	locationSteps[0] = {
+			new LockWheels()
+	};
 	locationSteps[1] = {
 			new TimedCrab(0.5, 0.0, 0.5, 0.5),	// kick out from left wall
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true),
-			new SearchForGoal(3, 0.3),
-			new AlignWithGoal(3, 0.3),
-			new ShootBall()
+//			new SearchForGoal(3, 0.3),
+//			new AlignWithGoal(3, 0.3),
+			new MoveToWallShootingPosition(10, 0.3),
+//			new ShootBall()
 	};
 	locationSteps[2] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true),
-			new SearchForGoal(2, 0.3),
-			new AlignWithGoal(2, 0.3),
-			new ShootBall()
+//			new SearchForGoal(2, 0.3),
+//			new AlignWithGoal(2, 0.3),
+			new MoveToWallShootingPosition(10, 0.3),
+//			new ShootBall()
 	};
 	locationSteps[3] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true),
-			new SearchForGoal(2, 0.3),
-			new AlignWithGoal(1.0, 0.3),
+//			new SearchForGoal(2, 0.3),
+//			new AlignWithGoal(1.0, 0.3),
+			new MoveToWallShootingPosition(10, 0.3),
 			new ShootBall()
 	};
 	locationSteps[4] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true),
-			new SearchForGoal(2, 0.3),
-			new AlignWithGoal(0.5, 0.3),
-			new ShootBall()
+//			new SearchForGoal(2, 0.3),
+//			new AlignWithGoal(0.5, 0.3),
+			new MoveToWallShootingPosition(10, 0.3),
+//			new ShootBall()
 	};
 	locationSteps[5] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true),
-			new SearchForGoal(2, 0.3),
-			new AlignWithGoal(2, 0.3),
-			new ShootBall()
+//			new SearchForGoal(2, 0.3),
+//			new AlignWithGoal(2, 0.3),
+			new MoveToWallShootingPosition(10, 0.3),
+//			new ShootBall()
 	};
 }
 
 bool ShootingStrategy::Run(World *world) {
-	if (world->GetTargetGoal() == 0) {	// invalid goal, do nothing
-		cout << "Noop shooting strategy, stopping\n";
-//		CrabInfo* ci = new CrabInfo();
-		CrabInfo ci;
-		RunPeriodicManagers(&ci);
-		return true;
+	// Check for target goal = 0, which means stop processing and run special location 0
+	std::vector<Step*> steps;
+	if (world->GetTargetGoal() != 0) {
+		steps = locationSteps[world->GetStartingPosition()];
+	} else {
+		steps = locationSteps[0];
 	}
 
-	const std::vector<Step*> steps = locationSteps[world->GetStartingPosition()];
 	if (currentStep >= steps.size()) {
 		return true;
 	}

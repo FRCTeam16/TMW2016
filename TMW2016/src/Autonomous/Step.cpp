@@ -26,6 +26,13 @@ bool TimedCrab::operator ()(World *world) {
 	}
 }
 
+// --------------------------------------------------------------------------//
+
+bool LockWheels::operator ()(World *world) {
+	cout << "LockWheels()\n";
+	crab->lock = true;
+	return false;
+}
 
 // --------------------------------------------------------------------------//
 
@@ -62,17 +69,17 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 		inRetry = true;
 		retryStartTime = currentTime;
 	}
-	if (inRetry) {
-		if ((currentTime - retryStartTime) < MAX_RETRY_TIME) {
-			// Attempt to move straight backwards
-			crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), -speed, 0.0, true);
-			return false;
-		} else {
-			inRetry = false;
-			startTime = currentTime;	// reset our timer for advancing
-			return false;
-		}
-	}
+//	if (inRetry) {
+//		if ((currentTime - retryStartTime) < MAX_RETRY_TIME) {
+//			// Attempt to move straight backwards
+////			crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), -speed, 0.0, true);
+//			return false;
+//		} else {
+//			inRetry = false;
+//			startTime = currentTime;	// reset our timer for advancing
+//			return false;
+//		}
+//	}
 
 	//
 	// Normal Operations

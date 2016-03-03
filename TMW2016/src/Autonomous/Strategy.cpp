@@ -36,9 +36,15 @@ void StepStrategy::RunPeriodicManagers(const CrabInfo *crab) {
 			<< "  yspeed: " << setw(5) << crab->yspeed
 			<< "  xspeed: " << setw(5) << crab->xspeed
 			<< "\n";
-	Robot::driveBase->Crab(crab->twist, crab->yspeed, crab->xspeed, crab->gyro);
-	Robot::driveBase->tankLeft->Set(crab->yspeed);
-	Robot::driveBase->tankRight->Set(crab->yspeed);
+
+	// If we are in lock mode, do not send information
+	if (!crab->lock) {
+		Robot::driveBase->Crab(crab->twist, crab->yspeed, crab->xspeed, crab->gyro);
+		Robot::driveBase->tankLeft->Set(crab->yspeed);
+		Robot::driveBase->tankRight->Set(crab->yspeed);
+	} else {
+		Robot::driveBase->Lock();
+	}
 	Robot::arm->DartManager();
 	Robot::arm->FireManager();
 	Robot::arm->ShooterManager();

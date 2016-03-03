@@ -20,6 +20,13 @@ private:
 	bool inRetry = false;
 };
 
+class MoatStrategy : public StepStrategy {
+public:
+	void Init() override;
+private:
+	bool inRetry = false;
+};
+
 class ChevalDeFriseStrategy : public StepStrategy {
 public:
 	void Init() override;
