@@ -10,7 +10,7 @@
 
 class ShootingStrategy : public StepStrategy {
 public:
-	void Init() override;
+	void Init(World* world) override;
 	virtual bool Run(World *world) override;
 private:
 	std::vector<Step*> locationSteps[6];			// TODO: Can we use safer pointer here

@@ -66,17 +66,17 @@ OuterworkAndShootStrategy::OuterworkAndShootStrategy(Strategy *outerworkStrategy
 
 bool OuterworkAndShootStrategy::Run(World *world) {
 	cout << "OuterworkAndShootStrategy base\n";
-	if (!outerworkComplete) {
-		if (firstOuterwork) {
-			firstOuterwork = false;
-			outerworkStrategy->Init();
+	if (!outerworkStrategyComplete) {
+		if (outerworkStrategyStarted) {
+			outerworkStrategyStarted = false;
+			outerworkStrategy->Init(world);
 		}
-		outerworkComplete = outerworkStrategy->Run(world);
+		outerworkStrategyComplete = outerworkStrategy->Run(world);
 		return false;	// always return false to trigger shooting strategy run
 	} else {
 		if (firstTimeShooting) {
 			firstTimeShooting = false;
-			shootingStrategy->Init();
+			shootingStrategy->Init(world);
 		}
 		bool runningShooterComplete = shootingStrategy->Run(world);
 		if (runningShooterComplete) {

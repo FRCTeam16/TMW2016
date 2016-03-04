@@ -5,17 +5,16 @@
 #include "World.h"
 #include <cassert>
 
-void World::Init(const int& startingPosition_, const int& targetGoal_) {
+void World::Init(const int& startingPosition_, const int& targetGoal_, outerworks startingDefense_) {
 	cout << "World::Init\n";
 	startingPosition = startingPosition_;
 	targetGoal = targetGoal_;
+	startingDefense = startingDefense_;
 	timer->Start();
-	cout << "World::Init complete\n";
 }
 
 
 void World::Update(const VisionData &visionData_) {
-//	cout << "World::Update\n";
 	visionData = visionData_;
 	runCounter++;
 }
@@ -38,6 +37,10 @@ int World::GetStartingPosition() const {
 
 int World::GetTargetGoal() const {
 	return targetGoal;
+}
+
+outerworks World::GetStartingDefense() const {
+	return startingDefense;
 }
 
 

@@ -14,8 +14,8 @@ class Strategy {
 public:
 	Strategy() {}
 	virtual ~Strategy() {};
-	virtual void Init() {};
-	virtual bool Run(World *world) = 0;
+	virtual void Init(World* world) {};
+	virtual bool Run(World* world) = 0;
 };
 
 class NoOpStrategy : public Strategy {
@@ -49,8 +49,8 @@ private:
 	virtual bool Run(World *world) override;
 	std::unique_ptr<Strategy> outerworkStrategy;
 	std::unique_ptr<Strategy> shootingStrategy;
-	bool outerworkComplete = false;
-	bool firstOuterwork = true;
+	bool outerworkStrategyComplete = false;
+	bool outerworkStrategyStarted = true;
 	bool firstTimeShooting = true;
 };
 

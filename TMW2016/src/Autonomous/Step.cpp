@@ -46,6 +46,7 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 	cout << "negativeCounter: " << negativeCounter << '\n';
 	cout << "startedObstacle: " << startedObstacle << '\n';
 	cout << "hitNegative    : " << hitNegative << '\n';
+	cout << "quietCount     : " << quietCount << '\n';
 
 	if (!running) {
 		running = true;
@@ -63,12 +64,12 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 	//
 	// Retry handling
 	//
-	if (running && !inRetry && !hitNegative && (currentTime - startTime) > MAX_TRY_TIME) {
-		// we have not hit the negative slope, but we've been trying for our max try time
-		// we can check for a negative retryStartTime to see if we've retried before
-		inRetry = true;
-		retryStartTime = currentTime;
-	}
+//	if (running && !inRetry && !hitNegative && (currentTime - startTime) > MAX_TRY_TIME) {
+//		// we have not hit the negative slope, but we've been trying for our max try time
+//		// we can check for a negative retryStartTime to see if we've retried before
+//		inRetry = true;
+//		retryStartTime = currentTime;
+//	}
 //	if (inRetry) {
 //		if ((currentTime - retryStartTime) < MAX_RETRY_TIME) {
 //			// Attempt to move straight backwards

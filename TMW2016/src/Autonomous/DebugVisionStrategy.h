@@ -11,7 +11,7 @@ class DebugVisionStrategy : public StepStrategy{
 public:
 	DebugVisionStrategy();
 	virtual ~DebugVisionStrategy();
-	void Init() override;
+	void Init(World* world) override;
 };
 
 #endif /* SRC_AUTONOMOUS_DEBUGVISIONSTRATEGY_H_ */

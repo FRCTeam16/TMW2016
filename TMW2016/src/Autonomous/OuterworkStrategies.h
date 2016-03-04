@@ -10,26 +10,21 @@
 
 class LowBarStrategy : public StepStrategy {
 public:
-	void Init() override;
+	void Init(World* world) override;
 };
 
 class RoughTerrainStrategy : public StepStrategy {
 public:
-	void Init() override;
+	void Init(World* world) override;
 private:
 	bool inRetry = false;
 };
 
 class MoatStrategy : public StepStrategy {
 public:
-	void Init() override;
+	void Init(World* world) override;
 private:
 	bool inRetry = false;
-};
-
-class ChevalDeFriseStrategy : public StepStrategy {
-public:
-	void Init() override;
 };
 
 
