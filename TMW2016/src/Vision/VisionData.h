@@ -34,7 +34,8 @@ struct VisionData {
                     width(width_) {}
     ~VisionData() {}
     bool HasData() const {
-        return !isnan(xposition) || !isnan(yposition) || !isnan(tilt_angle) || !isnan(width);
+    	bool nodata = isnan(tilt_angle) || isnan(xposition) || isnan(yposition);
+    	return nodata;
     }
 };
 

@@ -16,7 +16,7 @@ VisionDataParser::~VisionDataParser() {
 
 void VisionDataParser::AddRawData(const char* buffer, const int nchars) {
 	std::lock_guard<std::mutex> lock(data_mutex);
-//	std::cout << "RECV BUFFER: " << buffer << "\n";
+	std::cout << "RECV BUFFER: " << buffer << "\n";
     if (buffer == nullptr) {
         std::cerr << "Null buffer detected, skipping\n";
         return;
@@ -48,6 +48,7 @@ void VisionDataParser::AddRawData(const char* buffer, const int nchars) {
                 std::cerr << "Parser State Error: Detected no data while reading a frame, discarding previous contents\n";
                 Reset();
             } else {
+            	Reset();
                 continue;
             }
         } else {
@@ -99,6 +100,6 @@ void VisionDataParser::Reset() {
     data_frame.clear();             // clear state flags
     data_frame.str(std::string());  // clear internal buffer
     parsing = false;                // reset parsing flag
-    SetVisionData(VisionData());    // reset vision data
+    SetVisionData(emptyData);    // reset vision data
 }
 

@@ -97,6 +97,7 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {
 	// TODO: Put some indicator of current robot state
 	LogData();
+	driveBase->SMDB();
 	visionServer->SMDB();
 	ledDisplay->Update(visionServer->GetVisionData());
 	automan->Periodic();

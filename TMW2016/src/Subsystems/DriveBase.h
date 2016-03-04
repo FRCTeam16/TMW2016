@@ -15,6 +15,7 @@
 #include "WPILib.h"
 #include "AHRS.h"
 #include "CrabSpeed.h"
+#include "DualMaxBoticsI2CXL.h"
 
 
 class DriveBase: public Subsystem {
@@ -158,6 +159,7 @@ public:
 	void RunTanks(float speed);
 	std::unique_ptr<CrabSpeed> CrabSpeedTwist;
 	std::unique_ptr<PIDController> DriveControlTwist;
+	std::unique_ptr<DualMaxBoticsI2CXL> ultrasonics;
 	AHRS *imu;
 	void TestDrive(float first);
 	void SMDB();

@@ -109,7 +109,18 @@ private:
 
 // --------------------------------------------------------------------------//
 
+class TraverseObstacleWithGyroAndSonar : public Step {
+public:
+	TraverseObstacleWithGyroAndSonar(float speed_ = 0.75) : speed(speed_) {}
+	bool operator()(World *world) override;
+private:
+	double startTime = 01;
+	const float speed;
+	bool startedObstacle = false;
+	int quietCounter = 0;
+};
 
+// --------------------------------------------------------------------------//
 
 class Turn : public Step {
 public:

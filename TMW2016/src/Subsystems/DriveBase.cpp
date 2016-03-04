@@ -123,6 +123,8 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	rearLeftDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
 	rearRightSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
 	rearRightDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+
+	ultrasonics.reset(new DualMaxBoticsI2CXL(I2C::Port::kOnboard, 1, 2, 0.025));
 }
 
 void DriveBase::InitDefaultCommand() {
@@ -563,4 +565,6 @@ void DriveBase::SMDB() {
 	SmartDashboard::PutNumber("RearRightDriveCurrent", rearRightDrive->GetOutputCurrent());
 	SmartDashboard::PutNumber("LeftTankDriveCurrent", tankLeft->GetOutputCurrent());
 	SmartDashboard::PutNumber("RightTankDriveCurrent", tankRight->GetOutputCurrent());
+	SmartDashboard::PutNumber("Ultrasonics 0", ultrasonics->GetDistance(1));
+	SmartDashboard::PutNumber("Ultrasonics 1", ultrasonics->GetDistance(2));
 }

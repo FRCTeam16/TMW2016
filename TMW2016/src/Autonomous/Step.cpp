@@ -71,9 +71,10 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 		startTime = currentTime;	// As soon as we start the obstacle, start our timer for attempting to cross it
 	}
 	if (pitch < 4.0) {
-		if (++negativeCounter >= NEGATIVE_COUNTER_TARGET) {
-			cout << "**** HIT NEGATIVE ***";
+		if (negativeCounter++ >= NEGATIVE_COUNTER_TARGET) {
 			hitNegative = true;
+			cout << "**** HIT NEGATIVE ***";
+
 		}
 		quietCount = 0;	// reset quiet count
 	}
@@ -88,12 +89,55 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 	SmartDashboard::PutNumber("Quiet Count", quietCount);
 
 	if (quietCount > 5) {
-		crab->Stop();
 		return true;
 	} else {
 		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
 		return false;
 	}
+}
+
+// --------------------------------------------------------------------------//
+
+
+bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
+	cout << "TraverseObstacleWithGyroAndSonar()\n";
+	const double currentTime = world->GetClock();
+	const float pitch = Robot::driveBase->imu->GetRoll();
+	const int distance_one = Robot::driveBase->ultrasonics->GetDistance(1);
+	const int distance_two = Robot::driveBase->ultrasonics->GetDistance(2);
+
+	if (startTime < 0) {
+		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
+		startTime = currentTime;
+	}
+
+	cout << "startTime  : " << startTime << '\n';
+	cout << "currentTime: " << currentTime << '\n';
+	cout << "pitch      : " << pitch << '\n';
+	cout << "Dist 1     : " << distance_one << '\n';
+	cout << "Dist 2     : " << distance_two << '\n';
+	cout << "quiet cntr : " << quietCounter << '\n';
+	cout << "started def: " << startedObstacle << '\n';
+
+	if (!startedObstacle && pitch > 5.0) {
+		startedObstacle = true;
+		startTime = currentTime;	// As soon as we start the obstacle, start our timer for attempting to cross it
+	}
+
+	if (startedObstacle) {
+		if ((distance_one == 0) && (distance_two == 0)) {
+			if (quietCounter++ > 5) {
+				cout << "TraverseObstacleWithGyroAndSonar detected zero distance and quieted\n";
+				return true;
+			} else {
+				cout << "Quieting..\n";
+			}
+		} else {
+			quietCounter = 0;	// reset counter
+		}
+	}
+	crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
+	return false;
 }
 
 

@@ -36,6 +36,7 @@ private:
 
     std::mutex data_mutex;
     VisionData visionData;
+    const VisionData emptyData;
     std::stringstream data_frame;
     bool parsing = false;
 };
