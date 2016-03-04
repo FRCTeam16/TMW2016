@@ -6,6 +6,7 @@
 #include <ctime>
 #include <iostream>
 #include <string>
+#include <chrono>
 
 typedef std::pair<string, std::function<float()>> HeaderFnPair;
 
@@ -102,8 +103,10 @@ void DataLogger::Log() {
 		return;
 	}
 	// Time Header
-	std::time_t t = std::time(nullptr);
-	outstream << t;
+//	std::time_t t = std::time(nullptr);
+//	outstream << t;
+	long ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	outstream << ms;
 
 	// IMU Headers
 	std::for_each(imu_data.begin(), imu_data.end(), [this](HeaderFnPair &p){ outstream << ',' << p.second();});

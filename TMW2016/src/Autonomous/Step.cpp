@@ -47,6 +47,7 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 	cout << "startedObstacle: " << startedObstacle << '\n';
 	cout << "hitNegative    : " << hitNegative << '\n';
 	cout << "quietCount     : " << quietCount << '\n';
+	cout << "pitch          : " << pitch << '\n';
 
 	if (!running) {
 		running = true;
@@ -61,26 +62,6 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 		return false;
 	}
 
-	//
-	// Retry handling
-	//
-//	if (running && !inRetry && !hitNegative && (currentTime - startTime) > MAX_TRY_TIME) {
-//		// we have not hit the negative slope, but we've been trying for our max try time
-//		// we can check for a negative retryStartTime to see if we've retried before
-//		inRetry = true;
-//		retryStartTime = currentTime;
-//	}
-//	if (inRetry) {
-//		if ((currentTime - retryStartTime) < MAX_RETRY_TIME) {
-//			// Attempt to move straight backwards
-////			crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), -speed, 0.0, true);
-//			return false;
-//		} else {
-//			inRetry = false;
-//			startTime = currentTime;	// reset our timer for advancing
-//			return false;
-//		}
-//	}
 
 	//
 	// Normal Operations
