@@ -327,8 +327,8 @@ void Arm::DartManager() {
 			}
 		}
 	}
-	dartLeft->ConfigPeakOutputVoltage(dartLeftMaxForward*dartOutputLimit,dartLeftMaxReverse*dartOutputLimit);
-	dartRight->ConfigPeakOutputVoltage(dartRightMaxForward*dartOutputLimit,dartRightMaxReverse*dartOutputLimit);
+	dartLeft->ConfigPeakOutputVoltage(dartLeftMaxForward,dartLeftMaxReverse);
+	dartRight->ConfigPeakOutputVoltage(dartRightMaxForward,dartRightMaxReverse);
 }
 
 

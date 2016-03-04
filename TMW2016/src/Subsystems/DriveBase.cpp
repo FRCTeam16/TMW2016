@@ -506,16 +506,16 @@ void DriveBase::SetDriveSpeed(float FLSpeed, float FRSpeed, float RLSpeed, float
 	}
 
 	if(driveFront) {
-		frontLeftDrive->Set(FLSpeed*FLInv*driveLimit);
-		frontRightDrive->Set(FRSpeed*FRInv*driveLimit);
-		rearLeftDrive->Set(RLSpeed*RLInv*driveLimit);
-		rearRightDrive->Set(RRSpeed*RRInv*driveLimit);
+		frontLeftDrive->Set(FLSpeed*FLInv);
+		frontRightDrive->Set(FRSpeed*FRInv);
+		rearLeftDrive->Set(RLSpeed*RLInv);
+		rearRightDrive->Set(RRSpeed*RRInv);
 	}
 	else {
-		frontLeftDrive->Set(RRSpeed*FLInv*driveLimit);
-		frontRightDrive->Set(RLSpeed*FRInv*driveLimit);
-		rearLeftDrive->Set(FRSpeed*RLInv*driveLimit);
-		rearRightDrive->Set(FLSpeed*RRInv*driveLimit);
+		frontLeftDrive->Set(RRSpeed*FLInv);
+		frontRightDrive->Set(RLSpeed*FRInv);
+		rearLeftDrive->Set(FRSpeed*RLInv);
+		rearRightDrive->Set(FLSpeed*RRInv);
 	}
 
 	std::cout << "DriveLimit:" << driveLimit << " HotCounts:" << FLHotCount << "|" << FRHotCount << "|" << RLHotCount << "|" << RRHotCount << " CoolCount:" << coolCount << std::endl;
@@ -538,8 +538,8 @@ void DriveBase::RunTanks(float speed) {
 		tankDriveLimit = 1.0;
 	}
 
-	tankLeft->Set(speed*tankDriveLimit);
-	tankRight->Set(speed*tankDriveLimit);
+	tankLeft->Set(speed);
+	tankRight->Set(speed);
 }
 void DriveBase::Lock() //locks wheels to prevent robot movement
 {
