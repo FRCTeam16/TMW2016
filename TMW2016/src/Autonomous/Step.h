@@ -30,34 +30,22 @@ struct CrabInfo {
 	}
 };
 
+// --------------------------------------------------------------------------//
+
+
 class Step {
 public:
 	Step() {};
 	virtual ~Step() {};
 	virtual bool operator()(World *world) = 0;
-	const CrabInfo* GetCrabInfo() { return crab; }
+	const CrabInfo* GetCrabInfo() { return crab.get(); }
 protected:
-	CrabInfo * crab = new CrabInfo();
+	std::unique_ptr<CrabInfo> crab { new CrabInfo() };
 	std::shared_ptr<DriveBase> driveBase;
 };
 
 
-
-
 // --------------------------------------------------------------------------//
-
-//class ParallelStep : public Step {
-//public:
-//	ParallelStep(std::initializer_list<Step> stepsToAdd) : steps(stepsToAdd) {
-//		cout << "Constructed ParallelStep with " << steps.size() << " steps\n";
-//	}
-//	bool operator()(World *world) override;
-//private:
-//	std::vector<Step> steps;
-//};
-
-// --------------------------------------------------------------------------//
-
 
 class TimedCrab : public Step {
 public:
@@ -79,46 +67,7 @@ class LockWheels : public Step {
 public:
 	bool operator()(World *world) override;
 };
-// --------------------------------------------------------------------------//
 
-
-class TraverseObstacleWithGyro : public Step {
-public:
-	TraverseObstacleWithGyro(float speed_ = 0.75, int negativeCounterTarget=5) : speed(speed_), NEGATIVE_COUNTER_TARGET(negativeCounterTarget ){}
-	bool operator()(World *world) override;
-private:
-	const int MAX_LOOPS = 150;
-	int loopCounter = 0;
-
-	const double MAX_TRY_TIME = 2.0;
-	const double MAX_RETRY_TIME = 2.0;
-	double startTime = -1;
-
-	const float speed;
-	bool running = false;
-	bool startedObstacle = false;
-
-	const int NEGATIVE_COUNTER_TARGET;	// how many loops to detect negative movement
-	int negativeCounter = 0;
-	bool hitNegative = false;
-	int quietCount = 0;
-
-	bool inRetry = false;
-	float retryStartTime = -1;
-};
-
-// --------------------------------------------------------------------------//
-
-class TraverseObstacleWithGyroAndSonar : public Step {
-public:
-	TraverseObstacleWithGyroAndSonar(float speed_ = 0.75) : speed(speed_) {}
-	bool operator()(World *world) override;
-private:
-	double startTime = 01;
-	const float speed;
-	bool startedObstacle = false;
-	int quietCounter = 0;
-};
 
 // --------------------------------------------------------------------------//
 
@@ -142,6 +91,9 @@ private:
 	float shooterSpeed;
 	float feederSpeed;
 };
+
+// --------------------------------------------------------------------------//
+
 
 class ShootBall : public Step {
 public:

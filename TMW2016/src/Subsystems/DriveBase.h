@@ -160,6 +160,8 @@ public:
 	std::unique_ptr<CrabSpeed> CrabSpeedTwist;
 	std::unique_ptr<PIDController> DriveControlTwist;
 	std::unique_ptr<DualMaxBoticsI2CXL> ultrasonics;
+	std::shared_ptr<DigitalInput> proximityLeft;
+	std::shared_ptr<DigitalInput> proximityRight;
 	AHRS *imu;
 	void TestDrive(float first);
 	void SMDB();

@@ -100,6 +100,6 @@ void VisionDataParser::Reset() {
     data_frame.clear();             // clear state flags
     data_frame.str(std::string());  // clear internal buffer
     parsing = false;                // reset parsing flag
-    SetVisionData(emptyData);    // reset vision data
+    SetVisionData(emptyData);   	// reset vision data
 }
 

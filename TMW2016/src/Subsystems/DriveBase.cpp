@@ -125,6 +125,8 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	rearRightDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
 
 	ultrasonics.reset(new DualMaxBoticsI2CXL(I2C::Port::kOnboard, 1, 2, 0.025));
+	proximityLeft = RobotMap::driveBaseProximityLeft;
+	proximityRight = RobotMap::driveBaseProximityRight;
 }
 
 void DriveBase::InitDefaultCommand() {

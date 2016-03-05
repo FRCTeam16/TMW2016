@@ -19,7 +19,7 @@
 #include <iostream>
 
 void RunServer(int port, VisionDataParser* parser) {
-	std::cout << "Running in separate thread " << port << "\n";
+	std::cout << "Running in separate thread " << port << ")\n";
 	std::cout << "Got parser: " << &parser << "\n";
 
 	std::cout << "Starting RunServer for vision\n";
@@ -84,8 +84,7 @@ void RunServer(int port, VisionDataParser* parser) {
 VisionServer::VisionServer(const int port) :
 		parser(new VisionDataParser())
 {
-	std::cout << "*** Constructing VisionServer ***\n";
-	// Ensures parser has been initialized before starting task
+	std::cout << "*** Constructing VisionServer(" << port <<  "***\n";
 	server.reset(new Task("Vision Server", RunServer, port, parser.get()));
 }
 

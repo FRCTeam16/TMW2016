@@ -237,24 +237,6 @@ void Robot::LogData() {
 		dataLogger->Log();
 		logCounter = 0;
 	}
-
-	//	cout << "ACC: " << driveBase->imu->GetWorldLinearAccelX() << '\t'
-//			<< driveBase->imu->GetWorldLinearAccelY() << '\t'
-//			<< driveBase->imu->GetWorldLinearAccelZ() << '\t';
-
-//	cout << "Roll: " << driveBase->imu->GetRoll() << '\t';
-
-
-//	cout << "Yaw" << driveBase->imu->GetYaw() << '\n';
-//	cout << "Pitch" << driveBase->imu->GetPitch() << '\n';
-//	cout << "Roll" << driveBase->imu->GetRoll() << '\n';
-//	cout << "Altitude" << driveBase->imu->GetAltitude() << '\n';
-//	cout << "Compass" << driveBase->imu->GetCompassHeading() << '\n';
-//	cout << "Angle" << driveBase->imu->GetAngle() << '\n';
-//	cout << "DisplacementX" << driveBase->imu->GetDisplacementX() << '\n';
-//	cout << "DisplacementY" << driveBase->imu->GetDisplacementY() << '\n';
-//	cout << "DisplacementZ" << driveBase->imu->GetDisplacementZ() << '\n';
-
 }
 
 START_ROBOT_CLASS(Robot);
