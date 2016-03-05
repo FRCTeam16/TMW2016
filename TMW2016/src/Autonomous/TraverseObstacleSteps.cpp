@@ -75,6 +75,8 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 	const float pitch = Robot::driveBase->imu->GetRoll();
 	const int distance_one = Robot::driveBase->ultrasonics->GetDistance(1);
 	const int distance_two = Robot::driveBase->ultrasonics->GetDistance(2);
+	const int delta_one = distance_one - last_distance_one;
+	const int delta_two = distance_two - last_distance_two;
 
 	if (startTime < 0) {
 		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
@@ -85,7 +87,11 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 	cout << "currentTime: " << currentTime << '\n';
 	cout << "pitch      : " << pitch << '\n';
 	cout << "Dist 1     : " << distance_one << '\n';
+	cout << "Last 1     : " << last_distance_one << '\n';
+	cout << "Delta 1    : " << delta_one << '\n';
 	cout << "Dist 2     : " << distance_two << '\n';
+	cout << "Last 2     : " << last_distance_two << '\n';
+	cout << "Delta 2    : " << delta_two << '\n';
 	cout << "quiet cntr : " << quietCounter << '\n';
 	cout << "started def: " << startedObstacle << '\n';
 
@@ -94,10 +100,12 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 		startTime = currentTime;	// As soon as we start the obstacle, start our timer for attempting to cross it
 	}
 
+	const float DELTA_THRESHOLD = 30;
 	if (startedObstacle) {
-		if ((distance_one == 0) && (distance_two == 0)) {
-			if (quietCounter++ > 5) {
+		if ((delta_one > DELTA_THRESHOLD) || (delta_two > DELTA_THRESHOLD)) {
+			if (++quietCounter > 0) {
 				cout << "TraverseObstacleWithGyroAndSonar detected zero distance and quieted\n";
+				crab->Stop();
 				return true;
 			} else {
 				cout << "Quieting..\n";
@@ -106,6 +114,8 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 			quietCounter = 0;	// reset counter
 		}
 	}
+	last_distance_one = distance_one;
+	last_distance_two = distance_two;
 	crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
 	return false;
 }

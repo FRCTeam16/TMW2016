@@ -44,6 +44,9 @@ private:
 	const float speed;
 	bool startedObstacle = false;
 	int quietCounter = 0;
+	int last_distance_one = 0;
+	int last_distance_two = 0;
+
 };
 
 // --------------------------------------------------------------------------//
