@@ -18,9 +18,11 @@ LEDDisplay::~LEDDisplay() {
 
 void LEDDisplay::Update(const VisionData &vd) {
 	if (vd.HasData()) {
-		// TODO: Figure out left/right?
-		float widthVoltage = map(vd.leftGoal.width, MIN_WIDTH, MAX_WIDTH, MIN_OUT, MAX_OUT);
-		float translationVoltage = map(vd.leftGoal.xposition, MIN_X, MAX_X, MIN_OUT, MAX_OUT);
+		const int invalidGoal = -1;
+		GoalInfo goal = vd.GetGoal(invalidGoal);
+
+		float widthVoltage = map(goal.width, MIN_WIDTH, MAX_WIDTH, MIN_OUT, MAX_OUT);
+		float translationVoltage = map(goal.xposition, MIN_X, MAX_X, MIN_OUT, MAX_OUT);
 //		std::cout << "LEDDisplay W: " << vd.width << " -> " << widthVoltage << "\t"
 //				  << " X: " << vd.xposition << " -> " << translationVoltage << "\n";
 		widthOutput->SetVoltage(widthVoltage);

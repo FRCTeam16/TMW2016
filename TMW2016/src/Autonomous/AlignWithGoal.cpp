@@ -78,29 +78,7 @@ bool AlignWithGoal::operator()(World *world) {
 	const bool detectedGoal = vd.HasData();
 	const int targetGoal = world->GetTargetGoal();
 
-	GoalInfo goal;
-	bool hasTwoGoals = vd.leftGoal.HasData() && vd.rightGoal.HasData();
-	if (!hasTwoGoals) {
-		cout << "\tusing left goal\n";
-		goal = vd.leftGoal;
-	} else {
-		// Figure out which one we want here
-		if (targetGoal == 1) {
-			cout << "TG 1 using left goal\n";
-			goal = vd.leftGoal;
-		} else if (targetGoal == 3) {
-			cout << "TG 3 using right goal\n";
-			goal = vd.rightGoal;
-		} else {
-			if (vd.leftGoal.width > vd.rightGoal.width) {
-				cout << "\tGuessing left goal\n";
-				goal = vd.leftGoal;
-			} else {
-				cout << "\tGuessing right goal\n";
-				goal = vd.rightGoal;
-			}
-		}
-	}
+	GoalInfo goal = vd.GetGoal(targetGoal);
 
 	cout << "Current Time: " << currentTime << '\n';
 	cout << "Start Time  : " << startTime << '\n';

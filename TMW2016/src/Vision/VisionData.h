@@ -6,7 +6,7 @@
 #define SRC_VISION_VISIONDATA_H_
 
 #include <cmath>
-#include <ostream>
+#include <iostream>
 
 /**
  * Store Vision Data.
@@ -56,6 +56,33 @@ struct VisionData {
     ~VisionData() {}
     bool HasData() const {
     	return leftGoal.HasData() || rightGoal.HasData();
+    }
+
+    GoalInfo GetGoal(const int targetGoal) const {
+    	GoalInfo goal;
+		bool hasTwoGoals = leftGoal.HasData() && rightGoal.HasData();
+		if (!hasTwoGoals) {
+			std::cout << "\tusing left goal\n";
+			goal = leftGoal;
+		} else {
+			// Figure out which one we want here
+			if (targetGoal == 1) {
+				std::cout << "TG 1 using left goal\n";
+				goal = leftGoal;
+			} else if (targetGoal == 3) {
+				std::cout << "TG 3 using right goal\n";
+				goal = rightGoal;
+			} else {
+				if (leftGoal.width > rightGoal.width) {
+					std::cout << "\tGuessing left goal\n";
+					goal = leftGoal;
+				} else {
+					std::cout << "\tGuessing right goal\n";
+					goal = rightGoal;
+				}
+			}
+		}
+		return goal;
     }
 };
 
