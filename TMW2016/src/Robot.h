@@ -14,12 +14,6 @@
 
 // #define NDEBUG // Define to disabled assertions
 
-//#define DEBUG_MEMORY
-#ifdef DEBUG_MEMORY
-	#define DEBUG_NEW new(__FILE__, __LINE__)
-	#define new DEBUG_NEW
-#endif
-
 #include "WPILib.h"
 #include "Commands/Command.h"
 #include "RobotMap.h"

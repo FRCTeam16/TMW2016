@@ -76,10 +76,36 @@ bool AlignWithGoal::operator()(World *world) {
 	const float currentTime = world->GetClock();
 	const VisionData vd = world->GetVisionData();
 	const bool detectedGoal = vd.HasData();
+	const int targetGoal = world->GetTargetGoal();
+
+	GoalInfo goal;
+	bool hasTwoGoals = vd.leftGoal.HasData() && vd.rightGoal.HasData();
+	if (!hasTwoGoals) {
+		cout << "\tusing left goal\n";
+		goal = vd.leftGoal;
+	} else {
+		// Figure out which one we want here
+		if (targetGoal == 1) {
+			cout << "TG 1 using left goal\n";
+			goal = vd.leftGoal;
+		} else if (targetGoal == 3) {
+			cout << "TG 3 using right goal\n";
+			goal = vd.rightGoal;
+		} else {
+			if (vd.leftGoal.width > vd.rightGoal.width) {
+				cout << "\tGuessing left goal\n";
+				goal = vd.leftGoal;
+			} else {
+				cout << "\tGuessing right goal\n";
+				goal = vd.rightGoal;
+			}
+		}
+	}
 
 	cout << "Current Time: " << currentTime << '\n';
-	cout << "Start Time: " << startTime << '\n';
-	cout << "Vision X    : " << vd.xposition << '\n';
+	cout << "Start Time  : " << startTime << '\n';
+	cout << "Target Goal : " << targetGoal << '\n';
+	cout << "goal X      : " << goal.xposition << '\n';
 	cout << "Fine Tune   : " << fineTuneCounter << '\n';
 
 	// Startup & Timeout Checks
@@ -100,12 +126,19 @@ bool AlignWithGoal::operator()(World *world) {
 
 	// We've detected goal
 	float P = 1.0;
-	const float currentX = vd.xposition;
+	const float currentX = goal.xposition;
 	if (fabs(currentX) < xthreshold) {
 		P = 0.5;
-		std::cout << "AlignWithGoal: Goal aligned!\n";
-		if (++fineTuneCounter > 10) {
-			return true;
+		if (fabs(currentX) < 5) {
+			std::cout << "AlignWithGoal: Goal aligned!\n";
+			crab->Stop();
+			if (++fineTuneCounter >= 5) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			// keep moving slowly toward target
 		}
 	} else {
 		fineTuneCounter = 0;
@@ -113,13 +146,12 @@ bool AlignWithGoal::operator()(World *world) {
 
 	// Calculate movement
 	const int startingPosition = world->GetStartingPosition();
-	const int targetGoal = world->GetTargetGoal();
 	const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal);
 	cout << "SearchForGoal: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
 	float magnitude = P * speed;
 	const float x = magnitude * sin(driveAngleRadians);
 	const float y = magnitude * cos(driveAngleRadians);
-	cout << "Align VX: " << currentX << " magnitude: " << magnitude << '\n';
+	cout << "Align X: " << currentX << " magnitude: " << magnitude << '\n';
 	crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);
 
 	return false;
@@ -161,7 +193,16 @@ bool AlignWithGoalPID::operator()(World *world) {
 	}
 
 	const VisionData vd = world->GetVisionData();
-	const bool detectedGoal = vd.HasData();
+	const int targetGoal = world->GetTargetGoal();
+	GoalInfo goal;
+	if (targetGoal != 2) {
+		cout << "\tusing left goal\n";
+		goal = vd.leftGoal;
+	} else {
+		cout << "\tusing right goal\n";
+		goal = vd.rightGoal;
+	}
+	const bool detectedGoal = goal.HasData();
 
 	// Verify goal is visible
 	if (!detectedGoal) {
@@ -171,7 +212,7 @@ bool AlignWithGoalPID::operator()(World *world) {
 	}
 
 	// We've detected goal
-	const float currentX = vd.xposition;
+	const float currentX = goal.xposition;
 	pidXAdapter->Update(currentX);
 
 	if (fabs(currentX) < xthreshold) {

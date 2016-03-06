@@ -15,9 +15,12 @@ public:
 	virtual ~VisionServer();
 	VisionData GetVisionData() const;
 	void SMDB();
+	void SetClientConnected(bool connected);
+	bool GetClientConnected() const;
 private:
 	std::unique_ptr<Task> server;
 	std::unique_ptr<VisionDataParser> parser;
+	bool clientConnected = false;
 };
 
 

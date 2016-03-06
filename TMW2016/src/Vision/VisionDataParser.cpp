@@ -16,7 +16,7 @@ VisionDataParser::~VisionDataParser() {
 
 void VisionDataParser::AddRawData(const char* buffer, const int nchars) {
 	std::lock_guard<std::mutex> lock(data_mutex);
-	std::cout << "RECV BUFFER: " << buffer << "\n";
+//	std::cout << "RECV BUFFER: " << buffer << "\n";
     if (buffer == nullptr) {
         std::cerr << "Null buffer detected, skipping\n";
         return;
@@ -55,7 +55,7 @@ void VisionDataParser::AddRawData(const char* buffer, const int nchars) {
             if (parsing) {
                 data_frame << buffer[i];
             } else {
-                std::cerr << "Parser State Error: Unexpected data character while not reading a frame, ignoring\n";
+//                std::cerr << "Parser State Error: Unexpected data character [" << buffer[i] << "] while not reading a frame, ignoring\n";
             }
         }
     }
@@ -84,15 +84,21 @@ void VisionDataParser::ProcessDataFrame() {
 		}
 	}
 
-	if (data.size() == 4) {
-		{
-			std::cout << "Vision Frame: ";
-			std::for_each(data.begin(), data.end(), [](float &f) { std::cout << "[" << f << "]"; });
-			std::cout << "\t\t(" << data_frame << ")\n";
-		}
-		SetVisionData(VisionData(data[0], data[1], data[2], data[3]));
+	if (data.size() == 12) {
+		GoalInfo predicted(data[0], data[1], data[2], data[3]);
+		GoalInfo      left(data[4], data[5], data[6], data[7]);
+		GoalInfo     right(data[8], data[9], data[10], data[11]);
+
+//		for (int i=0 ;i<3; i++) {
+//			std::cout << "<";
+//			std::for_each(data.begin() + i*3, data.begin() + i*3 + 4, [](float &f) { std::cout << "[" << f << "]"; });
+//			std::cout << "> ";
+//		}
+//		std::cout << "\n";
+
+		SetVisionData(VisionData(predicted, left, right));
 	} else {
-		std::cerr << "Expected 4 data items, but got " << data.size() << '\n';
+		std::cerr << "VisionDataParser Expected 12 data items, but got " << data.size() << '\n';
 	}
 }
 

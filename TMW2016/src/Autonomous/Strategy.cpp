@@ -11,7 +11,6 @@
 // --------------------------------------------------------------------------//
 
 bool StepStrategy::Run(World *world) {
-	cout << "StepStrategy::Invoke\n";
 	// All work is finished in this strategy
 	if (currentStep >= steps.size()) {
 		RunPeriodicManagers(STOP.get());

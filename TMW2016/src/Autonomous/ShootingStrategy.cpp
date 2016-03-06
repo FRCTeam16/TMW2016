@@ -13,9 +13,15 @@
 
 void ShootingStrategy::Init(World* world) {
 	bool useVision =  world->GetTargetGoal() < 4;
+
+	//----------------------------------------------------------------------//
+
 	locationSteps[0] = {
 			new LockWheels()
 	};
+
+	//----------------------------------------------------------------------//
+
 	locationSteps[1] = {
 			new TimedCrab(0.5, 0.0, 0.5, 0.5),	// kick out from left wall
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
@@ -29,6 +35,7 @@ void ShootingStrategy::Init(World* world) {
 	}
 	locationSteps[1].push_back(new ShootBall());
 
+	//----------------------------------------------------------------------//
 
 	locationSteps[2] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
@@ -42,6 +49,7 @@ void ShootingStrategy::Init(World* world) {
 	}
 	locationSteps[2].push_back(new ShootBall());
 
+	//----------------------------------------------------------------------//
 
 	locationSteps[3] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
@@ -55,6 +63,7 @@ void ShootingStrategy::Init(World* world) {
 	}
 	locationSteps[3].push_back(new ShootBall());
 
+	//----------------------------------------------------------------------//
 
 	locationSteps[4] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
@@ -68,6 +77,7 @@ void ShootingStrategy::Init(World* world) {
 	}
 	locationSteps[4].push_back(new ShootBall());
 
+	//----------------------------------------------------------------------//
 
 	locationSteps[5] = {
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
@@ -88,6 +98,7 @@ bool ShootingStrategy::Run(World *world) {
 	if (world->GetTargetGoal() != 0) {
 		steps = locationSteps[world->GetStartingPosition()];
 	} else {
+		// Target goal 0 is noop
 		steps = locationSteps[0];
 	}
 

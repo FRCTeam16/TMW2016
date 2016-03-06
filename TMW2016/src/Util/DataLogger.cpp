@@ -82,13 +82,15 @@ DataLogger::DataLogger(DataLoggerMode dataLoggerMode,
 			[this](std::string &str){ this->outstream << ',' << str; });
 
 	// Vision Headers
-	outstream << ",vision.x,vision.y,vision.angle,vision.width";
+	outstream << ",p.vision.x,p.vision.y,p.vision.width,p.vision.height"
+			  << ",l.vision.x,l.vision.y,l.vision.width,l.vision.height"
+			  << ",r.vision.x,r.vision.y,r.vision.width,r.vision.height";
 
 	// Finish header
 	outstream	<< '\n';
 	outstream.flush();
 	initialized = true;
-	cout << "DataLogger::DataLogger completed init\n";
+	cout << "DataLogger writing to " << filename << "\n";
 }
 
 DataLogger::~DataLogger() {
@@ -125,10 +127,18 @@ void DataLogger::Log() {
 
 	// Vision Headers
 	const VisionData v = visionServer->GetVisionData();
-	outstream	<< ',' << v.xposition
-				<< ',' << v.yposition
-				<< ',' << v.tilt_angle
-				<< ',' << v.width;
+	outstream	<< ',' << v.predictedGoal.xposition
+				<< ',' << v.predictedGoal.yposition
+				<< ',' << v.predictedGoal.width
+				<< ',' << v.predictedGoal.height
+				<< ',' << v.leftGoal.xposition
+				<< ',' << v.leftGoal.yposition
+				<< ',' << v.leftGoal.width
+				<< ',' << v.leftGoal.height
+				<< ',' << v.rightGoal.xposition
+				<< ',' << v.rightGoal.yposition
+				<< ',' << v.rightGoal.width
+				<< ',' << v.rightGoal.height;
 
 
 	outstream << '\n';

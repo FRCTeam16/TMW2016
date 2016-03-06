@@ -104,7 +104,7 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 	if (startedObstacle) {
 		if ((delta_one > DELTA_THRESHOLD) || (delta_two > DELTA_THRESHOLD)) {
 			if (++quietCounter > 0) {
-				cout << "TraverseObstacleWithGyroAndSonar detected zero distance and quieted\n";
+				cout << "TraverseObstacleWithGyroAndSonar *** THRESHOLD DETECTED - OBSTACLE CLEARED ***\n";
 				crab->Stop();
 				return true;
 			} else {

@@ -522,7 +522,7 @@ void DriveBase::SetDriveSpeed(float FLSpeed, float FRSpeed, float RLSpeed, float
 		rearRightDrive->Set(FLSpeed*RRInv);
 	}
 
-	std::cout << "DriveLimit:" << driveLimit << " HotCounts:" << FLHotCount << "|" << FRHotCount << "|" << RLHotCount << "|" << RRHotCount << " CoolCount:" << coolCount << std::endl;
+//	std::cout << "DriveLimit:" << driveLimit << " HotCounts:" << FLHotCount << "|" << FRHotCount << "|" << RLHotCount << "|" << RRHotCount << " CoolCount:" << coolCount << std::endl;
 }
 
 void DriveBase::RunTanks(float speed) {

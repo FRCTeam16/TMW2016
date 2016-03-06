@@ -49,7 +49,7 @@ public:
 private:
 	const float timeout;
 	const float speed;
-	const int xthreshold = 5;
+	const int xthreshold = 10;
 	float startTime = -1;
 	int fineTuneCounter = 0;
 };
