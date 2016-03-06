@@ -95,12 +95,11 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
-	// TODO: Put some indicator of current robot state
+	ledDisplay->Update(visionServer->GetVisionData());
+	automan->Periodic();
 	LogData();
 	driveBase->SMDB();
 	visionServer->SMDB();
-	ledDisplay->Update(visionServer->GetVisionData());
-	automan->Periodic();
 }
 
 void Robot::TeleopInit() {
@@ -116,9 +115,6 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
-	LogData();
-	visionServer->SMDB();
-	ledDisplay->Update(visionServer->GetVisionData());
 	Scheduler::GetInstance()->Run();
 
 	driveBase->SMDB();
@@ -226,6 +222,11 @@ void Robot::TeleopPeriodic() {
 
 /********Beater Bar********/
 	arm->BeaterBar(oi->getGamepad()->GetRawAxis(1));
+
+/********Logging and display updates********/
+	LogData();
+	visionServer->SMDB();
+	ledDisplay->Update(visionServer->GetVisionData());
 }
 
 void Robot::TestPeriodic() {

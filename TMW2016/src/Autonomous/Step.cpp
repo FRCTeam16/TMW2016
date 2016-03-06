@@ -111,7 +111,7 @@ ControlShooterMotors::ControlShooterMotors(bool enable_) : enable(enable_) {
 }
 
 bool ControlShooterMotors::operator()(World *world) {
-	cout << "ControlShooterMotors()\n";
+	cout << "ControlShooterMotors(" << enable << ")\n";
 	if (enable) {
 		Robot::arm->SetShooterSpeed(shooterSpeed, feederSpeed);
 	} else {
@@ -120,6 +120,17 @@ bool ControlShooterMotors::operator()(World *world) {
 	return true;
 }
 
+// --------------------------------------------------------------------------//
+
+
+bool ControlBeaterBar::operator()(World *world) {
+	cout << "ControlBeaterBar(" << enable << ")\n";
+	const float speed = enable ? 1.0 : 0.0;
+	Robot::arm->BeaterBar(speed);
+	return true;
+}
+
+// --------------------------------------------------------------------------//
 
 bool ShootBall::operator()(World *world) {
 	cout << "ShootBall()\n";

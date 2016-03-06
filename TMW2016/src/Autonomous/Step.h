@@ -93,6 +93,15 @@ private:
 };
 
 // --------------------------------------------------------------------------//
+class ControlBeaterBar: public Step {
+public:
+	ControlBeaterBar(bool enable_) : enable(enable_) {}
+	bool operator()(World *world) override;
+private:
+	const bool enable;
+};
+
+// --------------------------------------------------------------------------//
 
 
 class ShootBall : public Step {

@@ -86,12 +86,12 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 	cout << "startTime  : " << startTime << '\n';
 	cout << "currentTime: " << currentTime << '\n';
 	cout << "pitch      : " << pitch << '\n';
-	cout << "Dist 1     : " << distance_one << '\n';
-	cout << "Last 1     : " << last_distance_one << '\n';
-	cout << "Delta 1    : " << delta_one << '\n';
-	cout << "Dist 2     : " << distance_two << '\n';
-	cout << "Last 2     : " << last_distance_two << '\n';
-	cout << "Delta 2    : " << delta_two << '\n';
+	cout << "Dist 1     : " << distance_one
+		 << " Last 1: " << last_distance_one
+		 << " Delta 1: " << delta_one << '\n';
+	cout << "Dist 2     : " << distance_two
+		 << " Last 2: : " << last_distance_two
+		 << " Delta 2: " << delta_two << '\n';
 	cout << "quiet cntr : " << quietCounter << '\n';
 	cout << "started def: " << startedObstacle << '\n';
 
@@ -111,7 +111,7 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 				cout << "Quieting..\n";
 			}
 		} else {
-			quietCounter = 0;	// reset counter
+//			quietCounter = 0;	// reset counter
 		}
 	}
 	last_distance_one = distance_one;
