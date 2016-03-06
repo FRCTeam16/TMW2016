@@ -43,7 +43,7 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 	if (pitch < 4.0) {
 		if (negativeCounter++ >= NEGATIVE_COUNTER_TARGET) {
 			hitNegative = true;
-			cout << "**** HIT NEGATIVE ***";
+			cout << "**** HIT NEGATIVE ***\n";
 
 		}
 		quietCount = 0;	// reset quiet count
@@ -90,25 +90,46 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 		 << " Last 1: " << last_distance_one
 		 << " Delta 1: " << delta_one << '\n';
 	cout << "Dist 2     : " << distance_two
-		 << " Last 2: : " << last_distance_two
+		 << " Last 2: " << last_distance_two
 		 << " Delta 2: " << delta_two << '\n';
 	cout << "quiet cntr : " << quietCounter << '\n';
 	cout << "started def: " << startedObstacle << '\n';
+	cout << "ultra start: " << ultrasonicStart << '\n';
+	cout << "neg ctr    : " << negativeCounter << '\n';
+	cout << "hit neg?   : " << negativeCounter << '\n';
+
+	if ((currentTime - startTime) > TIMEOUT) {
+		cout << "**** TIMEOUT ****\n";
+		crab->Stop();
+		return false;
+	}
 
 	if (!startedObstacle && pitch > 5.0) {
 		startedObstacle = true;
 		startTime = currentTime;	// As soon as we start the obstacle, start our timer for attempting to cross it
 	}
 
-	const float DELTA_THRESHOLD = 30;
+	if (pitch < -4.0) {
+		if (negativeCounter++ >= NEGATIVE_COUNTER_TARGET) {
+			hitNegative = true;
+			cout << "**** HIT NEGATIVE PITCH COUNTER ***\n";
+			crab->Stop();
+			return true;
+		}
+	}
+
+	const float DELTA_THRESHOLD = 5;
 	if (startedObstacle) {
-		if ((delta_one > DELTA_THRESHOLD) || (delta_two > DELTA_THRESHOLD)) {
+		if (distance_one < 30 || distance_two < 30) {
+			ultrasonicStart = true;
+		}
+		if (ultrasonicStart && ((delta_one > DELTA_THRESHOLD) || (delta_two > DELTA_THRESHOLD))) {
 			if (++quietCounter > 0) {
 				cout << "TraverseObstacleWithGyroAndSonar *** THRESHOLD DETECTED - OBSTACLE CLEARED ***\n";
 				crab->Stop();
 				return true;
 			} else {
-				cout << "Quieting..\n";
+//				cout << "Quieting..\n";
 			}
 		} else {
 //			quietCounter = 0;	// reset counter

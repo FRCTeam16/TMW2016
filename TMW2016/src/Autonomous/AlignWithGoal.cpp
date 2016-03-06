@@ -159,97 +159,97 @@ bool AlignWithGoal::operator()(World *world) {
 
 //--------------------------------------------------------------------------//
 
+//
+//AlignWithGoalPID::AlignWithGoalPID(float timeout_, float speed_) :timeout(timeout_), speed(speed_), pidXAdapter(new VisionPIDAdapter())
+//{
+//	// Problem reading Preference values
+////	Preferences *prefs = Preferences::GetInstance();
+////	pidX.reset(new PIDController(
+////				prefs->GetFloat("VisionXP"),
+////				prefs->GetFloat("VisionXI"),
+////				prefs->GetFloat("VisionXD"),
+////				pidXAdapter.get(),
+////				pidXAdapter.get(),
+////				0.2));
+//	pidX.reset(new PIDController(0.05, 0, 0, pidXAdapter.get(), pidXAdapter.get(), 0.2));
+//	pidX->SetSetpoint(0.0);
+//	pidX->SetContinuous(false);
+//	pidX->SetOutputRange(-speed, speed);	// output motor speeds
+//	pidX->SetInputRange(-160, 160);			// size of input image
+//	pidX->Enable();
+//}
 
-AlignWithGoalPID::AlignWithGoalPID(float timeout_, float speed_) :timeout(timeout_), speed(speed_), pidXAdapter(new VisionPIDAdapter())
-{
-	// Problem reading Preference values
-//	Preferences *prefs = Preferences::GetInstance();
-//	pidX.reset(new PIDController(
-//				prefs->GetFloat("VisionXP"),
-//				prefs->GetFloat("VisionXI"),
-//				prefs->GetFloat("VisionXD"),
-//				pidXAdapter.get(),
-//				pidXAdapter.get(),
-//				0.2));
-	pidX.reset(new PIDController(0.05, 0, 0, pidXAdapter.get(), pidXAdapter.get(), 0.2));
-	pidX->SetSetpoint(0.0);
-	pidX->SetContinuous(false);
-	pidX->SetOutputRange(-speed, speed);	// output motor speeds
-	pidX->SetInputRange(-160, 160);			// size of input image
-	pidX->Enable();
-}
-
-bool AlignWithGoalPID::operator()(World *world) {
-	cout << "AlignWithGoalPID(P=" << pidX->GetP() << " I=" << pidX->GetI() << " D= " << pidX->GetD() << ")\n";
-	const float currentTime = world->GetClock();
-
-	// Startup & Timeout Checks
-	if (startTime < 0) {
-		startTime = currentTime;
-	} else if ((currentTime - startTime) > timeout) {
-		std::cerr << "AlignWithGoal: timed out, halting\n";
-		crab->lock = true;
-		return false;
-	}
-
-	const VisionData vd = world->GetVisionData();
-	const int targetGoal = world->GetTargetGoal();
-	GoalInfo goal;
-	if (targetGoal != 2) {
-		cout << "\tusing left goal\n";
-		goal = vd.leftGoal;
-	} else {
-		cout << "\tusing right goal\n";
-		goal = vd.rightGoal;
-	}
-	const bool detectedGoal = goal.HasData();
-
-	// Verify goal is visible
-	if (!detectedGoal) {
-		cout << "AlignWithGoal: No goal visible, stopping...\n";
-		crab->Stop();
-		return true;
-	}
-
-	// We've detected goal
-	const float currentX = goal.xposition;
-	pidXAdapter->Update(currentX);
-
-	if (fabs(currentX) < xthreshold) {
-		std::cout << "AlignWithGoal: Goal aligned!\n";
-		if (++fineTuneCounter > 10) {
-			cout << "QUIETED READY TO SHOOT\n";
-			crab->Stop();
-			return true;
-		} else {
-			cout << "Waiting for lock on to goal: " << fineTuneCounter << "\n";
-		}
-	} else {
-		// Need to align with goal
-		if (fabs(currentX) < xthreshold) {
-			std::cout << "AlignWithGoal: Goal aligned!\n";
-			if (++fineTuneCounter > 10) {
-				cout << "QUIETED READY TO SHOOT\n";
-				crab->Stop();
-				return true;
-			} else {
-				cout << "Waiting for lock on to goal: " << fineTuneCounter << "\n";
-			}
-		} else {
-			fineTuneCounter = 0;
-			const float targetAngle = Robot::driveBase->imu->GetYaw();
-			const float radians = targetAngle * M_PI / 180.0;
-			const float magnitude = pidXAdapter->GetOutputValue();
-			cout << "AlignWithGoal adjusting position [" << currentX << " -> speed: " << magnitude << "...\n";
-			const float x = magnitude * sin(radians);
-			const float y = magnitude * cos(radians);
-
-			Robot::driveBase->DriveControlTwist->SetSetpoint(targetAngle);
-			crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);
-		}
-	}
-	return false;
-}
+//bool AlignWithGoalPID::operator()(World *world) {
+//	cout << "AlignWithGoalPID(P=" << pidX->GetP() << " I=" << pidX->GetI() << " D= " << pidX->GetD() << ")\n";
+//	const float currentTime = world->GetClock();
+//
+//	// Startup & Timeout Checks
+//	if (startTime < 0) {
+//		startTime = currentTime;
+//	} else if ((currentTime - startTime) > timeout) {
+//		std::cerr << "AlignWithGoal: timed out, halting\n";
+//		crab->lock = true;
+//		return false;
+//	}
+//
+//	const VisionData vd = world->GetVisionData();
+//	const int targetGoal = world->GetTargetGoal();
+//	GoalInfo goal;
+//	if (targetGoal != 2) {
+//		cout << "\tusing left goal\n";
+//		goal = vd.leftGoal;
+//	} else {
+//		cout << "\tusing right goal\n";
+//		goal = vd.rightGoal;
+//	}
+//	const bool detectedGoal = goal.HasData();
+//
+//	// Verify goal is visible
+//	if (!detectedGoal) {
+//		cout << "AlignWithGoal: No goal visible, stopping...\n";
+//		crab->Stop();
+//		return true;
+//	}
+//
+//	// We've detected goal
+//	const float currentX = goal.xposition;
+//	pidXAdapter->Update(currentX);
+//
+//	if (fabs(currentX) < xthreshold) {
+//		std::cout << "AlignWithGoal: Goal aligned!\n";
+//		if (++fineTuneCounter > 10) {
+//			cout << "QUIETED READY TO SHOOT\n";
+//			crab->Stop();
+//			return true;
+//		} else {
+//			cout << "Waiting for lock on to goal: " << fineTuneCounter << "\n";
+//		}
+//	} else {
+//		// Need to align with goal
+//		if (fabs(currentX) < xthreshold) {
+//			std::cout << "AlignWithGoal: Goal aligned!\n";
+//			if (++fineTuneCounter > 10) {
+//				cout << "QUIETED READY TO SHOOT\n";
+//				crab->Stop();
+//				return true;
+//			} else {
+//				cout << "Waiting for lock on to goal: " << fineTuneCounter << "\n";
+//			}
+//		} else {
+//			fineTuneCounter = 0;
+//			const float targetAngle = Robot::driveBase->imu->GetYaw();
+//			const float radians = targetAngle * M_PI / 180.0;
+//			const float magnitude = pidXAdapter->GetOutputValue();
+//			cout << "AlignWithGoal adjusting position [" << currentX << " -> speed: " << magnitude << "...\n";
+//			const float x = magnitude * sin(radians);
+//			const float y = magnitude * cos(radians);
+//
+//			Robot::driveBase->DriveControlTwist->SetSetpoint(targetAngle);
+//			crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);
+//		}
+//	}
+//	return false;
+//}
 
 //--------------------------------------------------------------------------//
 

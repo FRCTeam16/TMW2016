@@ -56,21 +56,21 @@ private:
 
 //--------------------------------------------------------------------------//
 
-class AlignWithGoalPID : public Step {
-public:
-	AlignWithGoalPID(float timeout_, float speed_);
-	virtual ~AlignWithGoalPID() {}
-	bool operator()(World *world) override;
-private:
-	const float timeout;
-	const float speed;
-	const int xthreshold = 5;
-	std::unique_ptr<VisionPIDAdapter> pidXAdapter;
-	std::unique_ptr<PIDController> pidX;
-	float startTime = -1;
-	int fineTuneCounter = 0;
-
-};
+//class AlignWithGoalPID : public Step {
+//public:
+//	AlignWithGoalPID(float timeout_, float speed_);
+//	virtual ~AlignWithGoalPID() {}
+//	bool operator()(World *world) override;
+//private:
+//	const float timeout;
+//	const float speed;
+//	const int xthreshold = 5;
+//	std::unique_ptr<VisionPIDAdapter> pidXAdapter;
+//	std::unique_ptr<PIDController> pidX;
+//	float startTime = -1;
+//	int fineTuneCounter = 0;
+//
+//};
 
 //--------------------------------------------------------------------------//
 

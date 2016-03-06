@@ -37,15 +37,22 @@ private:
 
 class TraverseObstacleWithGyroAndSonar : public Step {
 public:
-	TraverseObstacleWithGyroAndSonar(float speed_ = 0.75) : speed(speed_) {}
+	TraverseObstacleWithGyroAndSonar(float speed_ = 0.75, int negativeCounterTarget=5) : speed(speed_), NEGATIVE_COUNTER_TARGET(negativeCounterTarget) {}
 	bool operator()(World *world) override;
 private:
+	const float TIMEOUT = 2.5;
 	double startTime = 01;
 	const float speed;
 	bool startedObstacle = false;
 	int quietCounter = 0;
+
+	bool ultrasonicStart = false;
 	int last_distance_one = 0;
 	int last_distance_two = 0;
+
+	const int NEGATIVE_COUNTER_TARGET = 3;
+	int negativeCounter = 0;
+	bool hitNegative = false;
 
 };
 
