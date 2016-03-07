@@ -20,6 +20,7 @@ public:
 	LEDDisplay();
 	virtual ~LEDDisplay();
 	void Update(const VisionData &vd);
+	void Update(float xposition, float width);
 private:
 	std::unique_ptr<AnalogOutput> widthOutput;
 	std::unique_ptr<AnalogOutput> translationOutput;

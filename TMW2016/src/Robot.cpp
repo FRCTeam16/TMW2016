@@ -95,11 +95,11 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
-	ledDisplay->Update(visionServer->GetVisionData());
 	automan->Periodic();
 	LogData();
 	driveBase->SMDB();
 	visionServer->SMDB();
+	UpdateLED();
 }
 
 void Robot::TeleopInit() {
@@ -226,11 +226,12 @@ void Robot::TeleopPeriodic() {
 /********Logging and display updates********/
 	LogData();
 	visionServer->SMDB();
-	ledDisplay->Update(visionServer->GetVisionData());
+	UpdateLED();
 }
 
 void Robot::TestPeriodic() {
 	lw->Run();
+	UpdateLED();
 }
 
 void Robot::LogData() {
@@ -238,6 +239,14 @@ void Robot::LogData() {
 		dataLogger->Log();
 		logCounter = 0;
 	}
+}
+
+void Robot::UpdateLED() {
+	//	ledDisplay->Update(visionServer->GetVisionData());
+	ledDisplay->Update(
+				oi->getDriverLeft()->GetRawAxis(2),
+				oi->getDriverLeft()->GetRawAxis(2));
+
 }
 
 START_ROBOT_CLASS(Robot);

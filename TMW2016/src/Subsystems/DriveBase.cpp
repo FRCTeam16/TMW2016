@@ -567,6 +567,6 @@ void DriveBase::SMDB() {
 	SmartDashboard::PutNumber("RearRightDriveCurrent", rearRightDrive->GetOutputCurrent());
 	SmartDashboard::PutNumber("LeftTankDriveCurrent", tankLeft->GetOutputCurrent());
 	SmartDashboard::PutNumber("RightTankDriveCurrent", tankRight->GetOutputCurrent());
-	SmartDashboard::PutNumber("Ultrasonics 0", ultrasonics->GetDistance(1));
-	SmartDashboard::PutNumber("Ultrasonics 1", ultrasonics->GetDistance(2));
+	SmartDashboard::PutNumber("Ultrasonics 1", ultrasonics->GetDistance(1));
+	SmartDashboard::PutNumber("Ultrasonics 2", ultrasonics->GetDistance(2));
 }

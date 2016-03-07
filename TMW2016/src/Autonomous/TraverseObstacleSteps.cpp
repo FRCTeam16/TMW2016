@@ -69,114 +69,83 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 // --------------------------------------------------------------------------//
 
 
-bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
-	cout << "TraverseObstacleWithGyroAndSonar()\n";
-	const double currentTime = world->GetClock();
-	const float pitch = Robot::driveBase->imu->GetRoll();
-	const int distance_one = Robot::driveBase->ultrasonics->GetDistance(1);
-	const int distance_two = Robot::driveBase->ultrasonics->GetDistance(2);
-	const int delta_one = distance_one - last_distance_one;
-	const int delta_two = distance_two - last_distance_two;
 
-	if (startTime < 0) {
+bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
+	cout << "TraverseObstacleWithGyro()\n";
+	const float pitch = Robot::driveBase->imu->GetRoll();
+	const int distance = Robot::driveBase->ultrasonics->GetDistance(2);
+	const double currentTime = world->GetClock();
+
+	cout << "currentTime: " << currentTime << '\n';
+	cout << "startTime  : " << startTime << '\n';
+	cout << "negativeCounter: " << negativeCounter << '\n';
+	cout << "startedObstacle: " << startedObstacle << '\n';
+	cout << "hitNegative    : " << hitNegative << '\n';
+	cout << "quietCount     : " << quietCount << '\n';
+	cout << "pitch          : " << pitch << '\n';
+	cout << "distance       : " << distance << '\n';
+	cout << "last distance  : " << last_distance << '\n';
+	cout << "in_obstacle    : " << distance_in_obstacle << '\n';
+
+	if (!running) {
+		running = true;
 		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
 		startTime = currentTime;
+		last_distance = distance;
 	}
 
-	cout << "startTime  : " << startTime << '\n';
-	cout << "currentTime: " << currentTime << '\n';
-	cout << "pitch      : " << pitch << '\n';
-	cout << "Dist 1     : " << distance_one
-		 << " Last 1: " << last_distance_one
-		 << " Delta 1: " << delta_one << '\n';
-	cout << "Dist 2     : " << distance_two
-		 << " Last 2: " << last_distance_two
-		 << " Delta 2: " << delta_two << '\n';
-	cout << "quiet cntr : " << quietCounter << '\n';
-	cout << "started def: " << startedObstacle << '\n';
-	cout << "ultra start: " << ultrasonicStart << '\n';
-	cout << "neg ctr    : " << negativeCounter << '\n';
-	cout << "hit neg?   : " << negativeCounter << '\n';
-
-	if ((currentTime - startTime) > TIMEOUT) {
-		cout << "**** TIMEOUT ****\n";
+	if (++loopCounter > MAX_LOOPS) {
+		cerr << "Aborting due to timeout of loops\n";
+		// TODO: Just stop
 		crab->Stop();
 		return false;
 	}
 
+
+	//
+	// Normal Operations
+	//
 	if (!startedObstacle && pitch > 5.0) {
 		startedObstacle = true;
 		startTime = currentTime;	// As soon as we start the obstacle, start our timer for attempting to cross it
 	}
-
-	if (pitch < -4.0) {
+	if (pitch < 4.0) {
 		if (negativeCounter++ >= NEGATIVE_COUNTER_TARGET) {
 			hitNegative = true;
-			cout << "**** HIT NEGATIVE PITCH COUNTER ***\n";
-			crab->Stop();
+			cout << "**** HIT NEGATIVE ***\n";
+		}
+		quietCount = 0;	// reset quiet count
+	}
+	if (!hitNegative && pitch > 0.0) {
+		negativeCounter = 0;
+	}
+
+	if (startedObstacle && !distance_in_obstacle) {
+		if (distance < 60 && (last_distance - distance > 20)) {
+			distance_in_obstacle = true;
+			last_distance = distance;
+		}
+	} else if (startedObstacle && distance_in_obstacle) {
+		if (distance - last_distance > 20) {
+			cout << "*** ULTRASONICS DETECTED OBSTACLE CLEARANCE ***\n";
 			return true;
 		}
 	}
 
-	const float DELTA_THRESHOLD = 5;
-	if (startedObstacle) {
-		if (distance_one < 30 || distance_two < 30) {
-			ultrasonicStart = true;
-		}
-		if (ultrasonicStart && ((delta_one > DELTA_THRESHOLD) || (delta_two > DELTA_THRESHOLD))) {
-			if (++quietCounter > 0) {
-				cout << "TraverseObstacleWithGyroAndSonar *** THRESHOLD DETECTED - OBSTACLE CLEARED ***\n";
-				crab->Stop();
-				return true;
-			} else {
-//				cout << "Quieting..\n";
-			}
-		} else {
-//			quietCounter = 0;	// reset counter
+	if (startedObstacle && hitNegative) {
+		if (pitch > 0.0) {
+			quietCount++;
 		}
 	}
-	last_distance_one = distance_one;
-	last_distance_two = distance_two;
-	crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
-	return false;
-}
 
+	SmartDashboard::PutBoolean("Obstacle Started", startedObstacle);
+	SmartDashboard::PutNumber("Quiet Count", quietCount);
+	SmartDashboard::PutNumber("Last Dist", last_distance);
 
-// --------------------------------------------------------------------------//
-bool TraverseObstacleWithGyroAndProximity::operator ()(World* world) {
-	cout << "TraverseObstacleWithGyroAndProximity()\n";
-	const double currentTime = world->GetClock();
-	const float pitch = Robot::driveBase->imu->GetRoll();
-	const bool prox_left = Robot::driveBase->proximityLeft->Get();
-	const bool prox_right = Robot::driveBase->proximityRight->Get();
-
-	if (startTime < 0) {
-		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
-		startTime = currentTime;
-	} else if ((currentTime - startTime) > MAX_TRY_TIME) {
-		cout << "*** TIMED OUT *** Aborting attempt\n";
-		crab->lock = true;
+	if (quietCount > 5) {
+		return true;
+	} else {
+		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
 		return false;
 	}
-
-	cout << "\tstartTime  : " << startTime << '\n';
-	cout << "\tcurrentTime: " << currentTime << '\n';
-	cout << "\tpitch      : " << pitch << '\n';
-	cout << "\tprox left  : " << prox_left << '\n';
-	cout << "\tprox right  : " << prox_right << '\n';
-	cout << "\tstarted def: " << startedObstacle << '\n';
-
-	if (!startedObstacle && pitch > 5.0) {
-		startedObstacle = true;
-	}
-
-	if (startedObstacle) {
-		if (!prox_left || !prox_right) {
-			// Appears we've cleared the obstacle
-			cout << "Proximity indicators flagged we cleared defense\n";
-			return true;
-		}
-	}
-	crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
-	return false;
 }

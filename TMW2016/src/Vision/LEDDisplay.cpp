@@ -11,7 +11,7 @@ static float map(float x, float in_min, float in_max, float out_min, float out_m
 LEDDisplay::LEDDisplay() {
 	widthOutput.reset(new AnalogOutput(0));
 	translationOutput.reset(new AnalogOutput(1));
-	allianceOutput.reset(new DigitalOutput(0));
+//	allianceOutput.reset(new DigitalOutput(0));
 //	shooterWheel.reset(new DigitalOutput(1));
 }
 
@@ -52,5 +52,14 @@ void LEDDisplay::Update(const VisionData &vd) {
 		//
 //		feederStatus->Set(Robot::arm->IsFeederRunning() ? 1 : 0);
 	}
+}
+
+void LEDDisplay::Update(float xposition, float width) {
+	float widthVoltage = map(width, 0, 1, MIN_OUT, MAX_OUT);
+	float translationVoltage = map(xposition, 0, 1, MIN_OUT, MAX_OUT);
+//			std::cout << "LEDDisplay W: " << width << " -> " << widthVoltage << "\t"
+//					  << " X: " << xposition << " -> " << translationVoltage << "\n";
+	widthOutput->SetVoltage(widthVoltage);
+	translationOutput->SetVoltage(translationVoltage);
 }
 

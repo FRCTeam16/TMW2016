@@ -63,6 +63,7 @@ private:
 	RAWCConstants* File;
 	void SystemSMDB();
 	void DriveBaseSMDB();
+	void UpdateLED();
 	std::unique_ptr<AutoManager> automan;
 	std::shared_ptr<DataLogger> dataLogger;
 	bool dartOpen;
