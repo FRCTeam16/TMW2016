@@ -13,6 +13,7 @@
 
 void ShootingStrategy::Init(World* world) {
 	bool useVision =  world->GetTargetGoal() < 4;
+	bool waitForArm = world->GetTargetGoal() == 2;
 
 	//----------------------------------------------------------------------//
 
@@ -38,7 +39,7 @@ void ShootingStrategy::Init(World* world) {
 	//----------------------------------------------------------------------//
 
 	locationSteps[2] = {
-			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
+			new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm),
 			new ControlShooterMotors(true)
 	};
 	if (useVision) {
@@ -52,7 +53,7 @@ void ShootingStrategy::Init(World* world) {
 	//----------------------------------------------------------------------//
 
 	locationSteps[3] = {
-			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
+			new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm),
 			new ControlShooterMotors(true)
 	};
 	if (useVision) {
@@ -66,7 +67,7 @@ void ShootingStrategy::Init(World* world) {
 	//----------------------------------------------------------------------//
 
 	locationSteps[4] = {
-			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
+			new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm),
 			new ControlShooterMotors(true)
 	};
 	if (useVision) {
@@ -80,7 +81,7 @@ void ShootingStrategy::Init(World* world) {
 	//----------------------------------------------------------------------//
 
 	locationSteps[5] = {
-			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
+			new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm),
 			new ControlShooterMotors(true)
 	};
 	if (useVision) {
