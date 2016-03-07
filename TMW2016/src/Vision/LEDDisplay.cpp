@@ -56,7 +56,7 @@ void LEDDisplay::Update(const VisionData &vd) {
 
 void LEDDisplay::Update(float xposition, float width) {
 	float widthVoltage = map(width, -1.0, 1.0, MIN_OUT, MAX_OUT);
-	float translationVoltage = map(xposition, 1.0, 1.0, MIN_OUT, MAX_OUT);
+	float translationVoltage = map(xposition, -1.0, 1.0, MIN_OUT, MAX_OUT);
 //			std::cout << "LEDDisplay W: " << width << " -> " << widthVoltage << "\t"
 //					  << " X: " << xposition << " -> " << translationVoltage << "\n";
 	widthOutput->SetVoltage(widthVoltage);

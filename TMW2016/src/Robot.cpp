@@ -245,7 +245,7 @@ void Robot::UpdateLED() {
 	//	ledDisplay->Update(visionServer->GetVisionData());
 	ledDisplay->Update(
 				oi->getDriverLeft()->GetRawAxis(2),
-				oi->getDriverLeft()->GetRawAxis(2));
+				oi->getDriverRight()->GetRawAxis(3));
 
 }
 

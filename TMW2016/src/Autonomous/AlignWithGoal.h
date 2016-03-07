@@ -111,5 +111,29 @@ private:
 	double last_accel_y = 0.0;
 };
 
+//--------------------------------------------------------------------------//
+class SnugToWall : public Step {
+public:
+	SnugToWall(float speed_, float driveTime_=0.25, float driveWallTime_=1.0, int iterations_=3) :
+		speed(speed_), driveTime(driveTime_), driveWallTime(driveWallTime_), iterations(iterations_) {}
+	bool operator()(World *world) override;
+private:
+	const float speed;
+	const float driveTime;
+	const float driveWallTime;
+	const int iterations;
+	int currentIteration = 0;
+	float startTime = -1;
+	bool collisionDetected;
+	bool moveTowardsWall = false;		// true = positive y
+	bool doingPulse = false;
+
+	// TODO: Duplicated code
+	bool DetectCollision();
+	const double COLLISION_THRESHOLD_DELTA_G = 1.0f;
+	double last_accel_x = 0.0;
+	double last_accel_y = 0.0;
+};
+
 
 #endif /* SRC_AUTONOMOUS_ALIGNWITHGOAL_H_ */

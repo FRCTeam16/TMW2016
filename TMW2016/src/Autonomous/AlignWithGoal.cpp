@@ -350,6 +350,90 @@ bool MoveAlongMoveToWallShootingLine::operator ()(World* world) {
 
 //--------------------------------------------------------------------------//
 
+bool SnugToWall::operator ()(World* world) {
+	cout << "SnugToWall()\n";
+	const float currentTime = world->GetClock();
+	if (startTime < 0) {
+		startTime = currentTime;
+		doingPulse = true;
+	}
+
+	const bool collisionDetected = DetectCollision();
+
+	bool timeDone;
+	if (moveTowardsWall) {
+		timeDone = (currentTime - startTime) > driveWallTime;
+	} else {
+		timeDone = (currentTime - startTime) > driveTime;
+	}
+
+	cout << "Current T: " << currentTime << '\n';
+	cout << "Start T  : " << startTime << '\n';
+	cout << "Iteration: " << currentIteration << '\n';
+	cout << "Collision? " << collisionDetected << '\n';
+	cout << "MoveWall ? " << moveTowardsWall << '\n';
+	cout << "Time Done? " << timeDone << '\n';
+	cout << "In Pulse?  " << doingPulse << '\n';
+
+	if (currentIteration > iterations) {
+		cout << "Finished Iterations\n";
+		crab->Stop();
+		return true;
+	}
+
+	if (moveTowardsWall) {
+		if (timeDone) {
+			cout << "\t*** collision\n";
+			doingPulse = true;
+			moveTowardsWall = false;
+			currentIteration++;
+			startTime = currentTime;
+		} else {
+			crab->Update(0, speed, 0, true);
+		}
+	} else {
+		if (doingPulse) {
+			if (timeDone) {
+				doingPulse = false;
+				startTime = currentTime;
+			} else {
+				crab->Update(0, -speed, 0, true);
+				return false;
+			}
+		} else {
+			// coasting
+			if (timeDone) {
+				moveTowardsWall = true;
+				currentIteration++;
+				startTime = currentTime;
+			}
+			return false;
+		}
+	}
+	return false;
+}
+
+
+bool SnugToWall::DetectCollision() {
+	// @see http://www.pdocs.kauailabs.com/navx-mxp/examples/collision-detection/
+	double current_accel_x = Robot::driveBase->imu->GetWorldLinearAccelX();
+	double current_jerk_x = current_accel_x - last_accel_x;
+	last_accel_x = current_accel_x;
+
+	double current_accel_y = Robot::driveBase->imu->GetWorldLinearAccelY();
+	double current_jerk_y = current_accel_y - last_accel_y;
+	last_accel_y = current_accel_y;
+
+	cout << "MoveToWallShootingPosition jerk: x->" << current_jerk_x << " y-> " << current_jerk_y << "\n";
+
+	return ((fabs(current_jerk_x) > COLLISION_THRESHOLD_DELTA_G) ||
+			(fabs(current_jerk_y) > COLLISION_THRESHOLD_DELTA_G));
+}
+
+
+
+//--------------------------------------------------------------------------//
+
 
 float CalculateDriveAngle(const int pos, const int goal, outerworks defense) {
 	//all distances in inches
