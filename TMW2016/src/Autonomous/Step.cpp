@@ -125,7 +125,7 @@ bool ControlShooterMotors::operator()(World *world) {
 
 bool ControlBeaterBar::operator()(World *world) {
 	cout << "ControlBeaterBar(" << enable << ")\n";
-	const float speed = enable ? 1.0 : 0.0;
+	const float speed = enable ? -1.0 : 0.0;		// TODO: need direction
 	Robot::arm->BeaterBar(speed);
 	return true;
 }

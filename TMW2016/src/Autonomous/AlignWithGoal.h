@@ -7,7 +7,7 @@
 
 #include "Step.h"
 
-float CalculateDriveAngle(const int pos, const int goal);
+float CalculateDriveAngle(const int pos, const int goal, outerworks defense);
 void DebugDisplayCalculateDriveAngle();
 
 
@@ -73,6 +73,22 @@ private:
 //};
 
 //--------------------------------------------------------------------------//
+
+class MoveAlongMoveToWallShootingLine : public Step {
+public:
+	MoveAlongMoveToWallShootingLine(float travelTime_, float speed_, float timeout_=5) :
+		travelTime(travelTime_), speed(speed_), TIMEOUT_TIME(timeout_) {}
+	bool operator()(World *world) override;
+private:
+	const float travelTime;
+	const float speed;
+	const float TIMEOUT_TIME;
+	float startTime = -1;
+};
+
+
+//--------------------------------------------------------------------------//
+
 
 class MoveToWallShootingPosition : public Step {
 public:

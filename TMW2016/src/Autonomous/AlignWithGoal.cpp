@@ -40,7 +40,7 @@ bool SearchForGoal::operator()(World *world) {
 	}
 
 	// Calculate movement
-	const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal);
+	const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
 	cout << "SearchForGoal: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
 	const float x = speed * sin(driveAngleRadians);
 	const float y = speed * cos(driveAngleRadians);
@@ -124,7 +124,7 @@ bool AlignWithGoal::operator()(World *world) {
 
 	// Calculate movement
 	const int startingPosition = world->GetStartingPosition();
-	const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal);
+	const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
 	cout << "SearchForGoal: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
 	float magnitude = P * speed;
 	const float x = magnitude * sin(driveAngleRadians);
@@ -286,7 +286,7 @@ bool MoveToWallShootingPosition::operator ()(World* world) {
 			cout << "Quieting -> " << quietTimer << " / " << QUIETING_PERIOD << "\n";
 		}
 	} else {
-		const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal);
+		const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
 		cout << "MoveToWallShootingPosition: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
 		x = speed * sin(driveAngleRadians);
 		y = speed * cos(driveAngleRadians);
@@ -310,20 +310,76 @@ bool MoveToWallShootingPosition::DetectCollision() {
 	return ((fabs(current_jerk_x) > COLLISION_THRESHOLD_DELTA_G) ||
 			(fabs(current_jerk_y) > COLLISION_THRESHOLD_DELTA_G));
 }
+//--------------------------------------------------------------------------//
+
+// TODO: fix duplicated code with movetowall shooting position
+bool MoveAlongMoveToWallShootingLine::operator ()(World* world) {
+	cout << "MoveAlongMoveToWallShootingLine()\n";
+	const float currentTime = world->GetClock();
+	if (startTime < 0) {
+		startTime = currentTime;
+	}
+
+	const float deltaTime = currentTime - startTime;
+	if (deltaTime > TIMEOUT_TIME) {
+		cout << "*** TIMEOUT ***\n";
+		crab->lock = true;
+		return false;
+	}
+
+	if (deltaTime > travelTime) {
+		return true;
+	}
+
+	const int startingPosition = world->GetStartingPosition();
+	const int targetGoal = world->GetTargetGoal();
+	float yawSetpoint = 90.0;
+	if (targetGoal == 5) { yawSetpoint = -90.0; }
+	Robot::driveBase->DriveControlTwist->SetSetpoint(yawSetpoint);
+	float x = 0.0;
+	float y = 0.0;
+
+	const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
+	cout << "MoveToWallShootingPosition: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
+	x = speed * sin(driveAngleRadians);
+	y = speed * cos(driveAngleRadians);
+	crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);
+	return false;
+
+}
 
 //--------------------------------------------------------------------------//
 
 
-float CalculateDriveAngle(const int pos, const int goal) {
+float CalculateDriveAngle(const int pos, const int goal, outerworks defense) {
 	//all distances in inches
 	float dShoot = 108;  //distance from goal for shot
 	float dxGoalFromWall = 141; //distance in x of the goal from the left wall
 	float dxGoal = 7.5; // additional distance in x after the start of the goal
 	float dyGoal = 13; // additional distance in y after the start of the goal
 	float dxDefense = 24 + (pos-1)*53; //distance in x of the final robot position after crossing the defense
-	float dyDefense = 140; //distance in y of the final robot position after crossing the defense (not 135)
 	float dx = 0;
 	float dy = 0;
+
+	float dyDefense = 140; //distance in y of the final robot position after crossing the defense (not 135)
+	switch(defense) {
+	case LowBar:
+		dyDefense = 145;
+		break;
+	case RockWall:
+	case Ramparts:
+		dyDefense = 146;
+		break;
+	case RoughTerrain:
+		dyDefense = 137;
+		break;
+	case Moat:
+		dyDefense = 142;
+		break;
+	default:
+		// use default value
+		break;
+	}
 
 	const float PI_3 = M_PI / 3;
 	if(goal == 1) {
@@ -360,16 +416,16 @@ float CalculateDriveAngle(const int pos, const int goal) {
 	return atan2(dx,dy);
 }
 
-void DebugDisplayCalculateDriveAngle() {
-	for (int i=0;i<100;i++) { cout  << '\n'; }
-	for (int pos=1;pos<=5;pos++) {
-		for (int t=1;t<=5;t++) {
-			cout << "P: " << pos
-					<< " T: " << t
-					<< " Angle: "
-					<< CalculateDriveAngle(pos,t) * 180 / M_PI
-					<< '\n';
-		}
-	}
-}
+//void DebugDisplayCalculateDriveAngle() {
+//	for (int i=0;i<100;i++) { cout  << '\n'; }
+//	for (int pos=1;pos<=5;pos++) {
+//		for (int t=1;t<=5;t++) {
+//			cout << "P: " << pos
+//					<< " T: " << t
+//					<< " Angle: "
+//					<< CalculateDriveAngle(pos,t) * 180 / M_PI
+//					<< '\n';
+//		}
+//	}
+//}
 

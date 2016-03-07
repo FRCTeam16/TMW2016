@@ -18,7 +18,7 @@
 
 static const std::string AUTO_POSITION = "Auto Position";
 static const std::string AUTO_DEFENSE = "Auto Defense";
-static const std::string AUTO_TARGET = "Auto Goal ";
+static const std::string AUTO_TARGET = "Auton Goal ";
 
 static const std::string AUTO_INIT_CONFIG_ERROR = "Auto Config Error";
 

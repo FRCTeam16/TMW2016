@@ -24,7 +24,7 @@ void ShootingStrategy::Init(World* world) {
 	//----------------------------------------------------------------------//
 
 	locationSteps[1] = {
-			new TimedCrab(0.5, 0.0, 0.5, 0.5),	// kick out from left wall
+			new MoveAlongMoveToWallShootingLine(0.5, 0.5), // kick out from left wall
 			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
 			new ControlShooterMotors(true)
 	};
