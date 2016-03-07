@@ -12,7 +12,7 @@ void LowBarStrategy::Init(World* world) {
 	steps.push_back(std::unique_ptr<Step>(new ControlBeaterBar(true)));
 	steps.push_back(std::unique_ptr<Step>(new TimedCrab(0.25, 0.0, 0.40, 0.0)));
 	steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Pickup, true)));
-	steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonar(0.60)));
+	steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(0.60)));
 	steps.push_back(std::unique_ptr<Step>(new ControlBeaterBar(false)));
 }
 
