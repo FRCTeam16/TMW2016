@@ -16,9 +16,11 @@
 #include "AHRS.h"
 #include "CrabSpeed.h"
 #include "DualMaxBoticsI2CXL.h"
+#include "../Util/SafetyChecker.h"
 
 
 class DriveBase: public Subsystem {
+	friend class SafetyChecker;
 private:
 
 	float gyroreference;
@@ -157,6 +159,7 @@ public:
 	void SetRLTurns(int val);
 	void SetRRTurns(int val);
 	void RunTanks(float speed);
+	void EnableSteerPIDControllers(bool enable);
 	std::unique_ptr<CrabSpeed> CrabSpeedTwist;
 	std::unique_ptr<PIDController> DriveControlTwist;
 	std::unique_ptr<DualMaxBoticsI2CXL> ultrasonics;

@@ -551,6 +551,19 @@ void DriveBase::Lock() //locks wheels to prevent robot movement
 	SetDriveSpeed(0,0,0,0);
 }
 
+void DriveBase::EnableSteerPIDControllers(bool enable) {
+	std::vector<std::shared_ptr<PIDController>> controllers = {
+			frontLeft, frontRight, rearLeft, rearRight};
+	if (enable) {
+		std::for_each(controllers.begin(), controllers.end(),
+				[](std::shared_ptr<PIDController> &pid) { pid->Enable(); } );
+	} else {
+		std::for_each(controllers.begin(), controllers.end(),
+				[](std::shared_ptr<PIDController> &pid) { pid->Disable(); } );
+	}
+
+}
+
 void DriveBase::TestDrive(float first) {
 	frontRight->SetSetpoint(first*5);
 	frontLeft->SetSetpoint(first*5);

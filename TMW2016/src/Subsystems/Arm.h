@@ -17,6 +17,7 @@
 #include "WPILib.h"
 #include "../RAWCConstants.h"
 #include "../Util/DataLoggable.h"
+#include "../Util/SafetyChecker.h"
 
 /**
  *
@@ -24,6 +25,7 @@
  * @author ExampleAuthor
  */
 class Arm: public Subsystem, DataLoggable {
+	friend class SafetyChecker;
 private:
 	// It's desirable that everything possible is private except
 	// for methods that implement subsystem capabilities

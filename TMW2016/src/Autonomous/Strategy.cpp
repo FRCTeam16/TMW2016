@@ -28,6 +28,7 @@ bool StepStrategy::Run(World *world) {
 	return false;
 }
 
+
 void StepStrategy::RunPeriodicManagers(const CrabInfo *crab) {
 	// Must fire every invocation
 	cout << "RunPeriodicManager\n";

@@ -68,6 +68,7 @@ void Robot::RobotInit() {
 	visionServer.reset(new VisionServer(5800));
 	ledDisplay.reset(new LEDDisplay());
 	automan.reset(new AutoManager(visionServer.get()));
+	safetyChecker.reset(new SafetyChecker());
   }
 
 /**
@@ -95,7 +96,11 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
-	automan->Periodic();
+	if (safetyChecker->IsFailed() || !safetyChecker->CheckLimits()) {
+		safetyChecker->HaltPeriodic();
+	} else {
+		automan->Periodic();
+	}
 	LogData();
 	driveBase->SMDB();
 	visionServer->SMDB();
@@ -110,6 +115,7 @@ void Robot::TeleopInit() {
 	// these lines or comment it out.
 	if (autonomousCommand.get() != nullptr)
 		autonomousCommand->Cancel();
+	Robot::driveBase->EnableSteerPIDControllers(true);
 	driveBase->DriveControlTwist->SetPID(prefs->GetFloat("TwistP"),prefs->GetFloat("TwistI"),prefs->GetFloat("TwistD"));
 	driveBase->DriveControlTwist->SetOutputRange(-.5, .5);
 }

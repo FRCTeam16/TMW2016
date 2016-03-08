@@ -22,6 +22,7 @@
 #include "AutoManager.h"
 #include "BSButton.h"
 #include "Util/DataLogger.h"
+#include "Util/SafetyChecker.h"
 #include "Vision/VisionServer.h"
 #include "Vision/LEDDisplay.h"
 
@@ -75,6 +76,7 @@ private:
 	Preferences* prefs;
 	std::unique_ptr<VisionServer> visionServer;
 	std::unique_ptr<LEDDisplay> ledDisplay;
+	std::unique_ptr<SafetyChecker> safetyChecker;
 
 	void LogData();
 	int logCounter = 0;			// simple counting to control log frequency
