@@ -34,7 +34,8 @@ private:
 	const long MIN_OUT = 0;
 	const long MAX_OUT = 5;
 
-	float MapWidth(const int width) const;
+	float MapWidth(const int width, const int xposition) const;
+	float MapX(const int xposition) const;
 };
 
 #endif /* SRC_VISION_LEDDISPLAY_H_ */

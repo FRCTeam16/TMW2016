@@ -94,6 +94,7 @@ bool SetArmPosition::operator()(World *world) {
 
 	if (wait) {
 		cout << "Waiting for DART...";
+		crab->lock = true;
 		return Robot::arm->DartInPosition();
 	} else {
 		return true;
@@ -113,7 +114,9 @@ ControlShooterMotors::ControlShooterMotors(bool enable_) : enable(enable_) {
 bool ControlShooterMotors::operator()(World *world) {
 	cout << "ControlShooterMotors(" << enable << ")\n";
 	if (enable) {
+		cout << "Shooter Speed: " << shooterSpeed << " Feeder Speed: " << feederSpeed << '\n';
 		Robot::arm->SetShooterSpeed(shooterSpeed, feederSpeed);
+//		Robot::arm->RunShooter(true);
 	} else {
 		Robot::arm->RunShooter(false);
 	}

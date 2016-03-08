@@ -23,10 +23,11 @@ void LEDDisplay::Update(const VisionData &vd) {
 		const int invalidGoal = -1;
 		GoalInfo goal = vd.GetGoal(invalidGoal);
 
-		float widthVoltage = map(goal.width, MIN_WIDTH, MAX_WIDTH, MIN_OUT, MAX_OUT);
-		float translationVoltage = map(goal.xposition, MIN_X, MAX_X, MIN_OUT, MAX_OUT);
-//		std::cout << "LEDDisplay W: " << vd.width << " -> " << widthVoltage << "\t"
-//				  << " X: " << vd.xposition << " -> " << translationVoltage << "\n";
+		float translationVoltage = MapX(goal.xposition);
+		float widthVoltage = MapWidth(goal.width, goal.xposition);
+
+//		std::cout << "LEDDisplay W: " << goal.width << " -> " << widthVoltage << "\t"
+//				  << " X: " << goal.xposition << " -> " << translationVoltage << "\n";
 		widthOutput->SetVoltage(widthVoltage);
 		translationOutput->SetVoltage(translationVoltage);
 
@@ -54,29 +55,41 @@ void LEDDisplay::Update(const VisionData &vd) {
 	}
 }
 
-void LEDDisplay::Update(float xposition, float width) {
-	float translationVoltage = map(xposition, -1.0, 1.0, MIN_OUT, MAX_OUT);
-	float widthVoltage = MapWidth(width);
-//			std::cout << "LEDDisplay W: " << width << " -> " << widthVoltage << "\t"
-//					  << " X: " << xposition << " -> " << translationVoltage << "\n";
-	widthOutput->SetVoltage(widthVoltage);
-	translationOutput->SetVoltage(translationVoltage);
+float LEDDisplay::MapX(const int xposition) const {
+	//  <--75 |  |-50-50   |  | 75->
+
+	if (xposition < -50) {
+		return 0.0;
+	} else if (xposition > 50) {
+		return 5.0;
+	} else {
+		return map(xposition, -50, 50, 0, 5);
+	}
 }
 
-float LEDDisplay::MapWidth(const int width) const {
-	if (width >= 70) {
-		// too close
-		return 0.0;
-	} else if (width <= 40) {
-		// too far
-		return 0.0;
-	} else if (width <= 50) {
-		return map(width, 40, 55, 5/0.3, 5.0);
-	} else if (width >= 60 ){
-		return map(width, 55, 70, 5.0, 5/0.3);
-	} else {
+float LEDDisplay::MapWidth(const int width, const int x) const {
+
+	float scale = (100 - abs(x)) / 10.0;
+	float maxMapped = scale;
+
+	if (x > -50 && x < 50) {
 		// on target
-		return 5.0;
+		if (width > 50 && width < 60) {
+			// good width
+			return 5.0;
+		} else if (width <= 50) {
+			return map(width, 35, 50, 0, 5.0);
+		} else if (width >= 60 ){
+			return map(width, 60, 75, 5.0, 0);
+		}
+	} else {
+		// not on target
+		if (x < -50) {
+			return map(x, -100, -50, 0, 5.0);
+		} else if (x > 50) {
+			return map(x, 50, 100, 5.0, 0.0);
+		}
 	}
+	return 0;
 }
 

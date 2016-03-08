@@ -41,20 +41,38 @@ private:
 //--------------------------------------------------------------------------//
 
 
-class AlignWithGoal : public Step {
+//class AlignWithGoal : public Step {
+//public:
+//	AlignWithGoal(float timeout_, float speed_): timeout(timeout_), speed(speed_) {}
+//	virtual ~AlignWithGoal() {}
+//	bool operator()(World *world) override;
+//private:
+//	const float timeout;
+//	const float speed;
+//	const int xthreshold = 10;
+//	float startTime = -1;
+//	int fineTuneCounter = 0;
+//};
+
+//--------------------------------------------------------------------------//
+
+class AlignWithGoalAndShoot : public Step {
 public:
-	AlignWithGoal(float timeout_, float speed_);
-	virtual ~AlignWithGoal() {}
+	AlignWithGoalAndShoot(float timeout_, float speed_): timeout(timeout_), speed(speed_) {}
+	virtual ~AlignWithGoalAndShoot() {}
 	bool operator()(World *world) override;
 private:
 	const float timeout;
 	const float speed;
 	const int xthreshold = 10;
 	float startTime = -1;
+	bool fired = false;
 	int fineTuneCounter = 0;
 };
 
 //--------------------------------------------------------------------------//
+
+
 
 //class AlignWithGoalPID : public Step {
 //public:

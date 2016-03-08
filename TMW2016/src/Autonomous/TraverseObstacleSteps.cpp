@@ -145,12 +145,12 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 	SmartDashboard::PutNumber("Quiet Count", quietCount);
 	SmartDashboard::PutNumber("Last Dist", last_distance);
 
-	if (quietCount > 5) {
-		return true;
-	} else {
+//	if (quietCount > 5) {
+//		return true;
+//	} else {
 		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
 		return false;
-	}
+//	}
 }
 
 
@@ -226,11 +226,11 @@ bool TraverseObstacleWithGyroAndSonarLockingValues::operator ()(World* world) {
 	SmartDashboard::PutNumber("Quiet Count", quietCount);
 	SmartDashboard::PutNumber("Last Dist", last_distance);
 
-	if (quietCount > 5) {
-		return true;
-	} else {
+//	if (quietCount > 5) {
+////		return true;
+//	} else {
 		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
 		return false;
-	}
+//	}
 }
 

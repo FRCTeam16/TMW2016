@@ -13,7 +13,7 @@
 
 void ShootingStrategy::Init(World* world) {
 	bool useVision =  world->GetTargetGoal() < 4;
-	bool waitForArm = world->GetTargetGoal() == 2;
+	bool waitForArm = true;
 
 	//----------------------------------------------------------------------//
 
@@ -24,18 +24,17 @@ void ShootingStrategy::Init(World* world) {
 	//----------------------------------------------------------------------//
 
 	locationSteps[1] = {
-			new MoveAlongMoveToWallShootingLine(0.5, 0.5), // kick out from left wall
-			new SetArmPosition(SetArmPosition::Position::ShooterHigh, false),
+			new MoveAlongMoveToWallShootingLine(0.5, 0.3), // kick out from left wall
+			new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm),
 			new ControlShooterMotors(true)
 	};
 	if (useVision) {
 		locationSteps[1].push_back(new SearchForGoal(3, 0.3));
-		locationSteps[1].push_back(new AlignWithGoal(3, 0.3));
+		locationSteps[1].push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
 		locationSteps[1].push_back(new MoveToWallShootingPosition(10, 0.3));
 		locationSteps[1].push_back(new SnugToWall(0.3, 0.25));
 	}
-	locationSteps[1].push_back(new ShootBall());
 
 	//----------------------------------------------------------------------//
 
@@ -45,12 +44,11 @@ void ShootingStrategy::Init(World* world) {
 	};
 	if (useVision) {
 		locationSteps[2].push_back(new SearchForGoal(2, 0.3));
-		locationSteps[2].push_back(new AlignWithGoal(2, 0.3));
+		locationSteps[2].push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
 		locationSteps[2].push_back(new MoveToWallShootingPosition(10, 0.3));
 		locationSteps[2].push_back(new SnugToWall(0.3, 0.25));
 	}
-	locationSteps[2].push_back(new ShootBall());
 
 	//----------------------------------------------------------------------//
 
@@ -60,12 +58,11 @@ void ShootingStrategy::Init(World* world) {
 	};
 	if (useVision) {
 		locationSteps[3].push_back(new SearchForGoal(2, 0.3));
-		locationSteps[3].push_back(new AlignWithGoal(1, 0.3));
+		locationSteps[3].push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
 		locationSteps[3].push_back(new MoveToWallShootingPosition(10, 0.3));
 		locationSteps[3].push_back(new SnugToWall(0.3, 0.25));
 	}
-	locationSteps[3].push_back(new ShootBall());
 
 	//----------------------------------------------------------------------//
 
@@ -75,12 +72,11 @@ void ShootingStrategy::Init(World* world) {
 	};
 	if (useVision) {
 		locationSteps[4].push_back(new SearchForGoal(2, 0.3));
-		locationSteps[4].push_back(new AlignWithGoal(0.5, 0.3));
+		locationSteps[4].push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
 		locationSteps[4].push_back(new MoveToWallShootingPosition(10, 0.3));
 		locationSteps[4].push_back(new SnugToWall(0.3, 0.25));
 	}
-	locationSteps[4].push_back(new ShootBall());
 
 	//----------------------------------------------------------------------//
 
@@ -90,12 +86,11 @@ void ShootingStrategy::Init(World* world) {
 	};
 	if (useVision) {
 		locationSteps[5].push_back(new SearchForGoal(2, 0.3));
-		locationSteps[5].push_back(new AlignWithGoal(2, 0.3));
+		locationSteps[5].push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
 		locationSteps[5].push_back(new MoveToWallShootingPosition(10, 0.3));
 		locationSteps[5].push_back(new SnugToWall(0.3, 0.25));
 	}
-	locationSteps[5].push_back(new ShootBall());
 }
 
 bool ShootingStrategy::Run(World *world) {

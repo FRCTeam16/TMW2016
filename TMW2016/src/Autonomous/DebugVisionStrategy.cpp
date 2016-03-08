@@ -23,7 +23,7 @@ void DebugVisionStrategy::Init(World* world) {
 
 	if (useVision) {
 		steps.push_back(std::unique_ptr<Step>(new SearchForGoal(7, 0.3)));
-		steps.push_back(std::unique_ptr<Step>(new AlignWithGoal(7, 0.15)));
+		steps.push_back(std::unique_ptr<Step>(new AlignWithGoalAndShoot(7, 0.15)));
 	} else {
 		steps.push_back(std::unique_ptr<Step>(new MoveToWallShootingPosition(10, 0.3)));
 	}

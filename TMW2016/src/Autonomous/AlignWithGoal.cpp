@@ -19,7 +19,7 @@ bool SearchForGoal::operator()(World *world) {
 	const int targetGoal = world->GetTargetGoal();
 
 	float minTimes[5][3] = {
-			{2,3,5},
+			{0,3,5},
 			{2,2,5},
 			{2,0,2},
 			{2,0,2},
@@ -42,8 +42,13 @@ bool SearchForGoal::operator()(World *world) {
 	// Calculate movement
 	const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
 	cout << "SearchForGoal: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
-	const float x = speed * sin(driveAngleRadians);
-	const float y = speed * cos(driveAngleRadians);
+	float x = speed * sin(driveAngleRadians);
+	float y = speed * cos(driveAngleRadians);
+
+	int dir = (x >= 0) ? 1 : -1;
+	x = max(x, dir * 0.10f);
+	dir = (y >= 0) ? 1 : -1;
+	y = max(y, dir * 0.10f);
 
 	float yawSetpoint;
 	switch (targetGoal) {
@@ -66,16 +71,80 @@ bool SearchForGoal::operator()(World *world) {
 
 //--------------------------------------------------------------------------//
 
+//
+//bool AlignWithGoal::operator()(World *world) {
+//	cout << "AlignWithGoal()\n";
+//	const float currentTime = world->GetClock();
+//	const VisionData vd = world->GetVisionData();
+//	const bool detectedGoal = vd.HasData();
+//	const int targetGoal = world->GetTargetGoal();
+//
+//	GoalInfo goal = vd.GetGoal(targetGoal);
+//
+//	cout << "Current Time: " << currentTime << '\n';
+//	cout << "Start Time  : " << startTime << '\n';
+//	cout << "Target Goal : " << targetGoal << '\n';
+//	cout << "goal X      : " << goal.xposition << '\n';
+//	cout << "Fine Tune   : " << fineTuneCounter << '\n';
+//
+//	// Startup & Timeout Checks
+//	if (startTime < 0) {
+//		startTime = currentTime;
+//	} else if ((currentTime - startTime) > timeout) {
+//		std::cerr << "AlignWithGoal: timed out, halting\n";
+//		crab->lock = true;
+//		return false;
+//	}
+//
+//	// Verify goal is visible
+//	if (!detectedGoal) {
+//		cout << "AlignWithGoal: No goal visible, stopping...\n";
+//		crab->lock = true;
+//		return false;
+//	}
+//
+//	// We've detected goal
+//	float P = 1.0;
+//	const float currentX = goal.xposition;
+//	if (fabs(currentX) < xthreshold) {
+//		P = 0.5;
+//		if (fabs(currentX) < 5) {
+//			std::cout << "AlignWithGoal: Goal aligned!\n";
+//			crab->Stop();
+//			if (++fineTuneCounter >= 5) {
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		} else {
+//			// keep moving slowly toward target
+//		}
+//	} else {
+//		fineTuneCounter = 0;
+//	}
+//
+//	// Calculate movement
+//	const int startingPosition = world->GetStartingPosition();
+//	const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
+//	cout << "SearchForGoal: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
+//	float magnitude = P * speed;
+//	const float x = magnitude * sin(driveAngleRadians);
+//	const float y = magnitude * cos(driveAngleRadians);
+//	cout << "Align X: " << currentX << " magnitude: " << magnitude << '\n';
+//	crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);
+//
+//	return false;
+//}
 
-AlignWithGoal::AlignWithGoal(float timeout_, float speed_) :timeout(timeout_), speed(speed_)
-{
-}
+//--------------------------------------------------------------------------//
 
-bool AlignWithGoal::operator()(World *world) {
-	cout << "AlignWithGoal()\n";
+
+bool AlignWithGoalAndShoot::operator()(World *world) {
+	cout << "AlignWithGoalAndShoot()\n";
 	const float currentTime = world->GetClock();
 	const VisionData vd = world->GetVisionData();
 	const bool detectedGoal = vd.HasData();
+	const int startPosition = world->GetStartingPosition();
 	const int targetGoal = world->GetTargetGoal();
 
 	GoalInfo goal = vd.GetGoal(targetGoal);
@@ -85,6 +154,7 @@ bool AlignWithGoal::operator()(World *world) {
 	cout << "Target Goal : " << targetGoal << '\n';
 	cout << "goal X      : " << goal.xposition << '\n';
 	cout << "Fine Tune   : " << fineTuneCounter << '\n';
+	cout << "Fired       : " << fired << '\n';
 
 	// Startup & Timeout Checks
 	if (startTime < 0) {
@@ -102,40 +172,56 @@ bool AlignWithGoal::operator()(World *world) {
 		return false;
 	}
 
+
+	const float currentX = goal.xposition;
+	const int OFFSET = 5;
+	const int SLOW_THRESHOLD = 20;
+	const int FIRE_THRESHOLD = 10;
+
+	const int MIN_SLOW = OFFSET - SLOW_THRESHOLD;
+	const int MAX_SLOW = OFFSET + SLOW_THRESHOLD;
+	const int MIN_FIRE = OFFSET - FIRE_THRESHOLD;
+	const int MAX_FIRE = OFFSET + FIRE_THRESHOLD;
+
+
 	// We've detected goal
 	float P = 1.0;
-	const float currentX = goal.xposition;
-	if (fabs(currentX) < xthreshold) {
-		P = 0.5;
-		if (fabs(currentX) < 5) {
+
+	if (currentX > MIN_SLOW && currentX < MAX_SLOW) {
+		P = 0.35;
+		if (currentX > MIN_FIRE && currentX < MAX_FIRE) {
 			std::cout << "AlignWithGoal: Goal aligned!\n";
-			crab->Stop();
-			if (++fineTuneCounter >= 5) {
-				return true;
-			} else {
-				return false;
+			if (!fired) {
+				cout << "***********************-=====> FIRING\n";
+				Robot::arm->Fire();
+				fired = true;
 			}
+			return false;
 		} else {
 			// keep moving slowly toward target
 		}
-	} else {
-		fineTuneCounter = 0;
 	}
 
-	// Calculate movement
-	const int startingPosition = world->GetStartingPosition();
-	const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
-	cout << "SearchForGoal: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
-	float magnitude = P * speed;
-	const float x = magnitude * sin(driveAngleRadians);
-	const float y = magnitude * cos(driveAngleRadians);
-	cout << "Align X: " << currentX << " magnitude: " << magnitude << '\n';
-	crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);
-
+	if (fired) {
+		if (fineTuneCounter++ > 5) {
+			return true;
+		}
+		// coast
+	} else {
+		// Calculate movement
+		const int startingPosition = world->GetStartingPosition();
+		const float driveAngleRadians = CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
+		cout << "SearchForGoal: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
+		float magnitude = P * speed;
+		const float x = magnitude * sin(driveAngleRadians);
+		const float y = magnitude * cos(driveAngleRadians);
+		cout << "Align X: " << currentX << " magnitude: " << magnitude << '\n';
+		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);
+	}
+	cout << '\n';
 	return false;
 }
 
-//--------------------------------------------------------------------------//
 
 //
 //AlignWithGoalPID::AlignWithGoalPID(float timeout_, float speed_) :timeout(timeout_), speed(speed_), pidXAdapter(new VisionPIDAdapter())
