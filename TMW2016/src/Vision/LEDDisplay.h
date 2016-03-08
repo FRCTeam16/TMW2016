@@ -33,6 +33,8 @@ private:
 	const long MAX_X = 160;
 	const long MIN_OUT = 0;
 	const long MAX_OUT = 5;
+
+	float MapWidth(const int width) const;
 };
 
 #endif /* SRC_VISION_LEDDISPLAY_H_ */

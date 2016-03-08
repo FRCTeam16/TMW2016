@@ -55,11 +55,28 @@ void LEDDisplay::Update(const VisionData &vd) {
 }
 
 void LEDDisplay::Update(float xposition, float width) {
-	float widthVoltage = map(width, -1.0, 1.0, MIN_OUT, MAX_OUT);
 	float translationVoltage = map(xposition, -1.0, 1.0, MIN_OUT, MAX_OUT);
+	float widthVoltage = MapWidth(width);
 //			std::cout << "LEDDisplay W: " << width << " -> " << widthVoltage << "\t"
 //					  << " X: " << xposition << " -> " << translationVoltage << "\n";
 	widthOutput->SetVoltage(widthVoltage);
 	translationOutput->SetVoltage(translationVoltage);
+}
+
+float LEDDisplay::MapWidth(const int width) const {
+	if (width >= 70) {
+		// too close
+		return 0.0;
+	} else if (width <= 40) {
+		// too far
+		return 0.0;
+	} else if (width <= 50) {
+		return map(width, 40, 55, 5/0.3, 5.0);
+	} else if (width >= 60 ){
+		return map(width, 55, 70, 5.0, 5/0.3);
+	} else {
+		// on target
+		return 5.0;
+	}
 }
 
