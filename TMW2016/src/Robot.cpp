@@ -84,6 +84,18 @@ void Robot::DisabledPeriodic() {
 	driveBase->SMDB();
 	arm->SMDB();
 	visionServer->SMDB();
+
+	const int startingDefenseIdx = (int) automan->defense->GetSelected();
+	const int startingPosition 	 = (int) automan->position->GetSelected();
+	const int targetGoal		 = (int) automan->target->GetSelected();
+
+	cout << "Starting Defense Idx: " << startingDefenseIdx << '\n';
+	cout << "Starting Position   : " << startingPosition << '\n';
+	cout << "Starting Target     : " << targetGoal << '\n';
+	SmartDashboard::PutNumber("Selected Position", startingPosition);
+	SmartDashboard::PutNumber("Selected Defense", startingDefenseIdx);
+	SmartDashboard::PutNumber("Selected Target", targetGoal);
+
 }
 
 void Robot::AutonomousInit() {

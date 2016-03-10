@@ -448,7 +448,12 @@ bool SnugToWall::operator ()(World* world) {
 
 	bool timeDone;
 	if (moveTowardsWall) {
-		timeDone = (currentTime - startTime) > driveWallTime;
+		if (currentIteration >= iterations) {
+			// last iteration go further another 0.25
+			timeDone = (currentTime - 0.5 - startTime) > driveWallTime;
+		} else {
+			timeDone = (currentTime - startTime) > driveWallTime;
+		}
 	} else {
 		timeDone = (currentTime - startTime) > driveTime;
 	}
@@ -469,7 +474,7 @@ bool SnugToWall::operator ()(World* world) {
 
 	if (moveTowardsWall) {
 		if (timeDone) {
-			cout << "\t*** collision\n";
+			cout << "\t*** moved toward wall\n";
 			doingPulse = true;
 			moveTowardsWall = false;
 			currentIteration++;
