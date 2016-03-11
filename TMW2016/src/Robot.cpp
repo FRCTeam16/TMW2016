@@ -84,6 +84,7 @@ void Robot::DisabledPeriodic() {
 	driveBase->SMDB();
 	arm->SMDB();
 	visionServer->SMDB();
+	UpdateLED();
 
 	const int startingDefenseIdx = (int) automan->defense->GetSelected();
 	const int startingPosition 	 = (int) automan->position->GetSelected();
@@ -134,7 +135,7 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 	Scheduler::GetInstance()->Run();
-
+//	TestCollision();
 	driveBase->SMDB();
 	arm->SMDB();
 
@@ -264,6 +265,24 @@ void Robot::UpdateLED() {
 //	ledDisplay->Update(
 //				oi->getDriverLeft()->GetRawAxis(2),
 //				oi->getDriverRight()->GetRawAxis(3));
+}
+
+void Robot::TestCollision() {
+	double current_accel_x = Robot::driveBase->imu->GetWorldLinearAccelX();
+	double current_jerk_x = current_accel_x - last_accel_x;
+	last_accel_x = current_accel_x;
+
+	double current_accel_y = Robot::driveBase->imu->GetWorldLinearAccelY();
+	double current_jerk_y = current_accel_y - last_accel_y;
+	last_accel_y = current_accel_y;
+
+	std::cout << "Last X: " << last_accel_x << '\n'
+			  << "Cur  X: " << current_accel_x << "\n"
+			  << "Last Y: " << last_accel_y << '\n'
+			  << "Cur  Y: " << current_accel_y << '\n';
+
+
+	std::cout << "jerk: x->" << current_jerk_x << " y-> " << current_jerk_y << "\n";
 }
 
 START_ROBOT_CLASS(Robot);

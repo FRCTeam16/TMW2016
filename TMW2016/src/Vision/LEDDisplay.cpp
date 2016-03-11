@@ -30,28 +30,10 @@ void LEDDisplay::Update(const VisionData &vd) {
 //				  << " X: " << goal.xposition << " -> " << translationVoltage << "\n";
 		widthOutput->SetVoltage(widthVoltage);
 		translationOutput->SetVoltage(translationVoltage);
-
-		//
-		// Alliance Output
-		//
-//		unsigned int alliance_out_value = 0;
-//		switch(DriverStation::GetInstance().GetAlliance()) {
-//		case DriverStation::kBlue:
-//			alliance_out_value = 1;
-//			break;
-//		case DriverStation::kRed:
-//			alliance_out_value = 2;
-//			break;
-//		case DriverStation::kInvalid:
-//		default:
-//			break;
-//		}
-//		allianceOutput->Set(alliance_out_value);
-
-		//
-		// Shooter Wheel Status
-		//
-//		feederStatus->Set(Robot::arm->IsFeederRunning() ? 1 : 0);
+	} else {
+		// No data
+		widthOutput->SetVoltage(0);
+		translationOutput->SetVoltage(0);
 	}
 }
 

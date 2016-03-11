@@ -132,7 +132,7 @@ private:
 //--------------------------------------------------------------------------//
 class SnugToWall : public Step {
 public:
-	SnugToWall(float speed_, float driveTime_=0.25, float driveWallTime_=1.0, int iterations_=3) :
+	SnugToWall(float speed_, float driveTime_=0.25, float driveWallTime_=1.0, int iterations_=1) :
 		speed(speed_), driveTime(driveTime_), driveWallTime(driveWallTime_), iterations(iterations_) {}
 	bool operator()(World *world) override;
 private:

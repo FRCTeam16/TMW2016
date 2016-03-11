@@ -34,6 +34,7 @@ void ShootingStrategy::Init(World* world) {
 	} else {
 		locationSteps[1].push_back(new MoveToWallShootingPosition(10, 0.3));
 		locationSteps[1].push_back(new SnugToWall(0.3, 0.25));
+		locationSteps[1].push_back(new ShootBall(false));
 	}
 
 	//----------------------------------------------------------------------//
@@ -48,6 +49,7 @@ void ShootingStrategy::Init(World* world) {
 	} else {
 		locationSteps[2].push_back(new MoveToWallShootingPosition(10, 0.3));
 		locationSteps[2].push_back(new SnugToWall(0.3, 0.25));
+		locationSteps[2].push_back(new ShootBall(false));
 	}
 
 	//----------------------------------------------------------------------//
@@ -62,6 +64,7 @@ void ShootingStrategy::Init(World* world) {
 	} else {
 		locationSteps[3].push_back(new MoveToWallShootingPosition(10, 0.3));
 		locationSteps[3].push_back(new SnugToWall(0.3, 0.25));
+		locationSteps[3].push_back(new ShootBall(false));
 	}
 
 	//----------------------------------------------------------------------//
@@ -76,6 +79,7 @@ void ShootingStrategy::Init(World* world) {
 	} else {
 		locationSteps[4].push_back(new MoveToWallShootingPosition(10, 0.3));
 		locationSteps[4].push_back(new SnugToWall(0.3, 0.25));
+		locationSteps[4].push_back(new ShootBall(false));
 	}
 
 	//----------------------------------------------------------------------//
@@ -90,6 +94,7 @@ void ShootingStrategy::Init(World* world) {
 	} else {
 		locationSteps[5].push_back(new MoveToWallShootingPosition(10, 0.3));
 		locationSteps[5].push_back(new SnugToWall(0.3, 0.25));
+		locationSteps[5].push_back(new ShootBall(false));
 	}
 }
 

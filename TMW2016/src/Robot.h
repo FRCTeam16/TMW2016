@@ -82,5 +82,10 @@ private:
 	int logCounter = 0;			// simple counting to control log frequency
 	const int LOG_FREQ = 12;
 
+	// testing
+	void TestCollision();
+	float last_accel_x = 0;
+	float last_accel_y = 0;
+
 };
 #endif
