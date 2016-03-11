@@ -18,7 +18,7 @@
 
 static const std::string AUTO_POSITION = "Auto Position";
 static const std::string AUTO_DEFENSE = "Auto Defense";
-static const std::string AUTO_TARGET = "Auto Goal=";
+static const std::string AUTO_TARGET = "Auto Goal-";
 
 static const std::string AUTO_INIT_CONFIG_ERROR = "Auto Config Error";
 
@@ -78,11 +78,12 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	position->AddObject("4",  (void*) 4);
 	position->AddObject("5",  (void*) 5);
 
-	target->AddDefault("4 - Left Blind",  (void*) 4);
-	target->AddObject("1 - Left", (void*) 1);
+
+	target->AddDefault("1 - Left", (void*) 1);
 	target->AddObject("2 - Center",  (void*) 2);
 	target->AddObject("3 - Right",  (void*) 3);
-	target->AddObject("5 - Right Blind",  (void*) 5);
+//	target->AddObject("4 - Left Blind",  (void*) 4);
+//	target->AddObject("5 - Right Blind",  (void*) 5);
 	target->AddObject("9 - Stop After Outerworks", (void*) 0);
 
 	SmartDashboard::PutData(AUTO_POSITION, position.get());

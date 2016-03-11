@@ -29,7 +29,7 @@ void ShootingStrategy::Init(World* world) {
 			new ControlShooterMotors(true)
 	};
 	if (useVision) {
-		locationSteps[1].push_back(new SearchForGoal(3, 0.3));
+		locationSteps[1].push_back(new SearchForGoal(3.5, 0.3));
 		locationSteps[1].push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
 		locationSteps[1].push_back(new MoveToWallShootingPosition(10, 0.3));
@@ -44,7 +44,7 @@ void ShootingStrategy::Init(World* world) {
 			new ControlShooterMotors(true)
 	};
 	if (useVision) {
-		locationSteps[2].push_back(new SearchForGoal(2, 0.3));
+		locationSteps[2].push_back(new SearchForGoal(3.5, 0.3));
 		locationSteps[2].push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
 		locationSteps[2].push_back(new MoveToWallShootingPosition(10, 0.3));
@@ -59,7 +59,7 @@ void ShootingStrategy::Init(World* world) {
 			new ControlShooterMotors(true)
 	};
 	if (useVision) {
-		locationSteps[3].push_back(new SearchForGoal(2, 0.3));
+		locationSteps[3].push_back(new SearchForGoal(3.5, 0.3));
 		locationSteps[3].push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
 		locationSteps[3].push_back(new MoveToWallShootingPosition(10, 0.3));
@@ -74,7 +74,7 @@ void ShootingStrategy::Init(World* world) {
 			new ControlShooterMotors(true)
 	};
 	if (useVision) {
-		locationSteps[4].push_back(new SearchForGoal(2, 0.3));
+		locationSteps[4].push_back(new SearchForGoal(3.5, 0.3));
 		locationSteps[4].push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
 		locationSteps[4].push_back(new MoveToWallShootingPosition(10, 0.3));
@@ -89,7 +89,7 @@ void ShootingStrategy::Init(World* world) {
 			new ControlShooterMotors(true)
 	};
 	if (useVision) {
-		locationSteps[5].push_back(new SearchForGoal(2, 0.3));
+		locationSteps[5].push_back(new SearchForGoal(3.5, 0.3));
 		locationSteps[5].push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
 		locationSteps[5].push_back(new MoveToWallShootingPosition(10, 0.3));
