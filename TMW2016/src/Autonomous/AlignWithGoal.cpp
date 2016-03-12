@@ -59,7 +59,7 @@ bool SearchForGoal::operator()(World *world) {
 		yawSetpoint = 0.0;
 		break;
 	case 3:
-		yawSetpoint = 0.0;
+		yawSetpoint = -60.0;
 		break;
 	}
 	Robot::driveBase->DriveControlTwist->SetSetpoint(yawSetpoint);
@@ -193,7 +193,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	float P = 1.0;
 
 	if (currentX > MIN_SLOW && currentX < MAX_SLOW) {
-		P = 0.35;
+		P = 0.28;
 		if (currentX > MIN_FIRE && currentX < MAX_FIRE) {
 			std::cout << "AlignWithGoal: Goal aligned!\n";
 			if (!fired) {
