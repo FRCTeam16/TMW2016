@@ -19,8 +19,8 @@ bool SearchForGoal::operator()(World *world) {
 	const int targetGoal = world->GetTargetGoal();
 
 	float minTimes[5][3] = {
-			{0,3,5},
-			{2,2,5},
+			{0,1.5,5},
+			{1.5,0.5,5},
 			{2,0,2},
 			{2,0,2},
 			{5,3,2}
@@ -147,7 +147,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	const int startPosition = world->GetStartingPosition();
 	const int targetGoal = world->GetTargetGoal();
 
-	GoalInfo goal = vd.GetGoal(targetGoal);
+	goal = detectedGoal ? vd.GetGoal(targetGoal) : goal;
 
 	cout << "Current Time: " << currentTime << '\n';
 	cout << "Start Time  : " << startTime << '\n';
@@ -167,14 +167,19 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 
 	// Verify goal is visible
 	if (!detectedGoal) {
-		cout << "AlignWithGoal: No goal visible, stopping...\n";
-		crab->lock = true;
-		return false;
+		if (missingGoalCounter++ > 10) {
+			cout << "AlignWithGoal: No goal visible, stopping...\n";
+			crab->lock = true;
+			return false;
+		} else {
+			// waiting for missing goal counter
+		}
+	} else {
+		missingGoalCounter = 0;
 	}
 
-
 	const float currentX = goal.xposition;
-	const int OFFSET = 5;
+	const int OFFSET = 0;
 	const int SLOW_THRESHOLD = 20;
 	const int FIRE_THRESHOLD = 10;
 
@@ -188,7 +193,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	float P = 1.0;
 
 	if (currentX > MIN_SLOW && currentX < MAX_SLOW) {
-		P = 0.35;
+		P = 0.4;
 		if (currentX > MIN_FIRE && currentX < MAX_FIRE) {
 			std::cout << "AlignWithGoal: Goal aligned!\n";
 			if (!fired) {

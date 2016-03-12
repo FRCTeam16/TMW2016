@@ -15,8 +15,8 @@ DebugVisionStrategy::~DebugVisionStrategy() {
 
 void DebugVisionStrategy::Init(World* world) {
 
-	if (false) {
-		const bool doShoot = false;
+	if (true) {
+		const bool doShoot = true;
 		const bool useVision = world->GetTargetGoal() < 4;
 
 		if (doShoot) {

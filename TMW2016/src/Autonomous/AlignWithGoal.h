@@ -68,6 +68,8 @@ private:
 	float startTime = -1;
 	bool fired = false;
 	int fineTuneCounter = 0;
+	int missingGoalCounter = 0;
+	GoalInfo goal;
 };
 
 //--------------------------------------------------------------------------//
