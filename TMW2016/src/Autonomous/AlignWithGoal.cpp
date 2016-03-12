@@ -193,7 +193,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	float P = 1.0;
 
 	if (currentX > MIN_SLOW && currentX < MAX_SLOW) {
-		P = 0.4;
+		P = 0.35;
 		if (currentX > MIN_FIRE && currentX < MAX_FIRE) {
 			std::cout << "AlignWithGoal: Goal aligned!\n";
 			if (!fired) {
