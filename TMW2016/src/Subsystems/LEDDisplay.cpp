@@ -2,7 +2,7 @@
  * LEDDisplay.cpp
  */
 
-#include "LEDDisplay.h"
+#include "../Subsystems/LEDDisplay.h"
 
 static float map(float x, float in_min, float in_max, float out_min, float out_max) {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -38,7 +38,7 @@ void LEDDisplay::Update(const VisionData &vd) {
 }
 
 float LEDDisplay::MapX(const int xposition) const {
-	//  <--75 |  |-50-50   |  | 75->
+	//  <--/ -50 - 50 \-->
 
 	if (xposition < -50) {
 		return 0.0;
@@ -50,10 +50,6 @@ float LEDDisplay::MapX(const int xposition) const {
 }
 
 float LEDDisplay::MapWidth(const int width, const int x) const {
-
-	float scale = (100 - abs(x)) / 10.0;
-	float maxMapped = scale;
-
 	if (x > -50 && x < 50) {
 		// on target
 		if (width > 50 && width < 60) {

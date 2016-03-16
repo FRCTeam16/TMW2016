@@ -4,6 +4,7 @@
 
 #include "ShootingStrategy.h"
 #include "AlignWithGoal.h"
+#include "SearchForGoal.h"
 
 /**
  * Use world start and target position to calculate angle to move to search for goal

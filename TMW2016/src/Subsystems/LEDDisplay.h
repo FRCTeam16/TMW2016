@@ -2,11 +2,11 @@
  * LEDDisplay.h
  */
 
-#ifndef SRC_VISION_LEDDISPLAY_H_
-#define SRC_VISION_LEDDISPLAY_H_
+#ifndef SRC_SUBSYSTEMS_LEDDISPLAY_H_
+#define SRC_SUBSYSTEMS_LEDDISPLAY_H_
 
 #include "WPILib.h"
-#include "VisionData.h"
+#include "../Vision/VisionData.h"
 
 
 /**
@@ -38,4 +38,4 @@ private:
 	float MapX(const int xposition) const;
 };
 
-#endif /* SRC_VISION_LEDDISPLAY_H_ */
+#endif /* SRC_SUBSYSTEMS_LEDDISPLAY_H_ */

@@ -4,7 +4,8 @@
 
 #include "DebugVisionStrategy.h"
 #include "AlignWithGoal.h"
-#include "CollisionTestStep.h"
+#include "AlignGoalUsingPID.h"
+#include "SearchForGoal.h"
 
 DebugVisionStrategy::DebugVisionStrategy() {
 
@@ -15,7 +16,7 @@ DebugVisionStrategy::~DebugVisionStrategy() {
 
 void DebugVisionStrategy::Init(World* world) {
 
-	if (true) {
+	if (false) {
 		const bool doShoot = true;
 		const bool useVision = world->GetTargetGoal() < 4;
 
@@ -34,10 +35,9 @@ void DebugVisionStrategy::Init(World* world) {
 		if (doShoot) {
 			steps.push_back(std::unique_ptr<Step>(new ShootBall()));
 		}
+	} else {
+		steps.push_back(std::unique_ptr<Step>(new AlignGoalUsingPID(0.3)));
 	}
-
-//	steps.push_back(std::unique_ptr<Step>(new CollisionTestStep()));
-
 
 //	steps.push_back(std::unique_ptr<Step>(new AlignWithGoal(7, 0.15)));
 }
