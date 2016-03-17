@@ -142,11 +142,11 @@ void Robot::TeleopPeriodic() {
 	if(oi->DL1->Pressed())
 		driveBase->Lock();
 	else if(oi->DL4->Pressed()) {
-		driveBase->DriveControlTwist->SetSetpoint(90);
+		driveBase->DriveControlTwist->SetSetpoint(-120.0);
 		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
 	else if(oi->DL5->Pressed()) {
-		driveBase->DriveControlTwist->SetSetpoint(-90);
+		driveBase->DriveControlTwist->SetSetpoint(120.0);
 		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
 	else if(oi->DL3->Pressed()) {

@@ -63,9 +63,9 @@ private:
 
 	bool dartOutputUnlimited;
 
-	const int highShooter = 552;
+	const int highShooter = 545;
 	const int lowShooter = 720;
-	const int pickup = 940;
+	const int pickup = 912;
 	const int travel = 838;
 	const int extendPosition = 300;
 	const int extendLimit = 550;
