@@ -101,9 +101,9 @@ void AutoManager::Init() {
 	const int startingPosition 	 = (int) position->GetSelected();
 	const int targetGoal		 = (int) target->GetSelected();
 
-	cout << "Starting Defense Idx: " << startingDefenseIdx << '\n';
-	cout << "Starting Position   : " << startingPosition << '\n';
-	cout << "Starting Target     : " << targetGoal << '\n';
+//	cout << "Starting Defense Idx: " << startingDefenseIdx << '\n';
+//	cout << "Starting Position   : " << startingPosition << '\n';
+//	cout << "Starting Target     : " << targetGoal << '\n';
 	SmartDashboard::PutNumber("Selected Position", startingPosition);
 	SmartDashboard::PutNumber("Selected Defense", startingDefenseIdx);
 	SmartDashboard::PutNumber("Selected Target", targetGoal);

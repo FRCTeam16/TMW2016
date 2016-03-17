@@ -16,14 +16,11 @@ bool StepStrategy::Run(World *world) {
 		RunPeriodicManagers(STOP.get());
 		return true;
 	}
-
 	Step* step = steps[currentStep].get();
 	bool stepComplete = step->operator ()(world);
 	RunPeriodicManagers(step->GetCrabInfo());
-
 	if (stepComplete) {
 		currentStep++;
-		cout << "Advancing to Step: " << currentStep << '\n';
 	}
 	return false;
 }
@@ -31,7 +28,7 @@ bool StepStrategy::Run(World *world) {
 
 void StepStrategy::RunPeriodicManagers(const CrabInfo *crab) {
 	// Must fire every invocation
-	cout << "RunPeriodicManager\n";
+	cout << "RunPeriodicManager -> ";
 	cout 	<< "\ttwist: " << setw(5) << crab->twist
 			<< "  yspeed: " << setw(5) << crab->yspeed
 			<< "  xspeed: " << setw(5) << crab->xspeed

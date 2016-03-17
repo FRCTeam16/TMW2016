@@ -7,7 +7,7 @@
 #include <iostream>
 
 AlignGoalUsingPID::AlignGoalUsingPID(const float speed_) :
-	speed(speed_)
+	speed(speed_), xAdapter(new VisionPIDAdapter()), yAdapter(new VisionPIDAdapter())
 {
 	pidX.reset(new PIDController(0.05, 0, 0, xAdapter.get(), xAdapter.get(), 0.2));
 	pidX->SetSetpoint(0.0);
@@ -22,6 +22,7 @@ AlignGoalUsingPID::~AlignGoalUsingPID() {
 }
 
 bool AlignGoalUsingPID::operator ()(World* world) {
+	cout << "AlignGoalUsingPID()\n";
 	const float currentTime = world->GetClock();
 	if (startTime < 0) {
 		startTime = currentTime;
@@ -32,7 +33,6 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 		crab->lock = true;
 		return false;
 	}
-
 
 	const VisionData vd = world->GetVisionData();
 	goal = vd.GetGoal(world->GetTargetGoal());
@@ -54,14 +54,13 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 		const float targetAngle = Robot::driveBase->imu->GetYaw();	// todo: calculate?
 		const float radians = targetAngle * M_PI / 180.0;
 		const float magnitude = xAdapter->GetOutputValue();
-		const float x = magnitude * sin(radians) * speed;
-		const float y = magnitude * cos(radians) * speed;
-		std::cout << "Target Angle: " << targetAngle << '\n'
-				<< "Magnitude: " << magnitude << '\n'
-				<< "X: " << x << '\n'
-				<< "Y: " << y << '\n';
+		const float x = magnitude * sin(radians);
+		const float y = magnitude * cos(radians);
+		std::cout << "Target Angle: " << targetAngle
+				<< "  Magnitude: " << magnitude
+				<< "  X: " << x
+				<< "  Y: " << y << '\n';
 		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);
 	}
-
 	return false;
 }
