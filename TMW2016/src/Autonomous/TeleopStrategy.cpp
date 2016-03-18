@@ -25,8 +25,9 @@ void TeleopStrategy::Reset() {
 	}
 };
 
-bool TeleopStrategy::RunPeriodic() {
+bool TeleopStrategy::RunPeriodic(VisionData visionData) {
 	cout << "TeleopStrategy::RunPeriodic\n";
+	world->Update(visionData);
 	if (!started) { started = true; }
 	return StepStrategy::Run(world.get());
 	return false;

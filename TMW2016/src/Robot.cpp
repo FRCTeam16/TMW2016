@@ -154,7 +154,7 @@ void Robot::TeleopPeriodic() {
 	}
 	else if(oi->DL2->Pressed()) {
 		runningStrategy = true;
-		teleopStrategy->RunPeriodic();
+		teleopStrategy->RunPeriodic(visionServer->GetVisionData());
 	}
 	else
 	{

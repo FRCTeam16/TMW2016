@@ -9,7 +9,7 @@
 AlignGoalUsingPID::AlignGoalUsingPID(const float speed_) :
 	speed(speed_), xAdapter(new VisionPIDAdapter()), yAdapter(new VisionPIDAdapter())
 {
-	pidX.reset(new PIDController(0.05, 0, 0, xAdapter.get(), xAdapter.get(), 0.2));
+	pidX.reset(new PIDController(0.005, 0, 0.005, xAdapter.get(), xAdapter.get(), 0.2));
 	pidX->SetSetpoint(0.0);
 	pidX->SetContinuous(false);
 	pidX->SetOutputRange(-speed, speed);	// output motor speeds
@@ -47,11 +47,19 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 		}
 	}
 
+	// TODO:
+	// need to use drive angle, e.g. if we are pointed at 0 then we want -90 90
+	// if we are at angle, +/= 60
+
 	if (fabs(goal.xposition) < X_THRESHOLD) {
-		std::cout << "!!! Goal Aligned !!!\n";
-		return true;
+		std::cout << "!!! ====================== Goal Aligned  ====================== !!!\n";
+		return false;
 	} else {
-		const float targetAngle = Robot::driveBase->imu->GetYaw();	// todo: calculate?
+		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
+		float targetAngle = -90.0;
+//		if (goal.xposition < 0 ) {
+//			targetAngle = 90.0;
+//		}
 		const float radians = targetAngle * M_PI / 180.0;
 		const float magnitude = xAdapter->GetOutputValue();
 		const float x = magnitude * sin(radians);
@@ -60,7 +68,7 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 				<< "  Magnitude: " << magnitude
 				<< "  X: " << x
 				<< "  Y: " << y << '\n';
-		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);
+		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);		// no twist, don't use Robot::driveBase->CrabSpeedTwist->Get()
 	}
 	return false;
 }

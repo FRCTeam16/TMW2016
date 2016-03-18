@@ -13,7 +13,7 @@ class TeleopStrategy : public StepStrategy {
 public:
 	TeleopStrategy();
 	virtual ~TeleopStrategy();
-	bool RunPeriodic();
+	bool RunPeriodic(VisionData visionData);
 	void Reset();
 private:
 	std::unique_ptr<World> world;			// faux world state
