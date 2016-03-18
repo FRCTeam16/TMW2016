@@ -215,7 +215,7 @@ void Robot::TeleopPeriodic() {
 
 
 /*********Shooter/Arm*********/
-	if(oi->GPA->RisingEdge() || oi->DR3->RisingEdge()) {
+	if(oi->GPA->RisingEdge() /*|| oi->DR3->RisingEdge()*/) {
 		arm->PickupPosition();
 		tankRun = false;
 	}

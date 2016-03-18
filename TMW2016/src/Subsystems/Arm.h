@@ -91,7 +91,7 @@ public:
 	void ClimbRetract();
 	void RunShooter(bool run);
 	void ToggleShooterRun();
-	void Fire();
+	bool Fire();
 	void LowFire();
 	void BeaterBar(float speed);
 	void ShooterHigh();

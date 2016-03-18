@@ -9,8 +9,8 @@
 AlignGoalUsingPID::AlignGoalUsingPID(const float speed_) :
 	speed(speed_), xAdapter(new VisionPIDAdapter()), yAdapter(new VisionPIDAdapter())
 {
-	pidX.reset(new PIDController(0.005, 0, 0.005, xAdapter.get(), xAdapter.get(), 0.2));
-	pidX->SetSetpoint(0.0);
+	pidX.reset(new PIDController(0.006, 0, 0.005, xAdapter.get(), xAdapter.get(), 0.2));
+	pidX->SetSetpoint(GOAL_CENTER_OFFSET);
 	pidX->SetContinuous(false);
 	pidX->SetOutputRange(-speed, speed);	// output motor speeds
 	pidX->SetInputRange(-160, 160);			// size of input image
@@ -23,6 +23,7 @@ AlignGoalUsingPID::~AlignGoalUsingPID() {
 
 bool AlignGoalUsingPID::operator ()(World* world) {
 	cout << "AlignGoalUsingPID()\n";
+	crab->lock = false;
 	const float currentTime = world->GetClock();
 	if (startTime < 0) {
 		startTime = currentTime;
@@ -47,20 +48,25 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 		}
 	}
 
-
-	if (fabs(goal.xposition) < X_THRESHOLD) {
-		std::cout << "!!! ====================== Goal Aligned  ====================== !!!\n";
+	const int maxX = goal.xposition + X_THRESHOLD;
+	const int minX = goal.xposition - X_THRESHOLD;
+	if (GOAL_CENTER_OFFSET > minX && GOAL_CENTER_OFFSET < maxX) {
+		std::cout << "!!! ====================== Goal Aligned  ====================== !!! " << fired << "\n";
+		if (!fired) {
+			cout << "***********************-=====> FIRING\n";
+			fired = Robot::arm->Fire();
+		}
 		return false;
 	} else {
 		const int targetGoal = world->GetTargetGoal();
 		float targetAngle = 0.0;
 		float setpointAngle = 0.0;
 		if (targetGoal == 1) {
-			setpointAngle = 60.0;
+			setpointAngle = -60.0;
 		} else if (targetGoal == 2) {
 			setpointAngle = 0.0;
 		} else if (targetGoal == 3) {
-			setpointAngle = -60.0;
+			setpointAngle = 60.0;
 		}
 		targetAngle = setpointAngle - 90;
 		Robot::driveBase->DriveControlTwist->SetSetpoint(setpointAngle);
@@ -68,7 +74,8 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 		const float magnitude = xAdapter->GetOutputValue();
 		const float x = magnitude * sin(radians);
 		const float y = magnitude * cos(radians);
-		std::cout << "Target Angle: " << targetAngle
+		std::cout << "\tGoal X: " << goal.xposition
+		 	 	<< "  Target Angle: " << targetAngle
 				<< "  Setpoint Angle: " << setpointAngle
 				<< "  Magnitude: " << magnitude
 				<< "  X: " << x

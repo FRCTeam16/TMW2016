@@ -197,14 +197,16 @@ void Arm::ToggleShooterRun() {
 	shooterRun = !shooterRun;
 }
 
-void Arm::Fire() {
+bool Arm::Fire() {
 	if(shooterRun) {
 	firing = true;
 	fireTime = GetClock();
 	fire->Set(true);
+	return true;
 	} else {
 		cout << "*** Fire requested but shooter was not running ***\n";
 	}
+	return false;
 }
 
 void Arm::LowFire() {

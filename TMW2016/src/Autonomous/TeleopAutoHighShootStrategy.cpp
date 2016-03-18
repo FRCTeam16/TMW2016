@@ -27,7 +27,7 @@ void TeleopAutoHighShootStrategy::Reset() {
 };
 
 bool TeleopAutoHighShootStrategy::RunPeriodic(World *world) {
-	cout << "TeleopStrategy::RunPeriodic\n";
+//	cout << "TeleopStrategy::RunPeriodic\n";
 	if (!started) { started = true; }
 	return StepStrategy::Run(world);
 	return false;
