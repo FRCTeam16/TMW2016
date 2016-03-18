@@ -65,11 +65,12 @@ void Robot::RobotInit() {
 	feederSpeed = 0;
 	beaterBarSpeed = 0;
 
+	world.reset(new World());
 	visionServer.reset(new VisionServer(5800));
 	ledDisplay.reset(new LEDDisplay());
 	automan.reset(new AutoManager(visionServer.get()));
 	safetyChecker.reset(new SafetyChecker());
-	teleopStrategy.reset(new TeleopStrategy());
+	teleopAutoHighShootStrategy.reset(new TeleopAutoHighShootStrategy());
   }
 
 /**
@@ -101,7 +102,7 @@ void Robot::AutonomousInit() {
 	automan.reset(new AutoManager(visionServer.get()));
 	dataLogger.reset(new DataLogger(kAutonomous, driveBase, arm, oi.get(), visionServer.get()));
 	Robot::driveBase->DriveControlTwist->SetOutputRange(-0.25, 0.25);
-	automan->Init();
+	automan->Init(world.get());
 	cout << "Robot::AutonomousInit COMPLETE\n";
 }
 
@@ -109,7 +110,7 @@ void Robot::AutonomousPeriodic() {
 	if (safetyChecker->IsFailed() || !safetyChecker->CheckLimits()) {
 		safetyChecker->HaltPeriodic();
 	} else {
-		automan->Periodic();
+		automan->Periodic(world.get());
 	}
 	LogData();
 	driveBase->SMDB();
@@ -132,38 +133,62 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 	Scheduler::GetInstance()->Run();
-//	TestCollision();
+	UpdateWorld();
 	driveBase->SMDB();
 	arm->SMDB();
 
-	bool runningStrategy = false;
+	if (!oi->DR3->Pressed()) {
+		if(oi->DL1->Pressed()) {
+			driveBase->Lock();
+		}
+		else if(oi->DL4->Pressed()) {
+			driveBase->DriveControlTwist->SetSetpoint(-120.0);
+			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+		}
+		else if(oi->DL5->Pressed()) {
+			driveBase->DriveControlTwist->SetSetpoint(120.0);
+			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+		}
+		else if(oi->DL3->Pressed()) {
+			driveBase->DriveControlTwist->SetSetpoint(0);
+			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+		}
+		else if(oi->DL2->Pressed()) {
+			driveBase->DriveControlTwist->SetSetpoint(180.0);
+			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+		}
+		else
+		{
+			driveBase->Crab(oi->getJoystickTwist(),-oi->getJoystickY(),oi->getJoystickX(),true);
+		}
+	} else {
+		// modifier for auto high shooting enabled
+		int target = -1;
+		if(oi->DL1->Pressed()) {
+			driveBase->Lock();
+		}
+		else if(oi->DL4->Pressed()) {
+			target = 3;
+		}
+		else if(oi->DL5->Pressed()) {
+			target = 1;
+		}
+		else if(oi->DL2->Pressed()) {
+			target = 2;
+		}
+		else
+		{
+			driveBase->Crab(oi->getJoystickTwist(),-oi->getJoystickY(),oi->getJoystickX(),true);
+		}
 
-	if(oi->DL1->Pressed())
-		driveBase->Lock();
-	else if(oi->DL4->Pressed()) {
-		driveBase->DriveControlTwist->SetSetpoint(-120.0);
-		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-	}
-	else if(oi->DL5->Pressed()) {
-		driveBase->DriveControlTwist->SetSetpoint(120.0);
-		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-	}
-	else if(oi->DL3->Pressed()) {
-		driveBase->DriveControlTwist->SetSetpoint(0);
-		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-	}
-	else if(oi->DL2->Pressed()) {
-		runningStrategy = true;
-		teleopStrategy->RunPeriodic(visionServer->GetVisionData());
-	}
-	else
-	{
-		driveBase->Crab(oi->getJoystickTwist(),-oi->getJoystickY(),oi->getJoystickX(),true);
+		if (target > 0) {
+			world->SetTargetGoal(target);
+			teleopAutoHighShootStrategy->RunPeriodic(world.get());
+		} else {
+			teleopAutoHighShootStrategy->Reset();
+		}
 	}
 
-	if (!runningStrategy) {
-		teleopStrategy->Reset();
-	}
 
 	if(tankRun) {
 		if(fabs(driveBase->imu->GetYaw())>90) {
@@ -253,6 +278,10 @@ void Robot::TeleopPeriodic() {
 	LogData();
 	visionServer->SMDB();
 	UpdateLED();
+}
+
+void Robot::UpdateWorld() {
+	world->Update(visionServer->GetVisionData());
 }
 
 void Robot::TestPeriodic() {

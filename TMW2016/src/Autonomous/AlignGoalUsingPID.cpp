@@ -47,24 +47,29 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 		}
 	}
 
-	// TODO:
-	// need to use drive angle, e.g. if we are pointed at 0 then we want -90 90
-	// if we are at angle, +/= 60
 
 	if (fabs(goal.xposition) < X_THRESHOLD) {
 		std::cout << "!!! ====================== Goal Aligned  ====================== !!!\n";
 		return false;
 	} else {
-		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
-		float targetAngle = -90.0;
-//		if (goal.xposition < 0 ) {
-//			targetAngle = 90.0;
-//		}
+		const int targetGoal = world->GetTargetGoal();
+		float targetAngle = 0.0;
+		float setpointAngle = 0.0;
+		if (targetGoal == 1) {
+			setpointAngle = 60.0;
+		} else if (targetGoal == 2) {
+			setpointAngle = 0.0;
+		} else if (targetGoal == 3) {
+			setpointAngle = -60.0;
+		}
+		targetAngle = setpointAngle - 90;
+		Robot::driveBase->DriveControlTwist->SetSetpoint(setpointAngle);
 		const float radians = targetAngle * M_PI / 180.0;
 		const float magnitude = xAdapter->GetOutputValue();
 		const float x = magnitude * sin(radians);
 		const float y = magnitude * cos(radians);
 		std::cout << "Target Angle: " << targetAngle
+				<< "  Setpoint Angle: " << setpointAngle
 				<< "  Magnitude: " << magnitude
 				<< "  X: " << x
 				<< "  Y: " << y << '\n';

@@ -39,6 +39,10 @@ int World::GetTargetGoal() const {
 	return targetGoal;
 }
 
+void World::SetTargetGoal(const int targetGoal_) {
+	targetGoal = targetGoal_;
+}
+
 outerworks World::GetStartingDefense() const {
 	return startingDefense;
 }

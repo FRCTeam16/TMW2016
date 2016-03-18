@@ -20,14 +20,13 @@ class AutoManager {
 public:
 	AutoManager(const VisionServer *visionServer);
 	virtual ~AutoManager() {};
-	void Init();
-	void Periodic();
+	void Init(World *world);
+	void Periodic(World *world);
 
 	std::unique_ptr<SendableChooser> position;
 	std::unique_ptr<SendableChooser> defense;
 	std::unique_ptr<SendableChooser> target;
 private:
-	std::unique_ptr<World> world;
 	std::map<outerworks, std::shared_ptr<Strategy>> strategyLookup;
 	Strategy* currentStrategy;
 	const VisionServer* visionServer;

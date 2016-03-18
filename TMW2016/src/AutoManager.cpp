@@ -28,7 +28,6 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 		position(new SendableChooser()),
 		defense(new SendableChooser()),
 		target(new SendableChooser()),
-		world(new World()),
 		visionServer(visionServer_),
 		driveBase(Robot::driveBase) {
 	//
@@ -93,7 +92,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 }
 
 
-void AutoManager::Init() {
+void AutoManager::Init(World *world) {
 	cout << "AutoManager::Init\n";
 	// Read state of world information from driver station
 	const int startingDefenseIdx = (int) defense->GetSelected();
@@ -124,7 +123,7 @@ void AutoManager::Init() {
 	auto iterator = strategyLookup.find(startingDefense);
 	if (iterator != strategyLookup.end()) {
 		currentStrategy = iterator->second.get();
-		currentStrategy->Init(world.get());
+		currentStrategy->Init(world);
 	} else {
 		// ERROR
 		std::string msg = "No strategy selected in dash board";
@@ -138,8 +137,7 @@ void AutoManager::Init() {
 	cout << "AutoManager::Init COMPLETE\n";
 }
 
-void AutoManager::Periodic() {
+void AutoManager::Periodic(World *world) {
 	assert(currentStrategy != nullptr && "No strategy currently set");
-	world->Update(visionServer->GetVisionData());
-	currentStrategy->Run(world.get());
+	currentStrategy->Run(world);
 }

@@ -24,6 +24,7 @@ public:
 	double GetClock() const;					// time elapsed since Init() in seconds
 	int GetStartingPosition() const;			// starting position of robot
 	int GetTargetGoal() const;					// target goal number
+	void SetTargetGoal(const int targetGoal_);
 	outerworks GetStartingDefense() const;		// starting outerworks defense
 	const VisionData& GetVisionData() const;	// vision information
 private:

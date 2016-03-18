@@ -2,20 +2,21 @@
  * TeleopStrategy.cpp
  */
 
-#include "TeleopStrategy.h"
+#include "TeleopAutoHighShootStrategy.h"
+
 #include "AlignGoalUsingPID.h"
 
-TeleopStrategy::TeleopStrategy() : world(new World()){
+TeleopAutoHighShootStrategy::TeleopAutoHighShootStrategy() {
 	cout << "TeleopStrategy::TeleopStrategy\n";
 	started = true;	// hack
 	Reset();
 }
 
-TeleopStrategy::~TeleopStrategy() {
+TeleopAutoHighShootStrategy::~TeleopAutoHighShootStrategy() {
 
 }
 
-void TeleopStrategy::Reset() {
+void TeleopAutoHighShootStrategy::Reset() {
 	if (started) {
 		cout << "TeleopStrategy::Reset\n";
 		steps.clear();
@@ -25,11 +26,10 @@ void TeleopStrategy::Reset() {
 	}
 };
 
-bool TeleopStrategy::RunPeriodic(VisionData visionData) {
+bool TeleopAutoHighShootStrategy::RunPeriodic(World *world) {
 	cout << "TeleopStrategy::RunPeriodic\n";
-	world->Update(visionData);
 	if (!started) { started = true; }
-	return StepStrategy::Run(world.get());
+	return StepStrategy::Run(world);
 	return false;
 }
 
