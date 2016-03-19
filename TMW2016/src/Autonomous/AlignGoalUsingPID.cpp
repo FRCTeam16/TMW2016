@@ -15,7 +15,7 @@ AlignGoalUsingPID::AlignGoalUsingPID(const float speed_, const bool teleop_mode_
 	pidX->SetOutputRange(-speed, speed);	// output motor speeds
 	pidX->SetInputRange(-160, 160);			// size of input image
 	pidX->Enable();
-	pidY.reset(new PIDController(0.006, 0, 0.005, yAdapter.get(), yAdapter.get(), 0.2));
+	pidY.reset(new PIDController(0.01, 0, 0.0, yAdapter.get(), yAdapter.get(), 0.2));
 	pidY->SetSetpoint(Y_TARGET);
 	pidY->SetContinuous(false);
 	pidY->SetOutputRange(-speed, speed);	// output motor speeds
@@ -48,6 +48,7 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 	if (goal.HasData()) {
 		noGoalCounter = 0;
 		xAdapter->Update(goal.xposition);
+		yAdapter->Update(goal.height);
 		kickCounter = (goal.xposition == lastX) ? kickCounter + 1 : 0;
 	} else {
 		if (noGoalCounter++ > MAX_NO_GOAL_SCANS) {
@@ -95,6 +96,7 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 	targetAngle = setpointAngle-90;
 	Robot::driveBase->DriveControlTwist->SetSetpoint(setpointAngle);
 	const float radians = targetAngle * M_PI / 180.0;
+	float setpoint_radians = setpointAngle * M_PI / 180.0;
 	float magnitude = xAdapter->GetOutputValue();
 	if (fired) {
 		magnitude = 0.001;
@@ -107,17 +109,18 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 	if (teleop_mode) {
 		// Calculate vector normal to our drive vector of joystick input vector
 		float theta_j = Robot::oi->getDriverRight()->GetDirectionRadians();
-		float setpoint_radians = setpointAngle * M_PI / 180.0;
 		float theta_m = radians - theta_j;
 		float joystick_magnitude = Robot::oi->getDriverRight()->GetMagnitude();
 		float M = joystick_magnitude * sin(theta_m);
 		x += M * sin(setpoint_radians + M_PI);
 		y += M * cos(setpoint_radians + M_PI);
-
-		cout << "theta_j: " << theta_j * 180.0 / M_PI
-				<< "  theta_m: " << theta_m * 180.0 / M_PI
-				<< "  joy_mag: " << joystick_magnitude
-				<< "  M: " << M << '\n';
+	} else {
+		// Autonomous y adjustment
+		if (!fired) {
+			float yMagnitude = yAdapter->GetOutputValue();
+			x += yMagnitude * sin(setpoint_radians + M_PI);
+			y += yMagnitude * cos(setpoint_radians + M_PI);
+		}
 	}
 
 	std::cout << "\tGoal X: " << goal.xposition

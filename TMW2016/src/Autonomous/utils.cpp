@@ -12,7 +12,7 @@ static const float PI_3 = M_PI / 3;
 
 float CalculateDriveAngle(const int pos, const int goal, outerworks defense) {
 	//all distances in inches
-	float dShoot = 108;  //distance from goal for shot
+	float dShoot = 144;  //distance from goal for shot
 	float dxGoalFromWall = 141; //distance in x of the goal from the left wall
 	float dxGoal = 7.5; // additional distance in x after the start of the goal
 	float dyGoal = 13; // additional distance in y after the start of the goal

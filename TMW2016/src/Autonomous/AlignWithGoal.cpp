@@ -50,9 +50,9 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	}
 
 	const float currentX = goal.xposition;
-	const int OFFSET = 0;
+	const int OFFSET = -15;
 	const int SLOW_THRESHOLD = 20;
-	const int FIRE_THRESHOLD = 10;
+	const int FIRE_THRESHOLD = 8;
 
 	const int MIN_SLOW = OFFSET - SLOW_THRESHOLD;
 	const int MAX_SLOW = OFFSET + SLOW_THRESHOLD;

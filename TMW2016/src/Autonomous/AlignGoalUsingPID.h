@@ -31,7 +31,7 @@ private:
 	const int GOAL_CENTER_OFFSET = -15.0;
 	const int X_THRESHOLD = 8;
 
-	const int Y_TARGET = 29;
+	const int Y_TARGET = 31;
 	const int Y_THRESHOLD = 0;
 
 	const float TWIST_THRESHOLD = 0.5;
