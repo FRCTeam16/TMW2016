@@ -6,8 +6,8 @@
 #include "../Robot.h"
 #include <iostream>
 
-AlignGoalUsingPID::AlignGoalUsingPID(const float speed_) :
-	speed(speed_), xAdapter(new VisionPIDAdapter()), yAdapter(new VisionPIDAdapter())
+AlignGoalUsingPID::AlignGoalUsingPID(const float speed_, const bool teleop_mode_) :
+	speed(speed_), teleop_mode(teleop_mode_), xAdapter(new VisionPIDAdapter()), yAdapter(new VisionPIDAdapter())
 {
 	pidX.reset(new PIDController(0.006, 0, 0.005, xAdapter.get(), xAdapter.get(), 0.2));
 	pidX->SetSetpoint(GOAL_CENTER_OFFSET);
@@ -15,6 +15,13 @@ AlignGoalUsingPID::AlignGoalUsingPID(const float speed_) :
 	pidX->SetOutputRange(-speed, speed);	// output motor speeds
 	pidX->SetInputRange(-160, 160);			// size of input image
 	pidX->Enable();
+	pidY.reset(new PIDController(0.006, 0, 0.005, yAdapter.get(), yAdapter.get(), 0.2));
+	pidY->SetSetpoint(Y_TARGET);
+	pidY->SetContinuous(false);
+	pidY->SetOutputRange(-speed, speed);	// output motor speeds
+	pidY->SetInputRange(0, 320);			// size of input image
+	pidY->Enable();
+
 }
 
 AlignGoalUsingPID::~AlignGoalUsingPID() {
@@ -36,51 +43,97 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 	}
 
 	const VisionData vd = world->GetVisionData();
+	int lastX = goal.xposition;
 	goal = vd.GetGoal(world->GetTargetGoal());
 	if (goal.HasData()) {
 		noGoalCounter = 0;
 		xAdapter->Update(goal.xposition);
+		kickCounter = (goal.xposition == lastX) ? kickCounter + 1 : 0;
 	} else {
 		if (noGoalCounter++ > MAX_NO_GOAL_SCANS) {
 			std::cout << "*** NO GOAL ***\n";
-			crab->lock = true;
-			return false;
+			if (!teleop_mode) {
+				crab->Update(lastCrab.twist, lastCrab.xspeed, lastCrab.yspeed, lastCrab.gyro);
+			} else {
+				// No goal, allow driver to operate robot
+				crab->Update(Robot::oi->getJoystickTwist(),-Robot::oi->getJoystickY(),Robot::oi->getJoystickX(),true);
+			}
 		}
 	}
 
+	float current_twist = fabs(Robot::driveBase->imu->GetYaw());
+	float delta_twist = last_twist < 0 ? current_twist : fabs(current_twist - last_twist);
+	if (delta_twist > 180.0) {
+		delta_twist = 360.0 - current_twist;
+	}
+	last_twist = current_twist;
+
+	const bool in_twist = delta_twist > TWIST_THRESHOLD;
 	const int maxX = goal.xposition + X_THRESHOLD;
 	const int minX = goal.xposition - X_THRESHOLD;
 	if (GOAL_CENTER_OFFSET > minX && GOAL_CENTER_OFFSET < maxX) {
 		std::cout << "!!! ====================== Goal Aligned  ====================== !!! " << fired << "\n";
-		if (!fired) {
+		if (!fired && !in_twist) {
 			cout << "***********************-=====> FIRING\n";
 			fired = Robot::arm->Fire();
+		} else {
+			cout << "!!! Not firing, fired = " << fired << "  in_twist = " << in_twist << '\n';
 		}
-		return false;
-	} else {
-		const int targetGoal = world->GetTargetGoal();
-		float targetAngle = 0.0;
-		float setpointAngle = 0.0;
-		if (targetGoal == 1) {
-			setpointAngle = -60.0;
-		} else if (targetGoal == 2) {
-			setpointAngle = 0.0;
-		} else if (targetGoal == 3) {
-			setpointAngle = 60.0;
-		}
-		targetAngle = setpointAngle - 90;
-		Robot::driveBase->DriveControlTwist->SetSetpoint(setpointAngle);
-		const float radians = targetAngle * M_PI / 180.0;
-		const float magnitude = xAdapter->GetOutputValue();
-		const float x = magnitude * sin(radians);
-		const float y = magnitude * cos(radians);
-		std::cout << "\tGoal X: " << goal.xposition
-		 	 	<< "  Target Angle: " << targetAngle
-				<< "  Setpoint Angle: " << setpointAngle
-				<< "  Magnitude: " << magnitude
-				<< "  X: " << x
-				<< "  Y: " << y << '\n';
-		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);		// no twist, don't use Robot::driveBase->CrabSpeedTwist->Get()
 	}
+
+
+	const int targetGoal = world->GetTargetGoal();
+	float targetAngle = 0.0;
+	float setpointAngle = 0.0;
+	if (targetGoal == 1) {
+		setpointAngle = 60.0;
+	} else if (targetGoal == 2) {
+		setpointAngle = 0.0;
+	} else if (targetGoal == 3) {
+		setpointAngle = -60.0;
+	}
+	targetAngle = setpointAngle-90;
+	Robot::driveBase->DriveControlTwist->SetSetpoint(setpointAngle);
+	const float radians = targetAngle * M_PI / 180.0;
+	float magnitude = xAdapter->GetOutputValue();
+	if (fired) {
+		magnitude = 0.001;
+	} else if (kickCounter > 0 && kickCounter % 10 == 0 ) {
+		magnitude += 0.1;
+	}
+	float x = magnitude * sin(radians);
+	float y = magnitude * cos(radians);
+
+	if (teleop_mode) {
+		// Calculate vector normal to our drive vector of joystick input vector
+		float theta_j = Robot::oi->getDriverRight()->GetDirectionRadians();
+		float setpoint_radians = setpointAngle * M_PI / 180.0;
+		float theta_m = radians - theta_j;
+		float joystick_magnitude = Robot::oi->getDriverRight()->GetMagnitude();
+		float M = joystick_magnitude * sin(theta_m);
+		x += M * sin(setpoint_radians + M_PI);
+		y += M * cos(setpoint_radians + M_PI);
+
+		cout << "theta_j: " << theta_j * 180.0 / M_PI
+				<< "  theta_m: " << theta_m * 180.0 / M_PI
+				<< "  joy_mag: " << joystick_magnitude
+				<< "  M: " << M << '\n';
+	}
+
+	std::cout << "\tGoal X: " << goal.xposition
+			<< "  Target Angle: " << targetAngle
+			<< "  Setpoint Angle: " << setpointAngle
+			<< "  Magnitude: " << magnitude
+			<< "  Kick Cntr: " << kickCounter
+			<< "  X: " << x
+			<< "  Y: " << y
+			<< "  DELTA TWIST: " << delta_twist << '\n';
+	crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), y, x, true);		// no twist, don't use Robot::driveBase->CrabSpeedTwist->Get()
+	lastCrab.beater_bar = crab.get()->beater_bar;
+	lastCrab.gyro = crab.get()->gyro;
+	lastCrab.lock = crab.get()->lock;
+	lastCrab.twist = crab.get()->twist;
+	lastCrab.xspeed = crab.get()->xspeed;
+	lastCrab.yspeed = crab.get()->yspeed;
 	return false;
 }

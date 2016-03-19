@@ -230,6 +230,7 @@ bool TraverseObstacleWithGyroAndSonarLockingValues::operator ()(World* world) {
 ////		return true;
 //	} else {
 		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
+		crab->beater_bar = -1.0;
 		return false;
 //	}
 }

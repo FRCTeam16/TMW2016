@@ -11,22 +11,33 @@
 
 class AlignGoalUsingPID : public Step {
 public:
-	AlignGoalUsingPID(const float speed_);
+	AlignGoalUsingPID(const float speed_, const bool teleop_mode_=false);
 	virtual ~AlignGoalUsingPID();
 	bool operator()(World* world) override;
 private:
 	float startTime = -1;
 	const float speed;
+	bool teleop_mode;
 	const float timeout = 10.0;
 	std::unique_ptr<PIDController> pidX;
 	std::unique_ptr<VisionPIDAdapter> xAdapter;
+	std::unique_ptr<PIDController> pidY;
 	std::unique_ptr<VisionPIDAdapter> yAdapter;
 	GoalInfo goal;
+	CrabInfo lastCrab;
 	const int MAX_NO_GOAL_SCANS = 10;
 	int noGoalCounter = 0;
 
 	const int GOAL_CENTER_OFFSET = -15.0;
 	const int X_THRESHOLD = 8;
+
+	const int Y_TARGET = 29;
+	const int Y_THRESHOLD = 0;
+
+	const float TWIST_THRESHOLD = 0.5;
+	float last_twist = -1.0;			// tracks scan to scan twist delta
+
+	int kickCounter = 0;	// track if x position has changed
 
 	bool fired = false;
 };

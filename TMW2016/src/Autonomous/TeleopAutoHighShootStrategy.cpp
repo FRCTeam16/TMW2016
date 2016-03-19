@@ -20,7 +20,7 @@ void TeleopAutoHighShootStrategy::Reset() {
 	if (started) {
 		cout << "TeleopStrategy::Reset\n";
 		steps.clear();
-		steps.push_back(std::unique_ptr<Step>(new AlignGoalUsingPID(0.3)));
+		steps.push_back(std::unique_ptr<Step>(new AlignGoalUsingPID(0.3, true)));
 		started = false;
 		currentStep = 0;	// reset current step executing
 	}

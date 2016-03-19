@@ -217,11 +217,14 @@ void Arm::LowFire() {
 }
 
 void Arm::BeaterBar(float speed) {
-	if(!lowFiring) {
-		beaterBar->Set(speed);
+	if(lowFiring) {
+		beaterBar->Set(1.0);
+	}
+	else if (firing) {
+		beaterBar->Set(-1.0);
 	}
 	else {
-		beaterBar->Set(1.0);
+		beaterBar->Set(speed);
 	}
 
 }

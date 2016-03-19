@@ -45,6 +45,8 @@ void StepStrategy::RunPeriodicManagers(const CrabInfo *crab) {
 	Robot::arm->DartManager();
 	Robot::arm->FireManager();
 	Robot::arm->ShooterManager();
+	Robot::arm->BeaterBar(crab->beater_bar);
+
 }
 
 // --------------------------------------------------------------------------//

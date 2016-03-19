@@ -42,7 +42,7 @@ bool SafetyChecker::CheckLimits() {
 		success = false;
 	}
 
-	cout << "Simulate Error: " << simulateError << " COUNTER? " << simulatedErrorCounter << '\n';
+	//cout << "Simulate Error: " << simulateError << " COUNTER? " << simulatedErrorCounter << '\n';
 	if (simulateError && simulatedErrorCounter++ > 10) {
 		cout << "<<< SIMULATED ERROR EXCEEDED LIMIT >>>\n";
 		success = false;

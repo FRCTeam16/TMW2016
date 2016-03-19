@@ -15,6 +15,7 @@ struct CrabInfo {
 	float xspeed	= 0.0;
 	bool gyro = true;
 	bool lock = false;
+	float beater_bar = 0.0;
 
 	void Stop() {
 		twist  = 0.0;
