@@ -63,9 +63,9 @@ private:
 
 	bool dartOutputUnlimited;
 
-	const int highShooter = 579;
+	int highShooter;
 	const int lowShooter = 720;
-	const int pickup = 923;
+	const int pickup = 933;
 	const int travel = 838;
 	const int extendPosition = 300;
 	const int extendLimit = 550;
@@ -87,6 +87,8 @@ public:
 	void SetDartOffset(int offset);
 	void UnlimitDartOutput(bool unlimit);
 	bool DartInPosition() const;
+	void IncDart();
+	void DecDart();
 	void ClimbExtend();
 	void ClimbRetract();
 	void RunShooter(bool run);

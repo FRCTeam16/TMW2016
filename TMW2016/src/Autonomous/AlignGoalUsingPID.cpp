@@ -21,6 +21,7 @@ AlignGoalUsingPID::AlignGoalUsingPID(const float speed_, const bool teleop_mode_
 	pidY->SetOutputRange(-speed, speed);	// output motor speeds
 	pidY->SetInputRange(0, 320);			// size of input image
 	pidY->Enable();
+	GOAL_CENTER_OFFSET = -3;
 
 }
 

@@ -95,6 +95,8 @@ Arm::Arm() : Subsystem("Arm") {
 
 	dartOutputUnlimited = false;
 
+	highShooter = 570;
+
 }
 
 
@@ -132,6 +134,16 @@ bool Arm::DartInPosition() const {
 	return (leftDelta < deltaThreshold && rightDelta < deltaThreshold);
 }
 
+
+void Arm::IncDart() {
+	//increases the shooting location
+	highShooter = highShooter + 10;
+}
+
+void Arm::DecDart() {
+	highShooter = highShooter - 10;
+
+}
 
 void Arm::DartSetToCurrent() {
 	DartPosition(dartLeft->GetPosition());

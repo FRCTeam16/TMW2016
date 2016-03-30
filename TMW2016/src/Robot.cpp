@@ -178,7 +178,7 @@ void Robot::TeleopPeriodic() {
 		else if(oi->DL5->Pressed()) {
 			target = 3;
 		}
-		else if(oi->DL2->Pressed()) {
+		else if(oi->DL3->Pressed()) {
 			target = 2;
 		}
 		else
@@ -254,6 +254,14 @@ void Robot::TeleopPeriodic() {
 	if(oi->DR2->RisingEdge()) {
 		arm->LowFire();
 		arm->SetShooterSpeed(0,1.0);
+	}
+
+	if(oi->DR9->RisingEdge()) {
+		arm->IncDart();
+	}
+
+	if(oi->DR11->RisingEdge()) {
+		arm->DecDart();
 	}
 
 /********Dart Open Loop*******/

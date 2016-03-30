@@ -24,8 +24,8 @@ public:
 private:
 	std::unique_ptr<AnalogOutput> widthOutput;
 	std::unique_ptr<AnalogOutput> translationOutput;
-	std::unique_ptr<DigitalOutput> allianceOutput;
-	std::unique_ptr<DigitalOutput> shooterStatus;
+	std::unique_ptr<DigitalOutput> blueAlliance;
+	std::unique_ptr<DigitalOutput> redAlliance;
 
 	const long MIN_WIDTH = 0;
 	const long MAX_WIDTH = 320;

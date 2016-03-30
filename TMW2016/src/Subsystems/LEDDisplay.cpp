@@ -11,8 +11,8 @@ static float map(float x, float in_min, float in_max, float out_min, float out_m
 LEDDisplay::LEDDisplay() {
 	widthOutput.reset(new AnalogOutput(0));
 	translationOutput.reset(new AnalogOutput(1));
-//	allianceOutput.reset(new DigitalOutput(0));
-//	shooterWheel.reset(new DigitalOutput(1));
+	blueAlliance.reset(new DigitalOutput(11));
+	redAlliance.reset(new DigitalOutput(12));
 }
 
 LEDDisplay::~LEDDisplay() {
@@ -35,7 +35,10 @@ void LEDDisplay::Update(const VisionData &vd) {
 		widthOutput->SetVoltage(0);
 		translationOutput->SetVoltage(0);
 	}
-}
+
+	blueAlliance->Set(DriverStation::GetInstance().GetAlliance() == DriverStation::kBlue);
+	redAlliance->Set(DriverStation::GetInstance().GetAlliance() == DriverStation::kRed);
+	}
 
 float LEDDisplay::MapX(const int xposition) const {
 	//  <--/ -50 - 50 \-->

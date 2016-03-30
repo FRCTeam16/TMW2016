@@ -63,7 +63,12 @@ struct VisionData {
 		bool hasTwoGoals = leftGoal.HasData() && rightGoal.HasData();
 		if (!hasTwoGoals) {
 //			std::cout << "\tusing left goal\n";
-			goal = leftGoal;
+			if(leftGoal.HasData()) {
+				goal = leftGoal;
+			}
+			else {
+				goal = predictedGoal;
+			}
 		} else {
 			// Figure out which one we want here
 			if (targetGoal == 1) {
@@ -82,6 +87,7 @@ struct VisionData {
 				}
 			}
 		}
+
 		return goal;
     }
 };
