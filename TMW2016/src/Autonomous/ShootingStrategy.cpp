@@ -98,7 +98,7 @@ void ShootingStrategy::Init(World* world) {
 
 void ShootingStrategy::constructLeftGoalSteps(
 		std::vector<Step*> &vec, const bool useVision, const bool waitForArm, const bool retraverse) {
-	cout << "ShootingStrategy::constructLeftGoalSteps\n";
+	cout << "ShootingStrategy::constructLeftGoalSteps(re-traverse? " << retraverse << "\n";
 
 	vec.push_back(new MoveAlongMoveToWallShootingLine(0.5, 0.3)); // kick out from left wall
 	vec.push_back(new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm));
@@ -106,7 +106,7 @@ void ShootingStrategy::constructLeftGoalSteps(
 
 	if (useVision) {
 		vec.push_back(new SearchForGoal(5, 0.3));
-		vec.push_back(new AlignWithGoalAndShoot(5, 0.2));
+		vec.push_back(new AlignWithGoalAndShoot(8, 0.2));
 	} else {
 		vec.push_back(new MoveToWallShootingPosition(10, 0.3));
 		vec.push_back(new SnugToWall(0.3, 0.25));
@@ -126,7 +126,12 @@ bool ShootingStrategy::Run(World *world) {
 	// Check for target goal = 0, which means stop processing and run special location 0
 	std::vector<Step*> steps;
 	if (world->GetTargetGoal() != 0) {
-		steps = locationSteps[world->GetStartingPosition()];
+		int startingPosition = world->GetStartingPosition();
+		if (world->GetTargetGoal() == 6) {
+			// position 1 return
+			startingPosition = 6;
+		}
+		steps = locationSteps[startingPosition];
 	} else {
 		// Target goal 0 is noop
 		steps = locationSteps[0];

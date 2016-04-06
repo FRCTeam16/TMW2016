@@ -51,6 +51,8 @@ void Robot::RobotInit() {
 	if(!prefs->ContainsKey("TwistD"))
 		prefs->PutFloat("TwistD",0.02);
 
+	SmartDashboard::PutNumber(AUTO_DELAY, 0.0);
+
 	// Vision PID
 	if (!prefs->ContainsKey("VisionXP")) { prefs->PutFloat("VixionXP", 1.0); }
 	if (!prefs->ContainsKey("VisionXI")) { prefs->PutFloat("VixionXI", 0.0); }

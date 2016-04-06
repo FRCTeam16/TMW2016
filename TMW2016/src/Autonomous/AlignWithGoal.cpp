@@ -17,6 +17,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	const VisionData vd = world->GetVisionData();
 	const bool detectedGoal = vd.HasData();
 	const int targetGoal = world->GetTargetGoal();
+	const bool in_twist = InTwist();
 
 	goal = detectedGoal ? vd.GetGoal(targetGoal) : goal;
 
@@ -26,6 +27,8 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	cout << "goal X      : " << goal.xposition << '\n';
 	cout << "Fine Tune   : " << fineTuneCounter << '\n';
 	cout << "Fired       : " << fired << '\n';
+	cout << "Kicker      : " << kickCounter << '\n';
+	cout << "In Twist    : " << in_twist << '\n';
 
 	// Startup & Timeout Checks
 	if (startTime < 0) {
@@ -33,20 +36,21 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	} else if ((currentTime - startTime) > timeout) {
 		std::cerr << "AlignWithGoal: timed out, halting\n";
 		crab->lock = true;
+		crab->beater_bar = 0.0;
 		return false;
 	}
 
 	// Verify goal is visible
-	if (!detectedGoal) {
-		if (missingGoalCounter++ > 10) {
-			cout << "AlignWithGoal: No goal visible, stopping...\n";
-			crab->lock = true;
-			return false;
-		} else {
-			// waiting for missing goal counter
+	if (detectedGoal) {
+		if (lastGoalX != 999) {
+			const int diff = abs(vd.GetGoal(targetGoal).xposition - lastGoalX);
+			if (diff < 2) {
+				kickCounter++;
+			} else {
+				kickCounter = 0;
+			}
 		}
-	} else {
-		missingGoalCounter = 0;
+		lastGoalX = vd.GetGoal(targetGoal).xposition;
 	}
 
 	const float currentX = goal.xposition;
@@ -59,22 +63,16 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	const int MIN_FIRE = OFFSET - FIRE_THRESHOLD;
 	const int MAX_FIRE = OFFSET + FIRE_THRESHOLD;
 
-
-	// We've detected goal
-	float P = 1.0;
-
+	P = 1.0;
 	if (currentX > MIN_SLOW && currentX < MAX_SLOW) {
 		P = 0.28;
 		if (currentX > MIN_FIRE && currentX < MAX_FIRE) {
 			std::cout << "AlignWithGoal: Goal aligned!\n";
-			if (!fired) {
+			if (!fired && !in_twist) {
 				cout << "***********************-=====> FIRING\n";
 				Robot::arm->Fire();
 				fired = true;
 			}
-			return false;
-		} else {
-			// keep moving slowly toward target
 		}
 	}
 
@@ -89,6 +87,9 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 		const float driveAngleRadians = utils::CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
 		cout << "SearchForGoal: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
 		float magnitude = P * speed;
+		if (kickCounter > 0) {
+			magnitude += 0.005 * kickCounter;
+		}
 		const float x = magnitude * sin(driveAngleRadians);
 		const float y = magnitude * cos(driveAngleRadians);
 		cout << "Align X: " << currentX << " magnitude: " << magnitude << '\n';
@@ -96,6 +97,16 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	}
 	cout << '\n';
 	return false;
+}
+
+bool AlignWithGoalAndShoot::InTwist() {
+	float current_twist = fabs(Robot::driveBase->imu->GetYaw());
+	float delta_twist = last_twist < 0 ? current_twist : fabs(current_twist - last_twist);
+	if (delta_twist > 180.0) {
+		delta_twist = 360.0 - current_twist;
+	}
+	last_twist = current_twist;
+	return delta_twist > TWIST_THRESHOLD;
 }
 
 

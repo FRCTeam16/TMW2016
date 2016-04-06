@@ -90,8 +90,6 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	SmartDashboard::PutData(AUTO_DEFENSE, defense.get());
 	SmartDashboard::PutData(AUTO_TARGET, target.get());
 
-	SmartDashboard::PutNumber(AUTO_DELAY, 0.0);
-
 	cout << "AutoManager::AutoManager complete\n";
 }
 
@@ -137,7 +135,7 @@ void AutoManager::Init(World *world) {
 	}
 
 	// Initialize sensors
-	// FIXME?driveBase->imu->ZeroYaw();
+	driveBase->imu->ZeroYaw();
 	cout << "AutoManager::Init COMPLETE\n";
 }
 

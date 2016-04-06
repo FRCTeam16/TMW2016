@@ -20,15 +20,15 @@ bool SearchForGoal::operator()(World *world) {
 	// Lookup table of minimum travel times based on starting position and target goal
 	// The minimum travel time allows us to travel to a location for a period of time
 	// before starting to look for a goal
-	float minTimes[6][3] = {
+	float minTimes[5][3] = {
 			{0.0, 1.5, 5.0},		// index 0 and 5 should be the same
 			{1.5, 0.5, 5.0},
 			{2.0, 0.0, 2.0},
 			{2.0, 0.0, 2.0},
-			{5.0, 3.0, 2.0},
-			{0.0, 1.5, 5.0}			// index 1 and 5 should be the same
+			{5.0, 3.0, 2.0}
 	};
-	const float minTime = minTimes[startingPosition-1][targetGoal-1];
+	const int lookupTargetGoal = targetGoal != 6 ? targetGoal-1 : 0;
+	const float minTime = minTimes[startingPosition-1][lookupTargetGoal];
 	cout << "MinTime: " << minTime << '\n';
 
 	// Startup & Timeout Checks
@@ -55,8 +55,7 @@ bool SearchForGoal::operator()(World *world) {
 
 	float yawSetpoint;
 	switch (targetGoal) {
-	case 1:
-	case 6:
+	case 1:	case 6:
 		yawSetpoint = 60.0;
 		break;
 	case 2:

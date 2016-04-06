@@ -25,8 +25,14 @@ private:
 	float startTime = -1;
 	bool fired = false;
 	int fineTuneCounter = 0;
-	int missingGoalCounter = 0;
 	GoalInfo goal;
+	int lastGoalX = 999;
+	int kickCounter = 0;
+	float P = 1.0;			// Default P magnitude
+
+	bool InTwist();
+	const float TWIST_THRESHOLD = 0.5;
+	float last_twist = -1.0;			// tracks scan to scan twist delta
 };
 
 //--------------------------------------------------------------------------//

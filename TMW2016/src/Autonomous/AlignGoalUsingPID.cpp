@@ -56,9 +56,11 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 			std::cout << "*** NO GOAL ***\n";
 			if (!teleop_mode) {
 				crab->Update(lastCrab.twist, lastCrab.xspeed, lastCrab.yspeed, lastCrab.gyro);
+				// TODO: This is probably incorrect
 			} else {
 				// No goal, allow driver to operate robot
 				crab->Update(Robot::oi->getJoystickTwist(),-Robot::oi->getJoystickY(),Robot::oi->getJoystickX(),true);
+				return false;
 			}
 		}
 	}
@@ -90,9 +92,9 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 	if (targetGoal == 1 || targetGoal == 6) {	// FIXME: Target Goal ID Handling
 		setpointAngle = 60.0;
 	} else if (targetGoal == 2) {
-		setpointAngle = 0.0;
+		setpointAngle = teleop_mode ? 12.0 : 0.0;
 	} else if (targetGoal == 3) {
-		setpointAngle = -60.0;
+		setpointAngle = teleop_mode ? -3.0 : -60.0;
 	}
 	targetAngle = setpointAngle-90;
 	Robot::driveBase->DriveControlTwist->SetSetpoint(setpointAngle);
@@ -101,8 +103,8 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 	float magnitude = xAdapter->GetOutputValue();
 	if (fired) {
 		magnitude = 0.001;
-	} else if (kickCounter > 0 && kickCounter % 10 == 0 ) {
-		magnitude += 0.1;
+	} else if (kickCounter > 0) {
+		magnitude += 0.005 * kickCounter;
 	}
 	float x = magnitude * sin(radians);
 	float y = magnitude * cos(radians);
