@@ -65,7 +65,7 @@ private:
 
 	int highShooter;
 	const int lowShooter = 720;
-	const int pickup = 933;
+	const int pickup = 920;				// 4/5/2016 - 933
 	const int travel = 838;
 	const int extendPosition = 300;
 	const int extendLimit = 550;

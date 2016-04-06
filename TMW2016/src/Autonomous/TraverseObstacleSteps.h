@@ -68,7 +68,8 @@ private:
 
 class TraverseObstacleWithGyroAndSonarLockingValues : public Step {
 public:
-	TraverseObstacleWithGyroAndSonarLockingValues(float speed_ = 0.75, int negativeCounterTarget=5) : speed(speed_), NEGATIVE_COUNTER_TARGET(negativeCounterTarget) {}
+	TraverseObstacleWithGyroAndSonarLockingValues(float speed_ = 0.75, float angle_ = 0.0, int negativeCounterTarget=5, bool forward_ = true, float beaterBarSpeed_ = -1.0) :
+		speed(speed_), angle(angle_), NEGATIVE_COUNTER_TARGET(negativeCounterTarget), forward(forward_), beaterBarSpeed(beaterBarSpeed_) {}
 	bool operator()(World *world) override;
 private:
 	const int MAX_LOOPS = 150;
@@ -77,10 +78,13 @@ private:
 	const double MAX_TRY_TIME = 2.0;
 	const double MAX_RETRY_TIME = 2.0;
 	double startTime = -1;
+	const double TIMEOUT_THRESHOLD = 3.0;
 
 	const float speed;
 	bool running = false;
 	bool startedObstacle = false;
+
+	const float angle;
 
 	const int NEGATIVE_COUNTER_TARGET;	// how many loops to detect negative movement
 	int negativeCounter = 0;
@@ -92,6 +96,9 @@ private:
 
 	int last_distance = 0;
 	bool distance_in_obstacle = false;
+
+	const bool forward;
+	const float beaterBarSpeed;
 
 };
 

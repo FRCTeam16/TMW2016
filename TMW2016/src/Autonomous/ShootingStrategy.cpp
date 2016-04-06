@@ -5,6 +5,8 @@
 #include "ShootingStrategy.h"
 #include "AlignWithGoal.h"
 #include "SearchForGoal.h"
+#include "CollideWithWall.h"
+#include "TraverseObstacleSteps.h"
 
 /**
  * Use world start and target position to calculate angle to move to search for goal
@@ -13,7 +15,7 @@
  */
 
 void ShootingStrategy::Init(World* world) {
-	bool useVision =  world->GetTargetGoal() < 4;
+	bool useVision =  world->GetTargetGoal() < 4 || world->GetTargetGoal() == 6;	// FIXME: Target Goal ID Handling
 	bool waitForArm = true;
 
 	//----------------------------------------------------------------------//
@@ -24,19 +26,9 @@ void ShootingStrategy::Init(World* world) {
 
 	//----------------------------------------------------------------------//
 
-	locationSteps[1] = {
-			new MoveAlongMoveToWallShootingLine(0.5, 0.3), // kick out from left wall
-			new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm),
-			new ControlShooterMotors(true)
-	};
-	if (useVision) {
-		locationSteps[1].push_back(new SearchForGoal(5, 0.3));
-		locationSteps[1].push_back(new AlignWithGoalAndShoot(5, 0.2));
-	} else {
-		locationSteps[1].push_back(new MoveToWallShootingPosition(10, 0.3));
-		locationSteps[1].push_back(new SnugToWall(0.3, 0.25));
-		locationSteps[1].push_back(new ShootBall(false));
-	}
+	locationSteps[1] = {};
+	constructLeftGoalSteps(locationSteps[1], useVision, waitForArm, false);
+
 
 	//----------------------------------------------------------------------//
 
@@ -97,6 +89,37 @@ void ShootingStrategy::Init(World* world) {
 		locationSteps[5].push_back(new SnugToWall(0.3, 0.25));
 		locationSteps[5].push_back(new ShootBall(false));
 	}
+
+	//----------------------------------------------------------------------//
+
+	locationSteps[6] = {};
+	constructLeftGoalSteps(locationSteps[6], useVision, waitForArm, true);
+}
+
+void ShootingStrategy::constructLeftGoalSteps(
+		std::vector<Step*> &vec, const bool useVision, const bool waitForArm, const bool retraverse) {
+	cout << "ShootingStrategy::constructLeftGoalSteps\n";
+
+	vec.push_back(new MoveAlongMoveToWallShootingLine(0.5, 0.3)); // kick out from left wall
+	vec.push_back(new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm));
+	vec.push_back(new ControlShooterMotors(true));
+
+	if (useVision) {
+		vec.push_back(new SearchForGoal(5, 0.3));
+		vec.push_back(new AlignWithGoalAndShoot(5, 0.2));
+	} else {
+		vec.push_back(new MoveToWallShootingPosition(10, 0.3));
+		vec.push_back(new SnugToWall(0.3, 0.25));
+		vec.push_back(new ShootBall(false));
+	}
+
+	if (retraverse) {
+		vec.push_back(new SetArmPosition(SetArmPosition::Position::Pickup, false));
+		vec.push_back(new ControlBeaterBar(false));
+		vec.push_back(new CollideWithWall(0.0, -0.3, 0.0, 0.8));
+		vec.push_back(new TraverseObstacleWithGyroAndSonarLockingValues(-0.3, -2.0, 5, false, 0.0));
+	}
+
 }
 
 bool ShootingStrategy::Run(World *world) {

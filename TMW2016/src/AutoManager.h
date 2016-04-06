@@ -16,6 +16,9 @@
 #include "Autonomous/World.h"
 #include "Vision/VisionServer.h"
 
+static const std::string AUTO_DELAY = "Auto Delay";
+
+
 class AutoManager {
 public:
 	AutoManager(const VisionServer *visionServer);

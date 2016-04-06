@@ -22,7 +22,7 @@ bool CollisionDetector::Detect() {
 	double current_jerk_y = current_accel_y - last_accel_y;
 	last_accel_y = current_accel_y;
 
-	std::cout << "MoveToWallShootingPosition jerk: x->" << current_jerk_x
+	std::cout << "CollisionDetector jerk: x->" << current_jerk_x
 			  << " y-> " << current_jerk_y << "\n";
 
 	return ((fabs(current_jerk_x) > threshold) ||

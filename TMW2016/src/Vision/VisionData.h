@@ -71,7 +71,7 @@ struct VisionData {
 			}
 		} else {
 			// Figure out which one we want here
-			if (targetGoal == 1) {
+			if (targetGoal == 1 || targetGoal == 6) {
 //				std::cout << "TG 1 using left goal\n";
 				goal = leftGoal;
 			} else if (targetGoal == 3) {

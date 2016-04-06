@@ -87,7 +87,7 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 	const int targetGoal = world->GetTargetGoal();
 	float targetAngle = 0.0;
 	float setpointAngle = 0.0;
-	if (targetGoal == 1) {
+	if (targetGoal == 1 || targetGoal == 6) {	// FIXME: Target Goal ID Handling
 		setpointAngle = 60.0;
 	} else if (targetGoal == 2) {
 		setpointAngle = 0.0;

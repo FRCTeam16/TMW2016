@@ -173,13 +173,19 @@ bool TraverseObstacleWithGyroAndSonarLockingValues::operator ()(World* world) {
 
 	if (!running) {
 		running = true;
-		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
+		Robot::driveBase->DriveControlTwist->SetSetpoint(angle);
 		startTime = currentTime;
 		last_distance = distance;
 	}
 
+	if ((currentTime - startTime) > TIMEOUT_THRESHOLD) {
+		cerr << "Aborted due to timeout\n";
+		crab->Stop();
+		return false;
+	}
+
 	if (++loopCounter > MAX_LOOPS) {
-		cerr << "Aborting due to timeout of loops\n";
+		cerr << "Aborted due to timeout of loops\n";
 		// TODO: Just stop
 		crab->Stop();
 		return false;
@@ -189,17 +195,22 @@ bool TraverseObstacleWithGyroAndSonarLockingValues::operator ()(World* world) {
 	//
 	// Normal Operations
 	//
-	if (!startedObstacle && pitch > 5.0) {
+	const bool startedUp = forward ? pitch > 5.0 : pitch < -5.0;
+	if (!startedObstacle && startedUp) {
 		startedObstacle = true;
 		startTime = currentTime;	// As soon as we start the obstacle, start our timer for attempting to cross it
 	}
-	if (pitch < 4.0) {
+
+	const bool startedDown = forward ? pitch < 4.0 : pitch > -4.0;
+	if (startedDown) {
 		if (negativeCounter++ >= NEGATIVE_COUNTER_TARGET) {
 			hitNegative = true;
 			cout << "**** HIT NEGATIVE ***\n";
 		}
 		quietCount = 0;	// reset quiet count
 	}
+
+	const bool checkReset = forward ? pitch > 0.0 : pitch < 0.0;
 	if (!hitNegative && pitch > 0.0) {
 		negativeCounter = 0;
 	}
@@ -217,7 +228,7 @@ bool TraverseObstacleWithGyroAndSonarLockingValues::operator ()(World* world) {
 	}
 
 	if (startedObstacle && hitNegative) {
-		if (pitch > 0.0) {
+		if (checkReset) {
 			quietCount++;
 		}
 	}
@@ -230,7 +241,7 @@ bool TraverseObstacleWithGyroAndSonarLockingValues::operator ()(World* world) {
 ////		return true;
 //	} else {
 		crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), speed, 0.0, true);
-		crab->beater_bar = -1.0;
+		crab->beater_bar = beaterBarSpeed;
 		return false;
 //	}
 }

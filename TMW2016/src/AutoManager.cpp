@@ -83,11 +83,15 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	target->AddObject("3 - Right",  (void*) 3);
 //	target->AddObject("4 - Left Blind",  (void*) 4);
 //	target->AddObject("5 - Right Blind",  (void*) 5);
+	target->AddObject("6 - Left With Return", (void*) 6);
 	target->AddObject("9 - Stop After Outerworks", (void*) 0);
 
 	SmartDashboard::PutData(AUTO_POSITION, position.get());
 	SmartDashboard::PutData(AUTO_DEFENSE, defense.get());
 	SmartDashboard::PutData(AUTO_TARGET, target.get());
+
+	SmartDashboard::PutNumber(AUTO_DELAY, 0.0);
+
 	cout << "AutoManager::AutoManager complete\n";
 }
 
@@ -133,7 +137,7 @@ void AutoManager::Init(World *world) {
 	}
 
 	// Initialize sensors
-	driveBase->imu->ZeroYaw();
+	// FIXME?driveBase->imu->ZeroYaw();
 	cout << "AutoManager::Init COMPLETE\n";
 }
 

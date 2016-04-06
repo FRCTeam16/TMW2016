@@ -13,8 +13,9 @@ public:
 	void Init(World* world) override;
 	virtual bool Run(World *world) override;
 private:
-	std::vector<Step*> locationSteps[6];			// TODO: Can we use safer pointer here
+	std::vector<Step*> locationSteps[7];			// TODO: Can we use safer pointer here
 	unsigned int currentStep = 0;
+	void constructLeftGoalSteps(std::vector<Step*> &vec, const bool useVision, const bool waitForArm, const bool retraverse);
 };
 
 #endif /* SRC_AUTONOMOUS_SHOOTINGSTRATEGY_H_ */
