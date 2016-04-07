@@ -28,7 +28,7 @@ private:
 	const int MAX_NO_GOAL_SCANS = 10;
 	int noGoalCounter = 0;
 
-	int GOAL_CENTER_OFFSET = -11;	// Also fix in AlignWithGoal	(was -3)
+	int GOAL_CENTER_OFFSET = -11;	// set with preferences
 	const int X_THRESHOLD = 8;
 
 	const int Y_TARGET = 31;

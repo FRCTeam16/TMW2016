@@ -35,6 +35,8 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	// Startup & Timeout Checks
 	if (startTime < 0) {
 		startTime = currentTime;
+		vision_center_offset = Preferences::GetInstance()->GetInt("VisionCenterOffset", -11);
+		cout << "Set Offset to: " << vision_center_offset << '\n';
 	} else if ((currentTime - startTime) > timeout) {
 		std::cerr << "AlignWithGoal: timed out, halting\n";
 		crab->lock = true;
@@ -56,7 +58,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	}
 
 	const float currentX = goal.xposition;
-	const int OFFSET = -11;		// Also fix in AlignGoalUsingPID		(4/5/2016 was 0)
+	const int OFFSET = vision_center_offset;
 	const int SLOW_THRESHOLD = 20;
 	const int FIRE_THRESHOLD = 8;
 

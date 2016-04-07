@@ -38,7 +38,7 @@ bool SafetyChecker::CheckLimits() {
 		success = false;
 	}
 	if (Robot::arm->dartLeftHotCount > Robot::arm->dartOutputLimit) {
-		cout << "<<< DART RIGHT EXCEEDED LIMIT >>>\n";
+		cout << "<<< DART LEFT EXCEEDED LIMIT >>>\n";
 		success = false;
 	}
 

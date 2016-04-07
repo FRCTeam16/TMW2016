@@ -58,6 +58,9 @@ void Robot::RobotInit() {
 	if (!prefs->ContainsKey("VisionXI")) { prefs->PutFloat("VixionXI", 0.0); }
 	if (!prefs->ContainsKey("VisionXD")) { prefs->PutFloat("VixionXD", 0.0); }
 
+	// Vision
+	if (!prefs->ContainsKey("VisionCenterOffset")) { prefs->PutInt("VisionCenterOffset", -11); }
+
 	File = RAWCConstants::getInstance();
 	driveBase->SetOffsets(File->getValueForKey("FLOff"), File->getValueForKey("FROff"), File->getValueForKey("RLOff"), File->getValueForKey("RROff"));
 	dartOpen = false;

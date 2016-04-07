@@ -27,6 +27,13 @@ private:
 	bool inRetry = false;
 };
 
+class RampartStrategy : public StepStrategy {
+public:
+	void Init(World* world) override;
+private:
+	bool inRetry = false;
+};
+
 
 // --------------------------------------------------------------------------//
 

@@ -40,6 +40,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	std::shared_ptr<Strategy> lowbar 		{ new OuterworkAndShootStrategy(new LowBarStrategy()) };
 	std::shared_ptr<Strategy> roughTerrain 	{ new OuterworkAndShootStrategy(new RoughTerrainStrategy()) };
 	std::shared_ptr<Strategy> moat 			{ new OuterworkAndShootStrategy(new MoatStrategy()) };
+	std::shared_ptr<Strategy> rampart 		{ new OuterworkAndShootStrategy(new RampartStrategy()) };
 	std::shared_ptr<Strategy> debugVision 	{ new DebugVisionStrategy() };
 
 	// Map Defenses to Strategies
@@ -47,7 +48,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	strategyLookup.insert(std::make_pair(Portcullis, 	noop));
 	strategyLookup.insert(std::make_pair(ChevalDeFrise, noop));
 	strategyLookup.insert(std::make_pair(Moat, 			moat));
-	strategyLookup.insert(std::make_pair(Ramparts, 		roughTerrain));
+	strategyLookup.insert(std::make_pair(Ramparts, 		rampart));
 	strategyLookup.insert(std::make_pair(Drawbridge, 	noop));
 	strategyLookup.insert(std::make_pair(SallyPort, 	noop));
 	strategyLookup.insert(std::make_pair(RockWall, 		roughTerrain));
@@ -80,7 +81,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 
 	target->AddDefault("1 - Left", (void*) 1);
 	target->AddObject("2 - Center",  (void*) 2);
-	target->AddObject("3 - Right",  (void*) 3);
+//	target->AddObject("3 - Right",  (void*) 3);
 //	target->AddObject("4 - Left Blind",  (void*) 4);
 //	target->AddObject("5 - Right Blind",  (void*) 5);
 	target->AddObject("6 - Left With Return", (void*) 6);

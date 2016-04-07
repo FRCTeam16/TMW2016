@@ -305,6 +305,10 @@ void Arm::DartManager() {
 	dartLeft->GetOutputCurrent() > dartOutLimit ? dartLeftHotCount++ : dartLeftHotCount = 0;
 	dartRight->GetOutputCurrent() > dartOutLimit ? dartRightHotCount++ : dartRightHotCount = 0;
 
+	SmartDashboard::PutNumber("DartLeftCurrent", dartLeft->GetOutputCurrent());
+	SmartDashboard::PutNumber("DartRightCurrent", dartRight->GetOutputCurrent());
+
+
 	dartLeftHotCount == 0 && dartRightHotCount == 0 ? dartCoolCount++ : dartCoolCount = 0;
 
 	if(dartLeftHotCount > hotCountLimit || dartRightHotCount > hotCountLimit) {
