@@ -100,8 +100,8 @@ void ShootingStrategy::constructLeftGoalSteps(
 		std::vector<Step*> &vec, const bool useVision, const bool waitForArm, const bool retraverse) {
 	cout << "ShootingStrategy::constructLeftGoalSteps(re-traverse? " << retraverse << "\n";
 
+	vec.push_back(new SetArmPosition(SetArmPosition::Position::ShooterHigh, false));
 	vec.push_back(new MoveAlongMoveToWallShootingLine(0.5, 0.3)); // kick out from left wall
-	vec.push_back(new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm));
 	vec.push_back(new ControlShooterMotors(true));
 
 	if (useVision) {
@@ -116,8 +116,8 @@ void ShootingStrategy::constructLeftGoalSteps(
 	if (retraverse) {
 		vec.push_back(new SetArmPosition(SetArmPosition::Position::Pickup, false));
 		vec.push_back(new ControlBeaterBar(false));
-		vec.push_back(new CollideWithWall(0.0, -0.3, 0.0, 0.8));
-		vec.push_back(new TraverseObstacleWithGyroAndSonarLockingValues(-0.3, -2.0, 5, false, 0.0));
+		vec.push_back(new CollideWithWall(0.0, -0.3, -0.5, 0.8));
+		vec.push_back(new TraverseObstacleWithGyroAndSonarLockingValues(-0.5, -2.0, 5, false, 0.0));
 	}
 
 }

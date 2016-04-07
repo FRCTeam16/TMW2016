@@ -18,6 +18,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	const bool detectedGoal = vd.HasData();
 	const int targetGoal = world->GetTargetGoal();
 	const bool in_twist = InTwist();
+	const bool arm_in_position = Robot::arm->DartInPosition();
 
 	goal = detectedGoal ? vd.GetGoal(targetGoal) : goal;
 
@@ -29,6 +30,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	cout << "Fired       : " << fired << '\n';
 	cout << "Kicker      : " << kickCounter << '\n';
 	cout << "In Twist    : " << in_twist << '\n';
+	cout << "Arm in Pos  : " << arm_in_position << '\n';
 
 	// Startup & Timeout Checks
 	if (startTime < 0) {
@@ -68,7 +70,8 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 		P = 0.28;
 		if (currentX > MIN_FIRE && currentX < MAX_FIRE) {
 			std::cout << "AlignWithGoal: Goal aligned!\n";
-			if (!fired && !in_twist) {
+
+			if (!fired && !in_twist && arm_in_position) {
 				cout << "***********************-=====> FIRING\n";
 				Robot::arm->Fire();
 				fired = true;
@@ -90,6 +93,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 		if (kickCounter > 0) {
 			magnitude += 0.005 * kickCounter;
 		}
+		magnitude = max(magnitude, MIN_MAGNITUDE_FLOOR);
 		const float x = magnitude * sin(driveAngleRadians);
 		const float y = magnitude * cos(driveAngleRadians);
 		cout << "Align X: " << currentX << " magnitude: " << magnitude << '\n';

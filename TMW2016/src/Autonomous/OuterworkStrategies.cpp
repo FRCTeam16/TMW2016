@@ -11,7 +11,8 @@
 
 void LowBarStrategy::Init(World* world) {
 	steps.push_back(std::unique_ptr<Step>(new Delay()));
-	steps.push_back(std::unique_ptr<Step>(new TimedCrab(0.25, 0.0, 0.40, 0.0)));
+	steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Pickup, false)));
+	steps.push_back(std::unique_ptr<Step>(new TimedCrab(1.5, 0.0, 0.3, 0.0)));
 	steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Pickup, true)));
 	steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(0.60)));
 }
@@ -23,7 +24,7 @@ void RoughTerrainStrategy::Init(World* world) {
 	steps.push_back(std::unique_ptr<Step>(new Delay()));
 	steps.push_back(std::unique_ptr<Step>(new TimedCrab(0.25, 0.0, 0.40, 0.0)));
 	steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Travel, true)));
-	steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonar(0.75)));
+	steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(0.75)));
 }
 
 void MoatStrategy::Init(World* world) {
@@ -31,7 +32,7 @@ void MoatStrategy::Init(World* world) {
 	steps.push_back(std::unique_ptr<Step>(new Delay()));
 	steps.push_back(std::unique_ptr<Step>(new TimedCrab(0.25, 0.0, 0.40, 0.0)));
 	steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Travel, true)));
-	steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonar(0.75)));
+	steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(0.75)));
 }
 
 

@@ -29,6 +29,7 @@ private:
 	int lastGoalX = 999;
 	int kickCounter = 0;
 	float P = 1.0;			// Default P magnitude
+	const float MIN_MAGNITUDE_FLOOR = 0.10;
 
 	bool InTwist();
 	const float TWIST_THRESHOLD = 0.5;
