@@ -36,6 +36,7 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 	if (startTime < 0) {
 		startTime = currentTime;
 		GOAL_CENTER_OFFSET = Preferences::GetInstance()->GetInt("VisionCenterOffset", -11);
+		pidX->SetSetpoint(GOAL_CENTER_OFFSET);
 	}
 
 	if ((currentTime - startTime) > timeout) {
