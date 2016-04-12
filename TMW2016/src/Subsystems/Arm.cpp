@@ -266,16 +266,23 @@ void Arm::SetShooterSpeed(float ShooterSpeed, float FeederSpeed) {
 }
 void Arm::ShooterManager() {
 	if(shooterRun) {
-	shooterWheel->Set(shooterSpeed);
+		if (Relay::kOff == RobotMap::flashlightRelay->Get()) {
+			RobotMap::flashlightRelay->Set(Relay::kOn);
+		}
+		shooterWheel->Set(shooterSpeed);
 		feederWheel->Set(feederSpeed);
 		comp->Stop();
 	}
 	else {
+		if (Relay::kOn == RobotMap::flashlightRelay->Get()) {
+			RobotMap::flashlightRelay->Set(Relay::kOff);
+		}
 		shooterWheel->Set(0);
 		feederWheel->Set(0);
 		comp->Start();
-		}
+	}
 }
+
 
 bool Arm::ShooterWheelsAtSpeed() const {
 	const int shooterThreshold = 1500;
