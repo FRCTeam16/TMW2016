@@ -107,7 +107,7 @@ bool SetArmPosition::operator()(World *world) {
 
 ControlShooterMotors::ControlShooterMotors(bool enable_) : enable(enable_) {
 	Preferences *prefs = Preferences::GetInstance();
-	shooterSpeed = prefs->GetFloat("ShooterSpeed");
+	shooterSpeed = prefs->GetFloat("LongShooterSpeed");
 	feederSpeed = prefs->GetFloat("FeederSpeed");
 }
 

@@ -60,11 +60,12 @@ private:
 	double fireTime;
 	bool lowFiring;
 	double lowFireTime;
+	bool wallshotDartEnabled = false;
 
 	bool dartOutputUnlimited;
 
-	int highShooter;
-	const int lowShooter = 720;
+	int highShooter = 720;					// from prefs
+	int lowShooter = 720;					// from prefs
 	const int pickup = 920;				// 4/5/2016 - 933
 	const int travel = 838;
 	const int extendPosition = 300;
@@ -89,6 +90,8 @@ public:
 	bool DartInPosition() const;
 	void IncDart();
 	void DecDart();
+	void SetWallshotDart(const bool enabled);
+	bool GetWallshotDart() const;
 	void ClimbExtend();
 	void ClimbRetract();
 	void RunShooter(bool run);
