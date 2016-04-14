@@ -93,10 +93,12 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 	float setpointAngle = 0.0;
 	if (targetGoal == 1 || targetGoal == 6) {	// FIXME: Target Goal ID Handling
 		setpointAngle = 60.0;
-	} else if (targetGoal == 2) {
-		setpointAngle = teleop_mode ? 12.0 : 0.0;
+	} else if (targetGoal == 2 || targetGoal == 7) {
+		//setpointAngle = teleop_mode ? 12.0 : 0.0;
+		setpointAngle = 0.0;
 	} else if (targetGoal == 3) {
-		setpointAngle = teleop_mode ? -3.0 : -60.0;
+		//setpointAngle = teleop_mode ? -3.0 : -60.0;
+		setpointAngle = -60.0;
 	}
 	targetAngle = setpointAngle-90;
 	Robot::driveBase->DriveControlTwist->SetSetpoint(setpointAngle);

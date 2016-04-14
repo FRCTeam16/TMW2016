@@ -10,17 +10,17 @@
 
 class CollideWithWall : public Step {
 public:
-	CollideWithWall(float frontAngleDegrees_, float xSpeed_, float ySpeed_, float jerkThreshold = 1.0);
+	CollideWithWall(float frontAngleDegrees_, float xSpeed_, float ySpeed_, float jerkThreshold = 1.0, float timeout_ = 1.5);
 	~CollideWithWall();
 	bool operator ()(World* world);
 private:
 	std::unique_ptr<CollisionDetector> collisionDetector;
-	const float DEFAULT_TIMEOUT = 1.0;
 	const float YAW_THRESHOLD = 5.0;
 	const float yawDegrees;
 	const float xSpeed;
 	const float ySpeed;
 	const float JERK_THRESHOLD;
+	const float TIMEOUT;
 	double startTime = -1;
 	double collideStartTime = -1;
 	bool frontInPosition = false;

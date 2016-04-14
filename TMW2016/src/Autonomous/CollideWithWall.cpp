@@ -5,8 +5,8 @@
 #include "../Robot.h"
 #include "CollideWithWall.h"
 
-CollideWithWall::CollideWithWall(float frontAngleDegrees_, float xSpeed_, float ySpeed_, float jerkThreshold) :
-	yawDegrees(frontAngleDegrees_), xSpeed(xSpeed_), ySpeed(ySpeed_), JERK_THRESHOLD(jerkThreshold)
+CollideWithWall::CollideWithWall(float frontAngleDegrees_, float xSpeed_, float ySpeed_, float jerkThreshold, float timeout_) :
+	yawDegrees(frontAngleDegrees_), xSpeed(xSpeed_), ySpeed(ySpeed_), JERK_THRESHOLD(jerkThreshold), TIMEOUT(timeout_)
 {
 	collisionDetector.reset(new CollisionDetector(Robot::driveBase->imu, JERK_THRESHOLD));
 }
@@ -34,7 +34,7 @@ bool CollideWithWall::operator ()(World* world) {
 			collideStartTime = world->GetClock();
 		}
 		collisionDetected = collisionDetector->Detect();
-		const bool timedOut = (world->GetClock() - collideStartTime) > DEFAULT_TIMEOUT;
+		const bool timedOut = (world->GetClock() - collideStartTime) > TIMEOUT;
 		cout << "CollideWithWall-> collision? " << collisionDetected << " timeout: " << timedOut << '\n';
 		if (!collisionDetected && !timedOut) {
 			crab->Update(Robot::driveBase->CrabSpeedTwist->Get(), ySpeed, xSpeed, true);

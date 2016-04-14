@@ -187,7 +187,7 @@ void Robot::TeleopPeriodic() {
 			target = 1;
 		}
 		else if(oi->DL5->Pressed()) {
-			target = 3;
+			target = 2;
 		}
 		else if(oi->DL3->Pressed()) {
 			target = 2;
