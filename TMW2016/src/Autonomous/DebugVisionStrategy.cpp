@@ -17,7 +17,7 @@ DebugVisionStrategy::~DebugVisionStrategy() {
 
 void DebugVisionStrategy::Init(World* world) {
 	const int targetGoal = world->GetTargetGoal();
-	const bool useVision = targetGoal < 4 || targetGoal == 6 || targetGoal == 7;
+	const bool useVision = targetGoal < 4;
 	const bool waitForArm = false;
 	const bool retraverse = true;
 
@@ -42,21 +42,21 @@ void DebugVisionStrategy::Init(World* world) {
 			steps.push_back(std::unique_ptr<Step>(new ShootBall(false)));
 		}
 
-		if (retraverse) {
-			steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Pickup, false)));
-			steps.push_back(std::unique_ptr<Step>(new ControlBeaterBar(false)));
-			steps.push_back(std::unique_ptr<Step>(new TimedCrab(1.0, 0.0, 0.3, -0.6)));
-			steps.push_back(std::unique_ptr<Step>(new CollideWithWall(0.0, -0.5, -0.0, 7)));
-			steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(-0.5, -2.0, 5, false, 0.0)));
-		}
-	}
+		// Return Strategy
+		steps.push_back(std::unique_ptr<Step>(new AlignWithGoalAndShoot(5.0, 0.3, true)));
+		steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Travel, false)));
+		steps.push_back(std::unique_ptr<Step>(new Turn(180.0)));
+		steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Travel, true)));
+		steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(-0.75, 180.0, 5, false, 0.0)));
+		steps.push_back(std::unique_ptr<Step>(new LockWheels()));
 
-	if (false)
-	{
-		steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Pickup, false)));
-		steps.push_back(std::unique_ptr<Step>(new ControlBeaterBar(false)));
-		steps.push_back(std::unique_ptr<Step>(new CollideWithWall(0.0, -0.3, 0.0, 0.8)));
-		//steps.push_back(std::unique_ptr<Step>(new TimedCrab(0.25, 0.0, 0.0, 0.2)));
-		steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(-0.3, -2.0, 5, false, 0.0)));
+
+//		if (retraverse) {
+//			steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Pickup, false)));
+//			steps.push_back(std::unique_ptr<Step>(new ControlBeaterBar(false)));
+//			steps.push_back(std::unique_ptr<Step>(new TimedCrab(1.0, 0.0, 0.3, -0.6)));
+//			steps.push_back(std::unique_ptr<Step>(new CollideWithWall(0.0, -0.5, -0.0, 7)));
+//			steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(-0.5, -2.0, 5, false, 0.0)));
+//		}
 	}
 }

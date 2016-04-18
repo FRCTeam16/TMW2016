@@ -71,7 +71,7 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 
 
 bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
-	cout << "TraverseObstacleWithGyro()\n";
+	cout << "TraverseObstacleWithGyroAndSonar()\n";
 	const float pitch = Robot::driveBase->imu->GetRoll();
 	const int distance = Robot::driveBase->ultrasonics->GetDistance(2);
 	const double currentTime = world->GetClock();

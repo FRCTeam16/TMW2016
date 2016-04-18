@@ -52,6 +52,11 @@ void Robot::RobotInit() {
 	if(!prefs->ContainsKey("ShortShooterSpeed")) { prefs->PutFloat("ShortShooterSpeed", 15000); }
 	if(!prefs->ContainsKey("ShortShooterArm")) { prefs->PutFloat("ShortShooterArm", 720); }
 	if(!prefs->ContainsKey("WallShotOffset")) { prefs->PutFloat("WallShotOffset", 0); }
+	if(!prefs->ContainsKey("AutoReturnOffset2")) { prefs->PutFloat("AutoReturnOffset2", 200); }
+	if(!prefs->ContainsKey("AutoReturnOffset3")) { prefs->PutFloat("AutoReturnOffset3", 10); }
+	if(!prefs->ContainsKey("AutoReturnOffset4")) { prefs->PutFloat("AutoReturnOffset4", -10); }
+	if(!prefs->ContainsKey("AutoReturnOffset5")) { prefs->PutFloat("AutoReturnOffset5", -20); }
+
 
 
 	SmartDashboard::PutNumber(AUTO_DELAY, 0.0);

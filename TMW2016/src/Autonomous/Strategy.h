@@ -49,9 +49,13 @@ private:
 	virtual bool Run(World *world) override;
 	std::unique_ptr<Strategy> outerworkStrategy;
 	std::unique_ptr<Strategy> shootingStrategy;
+	std::unique_ptr<Strategy> returnStrategy;
 	bool outerworkStrategyComplete = false;
 	bool outerworkStrategyStarted = true;
 	bool firstTimeShooting = true;
+	bool shootingCompleted = false;
+	bool firstTimeReturning = true;
+	bool returnComplete = false;
 };
 
 // --------------------------------------------------------------------------//

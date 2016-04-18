@@ -77,8 +77,12 @@ public:
 	Turn(float angle_) : angle(angle_) {}
 	bool operator()(World *world) override;
 private:
+	const float TIMEOUT = 10.0;
+	float startTime = -1;
 	bool firstRun = true;
 	const float angle;
+	const float TWIST_THRESHOLD = 0.5;
+	float last_twist = -1.0;			// tracks scan to scan twist delta
 };
 
 // --------------------------------------------------------------------------//

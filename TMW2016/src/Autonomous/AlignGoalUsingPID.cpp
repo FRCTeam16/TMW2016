@@ -91,9 +91,9 @@ bool AlignGoalUsingPID::operator ()(World* world) {
 	const int targetGoal = world->GetTargetGoal();
 	float targetAngle = 0.0;
 	float setpointAngle = 0.0;
-	if (targetGoal == 1 || targetGoal == 6) {	// FIXME: Target Goal ID Handling
+	if (targetGoal == 1) {
 		setpointAngle = 60.0;
-	} else if (targetGoal == 2 || targetGoal == 7) {
+	} else if (targetGoal == 2) {
 		//setpointAngle = teleop_mode ? 12.0 : 0.0;
 		setpointAngle = 0.0;
 	} else if (targetGoal == 3) {

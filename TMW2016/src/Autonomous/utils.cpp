@@ -40,13 +40,13 @@ float CalculateDriveAngle(const int pos, const int goal, outerworks defense) {
 		break;
 	}
 
-	if(goal == 1 || goal == 6) {
+	if(goal == 1) {
 		dxGoal = 7.5;
 		dyGoal = 13;
 		dx = dxGoalFromWall + dxGoal - dShoot*sin(PI_3) - dxDefense;
 		dy = dyDefense - (dyGoal+dShoot*cos(PI_3));
 	}
-	if (goal == 2 || goal == 7) {
+	if (goal == 2) {
 		dxGoal = 30;
 		dyGoal = 26;
 		dx = dxGoalFromWall + dxGoal - dxDefense;

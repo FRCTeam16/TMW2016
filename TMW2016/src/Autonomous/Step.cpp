@@ -43,14 +43,16 @@ bool Turn::operator()(World *world) {
 	if (firstRun) {
 		firstRun = false;
 		Robot::driveBase->DriveControlTwist->SetSetpoint(angle);
+		startTime = world->GetClock();
 	}
-	SmartDashboard::PutNumber("DriveControlTwistError",
-			Robot::driveBase->DriveControlTwist->GetError());
-	SmartDashboard::PutNumber("DriveControlTwist Output",
-				Robot::driveBase->CrabSpeedTwist->Get());
+
+	if ((world->GetClock() - startTime) > TIMEOUT) {
+		cout << "TIMEOUT\n";
+		crab->Stop();
+		return false;
+	}
 
 	if (fabs(Robot::driveBase->DriveControlTwist->GetError()) < 3) {
-		crab->Stop();
 		cout << "Exiting Turn\n";
 		return true;
 	} else {

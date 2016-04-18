@@ -16,11 +16,13 @@
 class AlignWithGoalAndShoot : public Step {
 public:
 	AlignWithGoalAndShoot(float timeout_, float speed_): timeout(timeout_), speed(speed_) {}
+	AlignWithGoalAndShoot(float timeout_, float speed_, bool returnToStart_): timeout(timeout_), speed(speed_), returnToStart(returnToStart_) {}
 	virtual ~AlignWithGoalAndShoot() {}
 	bool operator()(World *world) override;
 private:
 	const float timeout;
 	const float speed;
+	const bool returnToStart = false;
 	const int xthreshold = 10;
 	float startTime = -1;
 	bool fired = false;

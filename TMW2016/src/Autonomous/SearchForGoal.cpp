@@ -27,12 +27,7 @@ bool SearchForGoal::operator()(World *world) {
 			{2.0, 0.0, 2.0},
 			{5.0, 3.0, 2.0}
 	};
-	int lookupTargetGoal = targetGoal - 1;
-	if (targetGoal == 6) {
-		lookupTargetGoal = 0;
-	} else if (targetGoal == 7) {
-		lookupTargetGoal = 1;
-	}
+	const int lookupTargetGoal = targetGoal - 1;
 	const float minTime = minTimes[startingPosition-1][lookupTargetGoal];
 	cout << "MinTime: " << minTime << '\n';
 
@@ -60,10 +55,10 @@ bool SearchForGoal::operator()(World *world) {
 
 	float yawSetpoint;
 	switch (targetGoal) {
-	case 1:	case 6:
+	case 1:
 		yawSetpoint = 60.0;
 		break;
-	case 2: case 7:
+	case 2:
 		yawSetpoint = 0.0;
 		break;
 	case 3:

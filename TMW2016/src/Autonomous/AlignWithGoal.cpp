@@ -26,6 +26,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	cout << "Start Time  : " << startTime << '\n';
 	cout << "Target Goal : " << targetGoal << '\n';
 	cout << "goal X      : " << goal.xposition << '\n';
+	cout << "ReturnStart?: " << returnToStart << '\n';
 	cout << "Fine Tune   : " << fineTuneCounter << '\n';
 	cout << "Fired       : " << fired << '\n';
 	cout << "Kicker      : " << kickCounter << '\n';
@@ -58,7 +59,27 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	}
 
 	const float currentX = goal.xposition;
-	const int OFFSET = vision_center_offset;
+	int OFFSET = vision_center_offset;
+	if (returnToStart) {
+		const int returnTarget = world->GetReturnPosition();
+		switch(returnTarget) {
+		case 1:
+			cout << "Invalid return position\n";
+			break;
+		case 2:
+			OFFSET = Preferences::GetInstance()->GetInt("AutoReturnOffset2", -11);
+			break;
+		case 3:
+			OFFSET = Preferences::GetInstance()->GetInt("AutoReturnOffset3", -11);
+			break;
+		case 4:
+			OFFSET = Preferences::GetInstance()->GetInt("AutoReturnOffset4", -11);
+			break;
+		case 5:
+			OFFSET = Preferences::GetInstance()->GetInt("AutoReturnOffset5", -11);
+			break;
+		}
+	}
 	const int SLOW_THRESHOLD = 20;
 	const int FIRE_THRESHOLD = 8;
 
@@ -75,7 +96,9 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 
 			if (!fired && !in_twist && arm_in_position) {
 				cout << "***********************-=====> FIRING\n";
-				Robot::arm->Fire();
+				if (!returnToStart) {
+					Robot::arm->Fire();
+				}
 				fired = true;
 			}
 		}
@@ -88,8 +111,15 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 		// coast
 	} else {
 		// Calculate movement
-		const int startingPosition = world->GetStartingPosition();
-		const float driveAngleRadians = utils::CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
+		const int startingPosition = !returnToStart ? world->GetStartingPosition() : world->GetReturnPosition();
+		float driveAngleRadians = utils::CalculateDriveAngle(startingPosition, targetGoal, world->GetStartingDefense());
+		if (returnToStart) {
+			if (driveAngleRadians > M_PI) {
+				driveAngleRadians -= M_PI;
+			} else {
+				driveAngleRadians += M_PI;
+			}
+		}
 		cout << "SearchForGoal: Pos: " << startingPosition << " Goal: " << targetGoal << " Calculated driveAngle = " << driveAngleRadians << "\n";
 		float magnitude = P * speed;
 		if (kickCounter > 0) {

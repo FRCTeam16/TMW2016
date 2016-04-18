@@ -29,6 +29,7 @@ public:
 	std::unique_ptr<SendableChooser> position;
 	std::unique_ptr<SendableChooser> defense;
 	std::unique_ptr<SendableChooser> target;
+	std::unique_ptr<SendableChooser> returnPosition;
 private:
 	std::map<outerworks, std::shared_ptr<Strategy>> strategyLookup;
 	Strategy* currentStrategy;

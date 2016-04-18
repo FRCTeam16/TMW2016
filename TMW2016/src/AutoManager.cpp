@@ -12,13 +12,15 @@
 #include "Autonomous/Strategy.h"
 #include "Autonomous/OuterworkStrategies.h"
 #include "Autonomous/DebugVisionStrategy.h"
+#include "Autonomous/ReturnStrategy.h"
 
 #include "WPILib.h"
 
 
 static const std::string AUTO_POSITION = "Auto Position";
 static const std::string AUTO_DEFENSE = "Auto Defense";
-static const std::string AUTO_TARGET = "Auto Goal--";
+static const std::string AUTO_TARGET = "Auto Goal-";
+static const std::string AUTO_RETURN = "Auto Return";
 
 static const std::string AUTO_INIT_CONFIG_ERROR = "Auto Config Error";
 
@@ -28,6 +30,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 		position(new SendableChooser()),
 		defense(new SendableChooser()),
 		target(new SendableChooser()),
+		returnPosition(new SendableChooser()),
 		visionServer(visionServer_),
 		driveBase(Robot::driveBase) {
 	//
@@ -42,6 +45,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	std::shared_ptr<Strategy> moat 			{ new OuterworkAndShootStrategy(new MoatStrategy()) };
 	std::shared_ptr<Strategy> rampart 		{ new OuterworkAndShootStrategy(new RampartStrategy()) };
 	std::shared_ptr<Strategy> debugVision 	{ new DebugVisionStrategy() };
+//	std::shared_ptr<Strategy> debugVision 	{ new ReturnStrategy() };
 
 	// Map Defenses to Strategies
 	strategyLookup.insert(std::make_pair(LowBar, 		lowbar));
@@ -84,13 +88,19 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 //	target->AddObject("3 - Right",  (void*) 3);
 //	target->AddObject("4 - Left Blind",  (void*) 4);
 //	target->AddObject("5 - Right Blind",  (void*) 5);
-	target->AddObject("6 - Left With Return", (void*) 6);
-	target->AddObject("7 - Center With Return", (void*) 7);
 	target->AddObject("9 - Stop After Outerworks", (void*) 0);
+
+	returnPosition->AddDefault("0 - None", (void*) 0);
+	returnPosition->AddDefault("1", (void*) 1);
+	returnPosition->AddObject("2",  (void*) 2);
+	returnPosition->AddObject("3",  (void*) 3);
+	returnPosition->AddObject("4",  (void*) 4);
+	returnPosition->AddObject("5",  (void*) 5);
 
 	SmartDashboard::PutData(AUTO_POSITION, position.get());
 	SmartDashboard::PutData(AUTO_DEFENSE, defense.get());
 	SmartDashboard::PutData(AUTO_TARGET, target.get());
+	SmartDashboard::PutData(AUTO_RETURN, returnPosition.get());
 
 	cout << "AutoManager::AutoManager complete\n";
 }
@@ -103,6 +113,7 @@ void AutoManager::Init(World *world) {
 	outerworks startingDefense 	 = static_cast<outerworks>(startingDefenseIdx);
 	const int startingPosition 	 = (int) position->GetSelected();
 	const int targetGoal		 = (int) target->GetSelected();
+	const int returnPos			 = (int) returnPosition->GetSelected();
 
 //	cout << "Starting Defense Idx: " << startingDefenseIdx << '\n';
 //	cout << "Starting Position   : " << startingPosition << '\n';
@@ -110,6 +121,7 @@ void AutoManager::Init(World *world) {
 	SmartDashboard::PutNumber("Selected Position", startingPosition);
 	SmartDashboard::PutNumber("Selected Defense", startingDefenseIdx);
 	SmartDashboard::PutNumber("Selected Target", targetGoal);
+	SmartDashboard::PutNumber("Selected Return", returnPos);
 
 	// TODO: Add precondition state checks to prevent starting at 1 and shooting at 3, for example
 	SmartDashboard::PutString(AUTO_INIT_CONFIG_ERROR, "");
@@ -121,7 +133,7 @@ void AutoManager::Init(World *world) {
 
 	// Initialize world state with initial information
 	// Must occur before strategy initialization
-	world->Init(startingPosition, targetGoal, startingDefense);
+	world->Init(startingPosition, targetGoal, startingDefense, returnPos);
 
 	// Lookup strategy for starting outerwork defense
 	auto iterator = strategyLookup.find(startingDefense);

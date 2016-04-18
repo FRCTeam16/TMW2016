@@ -16,7 +16,7 @@
 
 void ShootingStrategy::Init(World* world) {
 	const int targetGoal = world->GetTargetGoal();
-	bool useVision =  targetGoal < 4 || targetGoal == 6 || targetGoal == 7;
+	bool useVision =  targetGoal < 4;
 	bool waitForArm = true;
 
 	//----------------------------------------------------------------------//
@@ -116,15 +116,7 @@ bool ShootingStrategy::Run(World *world) {
 	std::vector<Step*> steps;
 	const int targetGoal = world->GetTargetGoal();
 	if (targetGoal != 0) {
-		int startingPosition = world->GetStartingPosition();
-		// Handle custom targets
-		if (targetGoal == 6) {
-			// position 1 return
-			startingPosition = 6;
-		} else if (targetGoal == 7) {
-			// position 2 return
-			startingPosition = 7;
-		}
+		const int startingPosition = world->GetStartingPosition();
 		steps = locationSteps[startingPosition];
 	} else {
 		// Target goal 0 is noop
