@@ -16,19 +16,19 @@ bool SafetyChecker::CheckLimits() {
 		cout << "<<< TANK RIGHT EXCEEDED LIMIT >>>\n";
 		success = false;
 	}
-	if (Robot::driveBase->FLHotCount > Robot::driveBase->driveLimit) {
+	if (Robot::driveBase->FLHotCount > Robot::driveBase->driveMaxLimit) {
 		cout << "<<< FL EXCEEDED LIMIT >>>\n";
 		success = false;
 	}
-	if (Robot::driveBase->FRHotCount > Robot::driveBase->driveLimit) {
+	if (Robot::driveBase->FRHotCount > Robot::driveBase->driveMaxLimit) {
 		cout << "<<< FR EXCEEDED LIMIT >>>\n";
 		success = false;
 	}
-	if (Robot::driveBase->RLHotCount > Robot::driveBase->driveLimit) {
+	if (Robot::driveBase->RLHotCount > Robot::driveBase->driveMaxLimit) {
 		cout << "<<< RL EXCEEDED LIMIT >>>\n";
 		success = false;
 	}
-	if (Robot::driveBase->RRHotCount > Robot::driveBase->driveLimit) {
+	if (Robot::driveBase->RRHotCount > Robot::driveBase->driveMaxLimit) {
 		cout << "<<< RR EXCEEDED LIMIT >>>\n";
 		success = false;
 	}

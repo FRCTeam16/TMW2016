@@ -21,7 +21,8 @@ ReturnStrategy::~ReturnStrategy() {
 
 void ReturnStrategy::Init(World* world) {
 	const int position = world->GetReturnPosition();
-	cout << "ReturnStrategy::Init(" << position << ")\n";
+	const bool ctypeReturn = world->GetCtypeReturn();
+	cout << "ReturnStrategy::Init(" << position << ", ctype=" << ctypeReturn << ")\n";
 	switch (position) {
 	case 0:
 		break;
@@ -44,7 +45,12 @@ void ReturnStrategy::Init(World* world) {
 		steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Travel, false)));
 		steps.push_back(std::unique_ptr<Step>(new Turn(180.0)));
 		steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Travel, true)));
-		steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(-0.75, 180.0, 5, false, 0.0)));
+//		steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(-0.75, 180.0, 5, false, 0.0)));
+		if (ctypeReturn) {
+			steps.push_back(std::unique_ptr<Step>(new TimedCrab(2.0, 180.0, -0.75, 0.0)));
+		} else {
+			steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonar(-0.75, 180.0)));
+		}
 	}
 	steps.push_back(std::unique_ptr<Step>(new LockWheels()));
 	cout << "Initialized " << steps.size() << " steps\n";

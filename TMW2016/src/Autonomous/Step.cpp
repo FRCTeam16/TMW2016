@@ -39,12 +39,14 @@ bool LockWheels::operator ()(World *world) {
 
 
 bool Turn::operator()(World *world) {
-	cout << "Turn()\n";
 	if (firstRun) {
 		firstRun = false;
 		Robot::driveBase->DriveControlTwist->SetSetpoint(angle);
 		startTime = world->GetClock();
 	}
+	const float yaw = Robot::driveBase->imu->GetYaw();
+	const float yawError = Robot::driveBase->DriveControlTwist->GetError();
+	cout << "Turn(yaw=" << yaw << ", error=" << yawError << ")\n";
 
 	if ((world->GetClock() - startTime) > TIMEOUT) {
 		cout << "TIMEOUT\n";
@@ -52,7 +54,8 @@ bool Turn::operator()(World *world) {
 		return false;
 	}
 
-	if (fabs(Robot::driveBase->DriveControlTwist->GetError()) < 3) {
+	const int THRESHOLD = 5;
+	if (fabs(yawError) <= THRESHOLD || (fabs(yawError) >= (360 - THRESHOLD))) {
 		cout << "Exiting Turn\n";
 		return true;
 	} else {

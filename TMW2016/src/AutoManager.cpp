@@ -21,6 +21,7 @@ static const std::string AUTO_POSITION = "Auto Position";
 static const std::string AUTO_DEFENSE = "Auto Defense";
 static const std::string AUTO_TARGET = "Auto Goal-";
 static const std::string AUTO_RETURN = "Auto Return";
+static const std::string AUTO_C_TYPE_RETURN = "Auto C-Type Return";
 
 static const std::string AUTO_INIT_CONFIG_ERROR = "Auto Config Error";
 
@@ -64,6 +65,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	//
 	// Initialize Sendable Objects and Dashboard
 	//
+
 	defense->AddDefault("1: LowBar", 		(void*) LowBar);
 //	defense->AddObject("A: Portcullis", 	(void*) Portcullis);
 //	defense->AddObject("A: ChevalDeFrise", 	(void*) ChevalDeFrise);
@@ -102,6 +104,8 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	SmartDashboard::PutData(AUTO_TARGET, target.get());
 	SmartDashboard::PutData(AUTO_RETURN, returnPosition.get());
 
+	SmartDashboard::PutBoolean(AUTO_C_TYPE_RETURN, false);
+
 	cout << "AutoManager::AutoManager complete\n";
 }
 
@@ -115,13 +119,12 @@ void AutoManager::Init(World *world) {
 	const int targetGoal		 = (int) target->GetSelected();
 	const int returnPos			 = (int) returnPosition->GetSelected();
 
-//	cout << "Starting Defense Idx: " << startingDefenseIdx << '\n';
-//	cout << "Starting Position   : " << startingPosition << '\n';
-//	cout << "Starting Target     : " << targetGoal << '\n';
 	SmartDashboard::PutNumber("Selected Position", startingPosition);
 	SmartDashboard::PutNumber("Selected Defense", startingDefenseIdx);
 	SmartDashboard::PutNumber("Selected Target", targetGoal);
 	SmartDashboard::PutNumber("Selected Return", returnPos);
+
+	const bool ctypeReturn = SmartDashboard::GetBoolean(AUTO_C_TYPE_RETURN, false);
 
 	// TODO: Add precondition state checks to prevent starting at 1 and shooting at 3, for example
 	SmartDashboard::PutString(AUTO_INIT_CONFIG_ERROR, "");
@@ -133,7 +136,7 @@ void AutoManager::Init(World *world) {
 
 	// Initialize world state with initial information
 	// Must occur before strategy initialization
-	world->Init(startingPosition, targetGoal, startingDefense, returnPos);
+	world->Init(startingPosition, targetGoal, startingDefense, returnPos, ctypeReturn);
 
 	// Lookup strategy for starting outerwork defense
 	auto iterator = strategyLookup.find(startingDefense);
@@ -148,7 +151,9 @@ void AutoManager::Init(World *world) {
 		return;
 	}
 
+	//
 	// Initialize sensors
+	//
 	driveBase->imu->ZeroYaw();
 	cout << "AutoManager::Init COMPLETE\n";
 }

@@ -106,6 +106,7 @@ private:
 	int RRHotCount;
 	int driveLimit;
 	int coolCount;
+	const int driveMaxLimit = 100;
 
 	int tankLeftHotCount;
 	int tankRightHotCount;

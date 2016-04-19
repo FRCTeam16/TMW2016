@@ -78,6 +78,7 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 
 	cout << "currentTime: " << currentTime << '\n';
 	cout << "startTime  : " << startTime << '\n';
+	cout << "ultrasonicTime  : " << ultrasonicStartTime << '\n';
 	cout << "negativeCounter: " << negativeCounter << '\n';
 	cout << "startedObstacle: " << startedObstacle << '\n';
 	cout << "hitNegative    : " << hitNegative << '\n';
@@ -89,7 +90,7 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 
 	if (!running) {
 		running = true;
-		Robot::driveBase->DriveControlTwist->SetSetpoint(0.0);
+		Robot::driveBase->DriveControlTwist->SetSetpoint(angle);
 		startTime = currentTime;
 		last_distance = distance;
 	}
@@ -120,14 +121,17 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 		negativeCounter = 0;
 	}
 
+	// Start ultrasonic checking
 	if (startedObstacle && !distance_in_obstacle) {
 		if (distance < 60 && (last_distance - distance > DELTA_ULTRASONIC)) {
 			distance_in_obstacle = true;
 			last_distance = distance;
+			ultrasonicStartTime = currentTime;
 		}
 	}
 
-	if (startedObstacle && distance_in_obstacle) {
+	const bool checkUltrasonics = (currentTime - ultrasonicStartTime) > ULTRASONIC_HOLD;
+	if (startedObstacle && distance_in_obstacle && checkUltrasonics) {
 		if (distance - last_distance > DELTA_ULTRASONIC) {
 			cout << "*** ULTRASONICS DETECTED OBSTACLE CLEARANCE ***\n";
 			return true;

@@ -42,22 +42,20 @@ void Robot::RobotInit() {
 	if(!prefs->ContainsKey("FeederSeed"))
 		prefs->PutFloat("FeederSpeed", -1.0);
 	if(!prefs->ContainsKey("TwistP"))
-		prefs->PutFloat("TwistP",.035);
+		prefs->PutFloat("TwistP",0.02);
 	if(!prefs->ContainsKey("TwistI"))
-		prefs->PutFloat("TwistI",0);
+		prefs->PutFloat("TwistI",0.0);
 	if(!prefs->ContainsKey("TwistD"))
-		prefs->PutFloat("TwistD",0.02);
-	if(!prefs->ContainsKey("LongShooterSpeed")) { prefs->PutFloat("LongShooterSpeed", 13000); }
+		prefs->PutFloat("TwistD",0.12);
+	if(!prefs->ContainsKey("LongShooterSpeed")) { prefs->PutFloat("LongShooterSpeed", 16000); }
 	if(!prefs->ContainsKey("LongShooterArm")) { prefs->PutFloat("LongShooterArm", 570); }
-	if(!prefs->ContainsKey("ShortShooterSpeed")) { prefs->PutFloat("ShortShooterSpeed", 15000); }
+	if(!prefs->ContainsKey("ShortShooterSpeed")) { prefs->PutFloat("ShortShooterSpeed", 11500); }
 	if(!prefs->ContainsKey("ShortShooterArm")) { prefs->PutFloat("ShortShooterArm", 720); }
 	if(!prefs->ContainsKey("WallShotOffset")) { prefs->PutFloat("WallShotOffset", 0); }
 	if(!prefs->ContainsKey("AutoReturnOffset2")) { prefs->PutFloat("AutoReturnOffset2", 200); }
-	if(!prefs->ContainsKey("AutoReturnOffset3")) { prefs->PutFloat("AutoReturnOffset3", 10); }
-	if(!prefs->ContainsKey("AutoReturnOffset4")) { prefs->PutFloat("AutoReturnOffset4", -10); }
-	if(!prefs->ContainsKey("AutoReturnOffset5")) { prefs->PutFloat("AutoReturnOffset5", -20); }
-
-
+	if(!prefs->ContainsKey("AutoReturnOffset3")) { prefs->PutFloat("AutoReturnOffset3", 92); }
+	if(!prefs->ContainsKey("AutoReturnOffset4")) { prefs->PutFloat("AutoReturnOffset4", -35); }
+	if(!prefs->ContainsKey("AutoReturnOffset5")) { prefs->PutFloat("AutoReturnOffset5", -131); }
 
 	SmartDashboard::PutNumber(AUTO_DELAY, 0.0);
 
@@ -113,7 +111,7 @@ void Robot::AutonomousInit() {
 	cout << "Robot::AutonomousInit\n";
 	automan.reset(new AutoManager(visionServer.get()));
 	dataLogger.reset(new DataLogger(kAutonomous, driveBase, arm, oi.get(), visionServer.get()));
-	Robot::driveBase->DriveControlTwist->SetOutputRange(-0.25, 0.25);
+	Robot::driveBase->DriveControlTwist->SetOutputRange(-0.5, 0.5);
 	automan->Init(world.get());
 	cout << "Robot::AutonomousInit COMPLETE\n";
 }
