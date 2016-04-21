@@ -105,6 +105,10 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	}
 
 	if (fired) {
+		if (returnToStart) {
+			crab->lock = true;
+			return true;
+		}
 		if (fineTuneCounter++ > 5) {
 			return true;
 		}

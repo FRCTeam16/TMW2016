@@ -88,7 +88,7 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	target->AddDefault("1 - Left", (void*) 1);
 	target->AddObject("2 - Center",  (void*) 2);
 //	target->AddObject("3 - Right",  (void*) 3);
-//	target->AddObject("4 - Left Blind",  (void*) 4);
+	target->AddObject("4 - Left Blind",  (void*) 4);
 //	target->AddObject("5 - Right Blind",  (void*) 5);
 	target->AddObject("9 - Stop After Outerworks", (void*) 0);
 

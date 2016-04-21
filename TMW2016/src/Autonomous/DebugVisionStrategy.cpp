@@ -19,8 +19,6 @@ void DebugVisionStrategy::Init(World* world) {
 	const int targetGoal = world->GetTargetGoal();
 	const bool useVision = targetGoal < 4;
 	const bool waitForArm = false;
-	const bool retraverse = true;
-
 
 	// ALignment tests
 	if (false)
@@ -29,7 +27,7 @@ void DebugVisionStrategy::Init(World* world) {
 	}
 
 	// Center Strategy
-	{
+	if (true) {
 		steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm)));
 		steps.push_back(std::unique_ptr<Step>(new ControlShooterMotors(true)));
 
@@ -43,12 +41,14 @@ void DebugVisionStrategy::Init(World* world) {
 		}
 
 		// Return Strategy
-		steps.push_back(std::unique_ptr<Step>(new AlignWithGoalAndShoot(5.0, 0.3, true)));
-		steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Travel, false)));
-		steps.push_back(std::unique_ptr<Step>(new Turn(180.0)));
-		steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Travel, true)));
-		steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(-0.75, 180.0, 5, false, 0.0)));
-		steps.push_back(std::unique_ptr<Step>(new LockWheels()));
+		if (false) {
+			steps.push_back(std::unique_ptr<Step>(new AlignWithGoalAndShoot(5.0, 0.3, true)));
+			steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Travel, false)));
+			steps.push_back(std::unique_ptr<Step>(new Turn(180.0)));
+			steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Travel, true)));
+			steps.push_back(std::unique_ptr<Step>(new TraverseObstacleWithGyroAndSonarLockingValues(-0.75, 180.0, 5, false, 0.0)));
+			steps.push_back(std::unique_ptr<Step>(new LockWheels()));
+		}
 
 
 //		if (retraverse) {

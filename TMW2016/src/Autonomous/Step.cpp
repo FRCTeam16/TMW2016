@@ -91,6 +91,10 @@ bool SetArmPosition::operator()(World *world) {
 		case Position::ShooterHigh:
 			Robot::arm->ShooterHigh();
 			break;
+		case Position::Wallshot:
+			Robot::arm->SetWallshotDart(true);
+			Robot::arm->ShooterHigh();
+			break;
 		default:
 			std::cerr << "Unrecognized position requested: " << static_cast<int>(position) << ", aborting!\n";
 			return true;

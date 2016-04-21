@@ -125,7 +125,7 @@ private:
 
 class SetArmPosition : public Step {
 public:
-	enum struct Position { Custom, Pickup, Travel, ShooterLow, ShooterHigh };
+	enum struct Position { Custom, Pickup, Travel, ShooterLow, ShooterHigh, Wallshot };
 	SetArmPosition(Position pos_, bool wait_):
 		position(pos_), wait(wait_), customTarget(-1) {}
 	SetArmPosition(int targetPosition_, bool wait_):

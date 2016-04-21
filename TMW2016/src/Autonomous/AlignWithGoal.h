@@ -60,8 +60,8 @@ private:
 
 class MoveToWallShootingPosition : public Step {
 public:
-	MoveToWallShootingPosition(float timeout_, float speed_) :
-		timeout(timeout_), speed(speed_), collisionDetector(new CollisionDetector(Robot::driveBase->imu, 1.0f)) {};
+	MoveToWallShootingPosition(float timeout_, float speed_, float collisionThreshold=1.0f) :
+		timeout(timeout_), speed(speed_), collisionDetector(new CollisionDetector(Robot::driveBase->imu, collisionThreshold)) {};
 	virtual ~MoveToWallShootingPosition() {};
 	bool operator()(World *world) override;
 private:

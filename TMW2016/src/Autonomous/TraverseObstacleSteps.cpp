@@ -130,13 +130,19 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 		}
 	}
 
-	const bool checkUltrasonics = (currentTime - ultrasonicStartTime) > ULTRASONIC_HOLD;
-	if (startedObstacle && distance_in_obstacle && checkUltrasonics) {
+	const bool checkUltrasonicsDelayPassed = (currentTime - ultrasonicStartTime) > ULTRASONIC_HOLD;
+	if (startedObstacle && distance_in_obstacle && checkUltrasonicsDelayPassed) {
 		if (distance - last_distance > DELTA_ULTRASONIC) {
 			cout << "*** ULTRASONICS DETECTED OBSTACLE CLEARANCE ***\n";
 			return true;
 		}
 		last_distance = distance;
+	}
+
+	// If we should exit this routing after detecting obstacle entered
+	if (exitAfterEnteringObstacle && distance_in_obstacle) {
+		cout << "Exiting after entering obstacle\n";
+		return true;
 	}
 
 	if (startedObstacle && hitNegative) {

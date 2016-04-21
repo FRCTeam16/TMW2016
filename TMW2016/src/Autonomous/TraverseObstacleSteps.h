@@ -37,28 +37,24 @@ private:
 
 class TraverseObstacleWithGyroAndSonar : public Step {
 public:
-	TraverseObstacleWithGyroAndSonar(float speed_ = 0.75, float angle_=0.0, int negativeCounterTarget=5) : speed(speed_), angle(angle_), NEGATIVE_COUNTER_TARGET(negativeCounterTarget) {}
+	TraverseObstacleWithGyroAndSonar(float speed_, float angle_=0.0, int negativeCounterTarget=5, bool exitAfterEntrance_=false) :
+		speed(speed_), angle(angle_), NEGATIVE_COUNTER_TARGET(negativeCounterTarget), exitAfterEnteringObstacle(exitAfterEntrance_) {}
 	bool operator()(World *world) override;
 private:
 	const int MAX_LOOPS = 150;
 	int loopCounter = 0;
-
-	const double MAX_TRY_TIME = 2.0;
-	const double MAX_RETRY_TIME = 2.0;
 	double startTime = -1;
 
 	const float speed;
 	const float angle;
+	const int NEGATIVE_COUNTER_TARGET = 5;	// how many loops to detect negative movement
+	const bool exitAfterEnteringObstacle = false;
+
 	bool running = false;
 	bool startedObstacle = false;
-
-	const int NEGATIVE_COUNTER_TARGET;	// how many loops to detect negative movement
 	int negativeCounter = 0;
 	bool hitNegative = false;
 	int quietCount = 0;
-
-	bool inRetry = false;
-	float retryStartTime = -1;
 
 	const int DELTA_ULTRASONIC = 10;
 	int last_distance = 0;
@@ -78,8 +74,6 @@ private:
 	const int MAX_LOOPS = 150;
 	int loopCounter = 0;
 
-	const double MAX_TRY_TIME = 2.0;
-	const double MAX_RETRY_TIME = 2.0;
 	double startTime = -1;
 	const double TIMEOUT_THRESHOLD = 3.0;
 

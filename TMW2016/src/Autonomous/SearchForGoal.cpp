@@ -29,7 +29,6 @@ bool SearchForGoal::operator()(World *world) {
 	};
 	const int lookupTargetGoal = targetGoal - 1;
 	const float minTime = minTimes[startingPosition-1][lookupTargetGoal];
-	cout << "MinTime: " << minTime << '\n';
 
 	// Startup & Timeout Checks
 

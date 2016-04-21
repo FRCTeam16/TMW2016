@@ -19,52 +19,46 @@ void ShootingStrategy::Init(World* world) {
 	bool useVision =  targetGoal < 4;
 	bool waitForArm = true;
 
-	//----------------------------------------------------------------------//
+	// Location Step based on starting position
 
+	//----------------------------------------------------------------------//
+	// Noop
 	locationSteps[0] = {
 			new LockWheels()
 	};
 
 	//----------------------------------------------------------------------//
-
+	// Left Goal
 	locationSteps[1] = {};
-	constructLeftGoalSteps(locationSteps[1], useVision, waitForArm, false);
+	constructLeftGoalSteps(locationSteps[1], useVision, waitForArm);
 
 
 	//----------------------------------------------------------------------//
-
+	// Center Goal
 	locationSteps[2] = {};
-	constructCenterGoalSteps(locationSteps[2], useVision, waitForArm, false);
+	constructCenterGoalSteps(locationSteps[2], useVision, waitForArm);
 
 	//----------------------------------------------------------------------//
-
+	// Unused Right Goal
 	locationSteps[3] = {};
-	constructCenterGoalSteps(locationSteps[3], useVision, waitForArm, false);
+	constructCenterGoalSteps(locationSteps[3], useVision, waitForArm);
 
 	//----------------------------------------------------------------------//
-
+	// Left blind
 	locationSteps[4] = {};
-	constructCenterGoalSteps(locationSteps[4], useVision, waitForArm, false);
+	constructCenterGoalSteps(locationSteps[4], useVision, waitForArm);
 
 	//----------------------------------------------------------------------//
-
+	// Unused Right Blind
 	locationSteps[5] = {};
-	constructCenterGoalSteps(locationSteps[5], useVision, waitForArm, false);
+	constructCenterGoalSteps(locationSteps[5], useVision, waitForArm);
 
 	//----------------------------------------------------------------------//
-	// Left Goal with Return
-	locationSteps[6] = {};
-	constructLeftGoalSteps(locationSteps[6], useVision, waitForArm, true);
-
-	//----------------------------------------------------------------------//
-	// Center Goal with Return
-	locationSteps[7] = {};
-	constructLeftGoalSteps(locationSteps[7], useVision, waitForArm, true);
 }
 
 void ShootingStrategy::constructLeftGoalSteps(
-		std::vector<Step*> &vec, const bool useVision, const bool waitForArm, const bool retraverse) {
-	cout << "ShootingStrategy::constructLeftGoalSteps(re-traverse? " << retraverse << "\n";
+		std::vector<Step*> &vec, const bool useVision, const bool waitForArm) {
+	cout << "ShootingStrategy::constructLeftGoalSteps\n";
 
 	vec.push_back(new SetArmPosition(SetArmPosition::Position::ShooterHigh, false));
 	vec.push_back(new MoveAlongMoveToWallShootingLine(0.5, 0.3)); // kick out from left wall
@@ -74,22 +68,16 @@ void ShootingStrategy::constructLeftGoalSteps(
 		vec.push_back(new SearchForGoal(5, 0.3));
 		vec.push_back(new AlignWithGoalAndShoot(8, 0.2));
 	} else {
-		vec.push_back(new MoveToWallShootingPosition(10, 0.3));
+		vec.push_back(new SetArmPosition(SetArmPosition::Position::Wallshot, false));
+		vec.push_back(new MoveToWallShootingPosition(10, 0.3, 0.9));
 		vec.push_back(new SnugToWall(0.3, 0.25));
 		vec.push_back(new ShootBall(false));
-	}
-
-	if (retraverse) {
-		vec.push_back(new SetArmPosition(SetArmPosition::Position::Pickup, false));
-		vec.push_back(new ControlBeaterBar(false));
-		vec.push_back(new CollideWithWall(0.0, -0.3, -0.5, 0.8));
-		vec.push_back(new TraverseObstacleWithGyroAndSonarLockingValues(-0.5, -2.0, 5, false, 0.0));
 	}
 }
 
 void ShootingStrategy::constructCenterGoalSteps(
-		std::vector<Step*> &vec, const bool useVision, const bool waitForArm, const bool retraverse) {
-	cout << "ShootingStrategy::constructCenterGoalSteps(re-traverse? " << retraverse << "\n";
+		std::vector<Step*> &vec, const bool useVision, const bool waitForArm) {
+	cout << "ShootingStrategy::constructCenterGoalSteps\n";
 	vec.push_back(new SetArmPosition(SetArmPosition::Position::ShooterHigh, waitForArm));
 	vec.push_back(new ControlShooterMotors(true));
 
@@ -97,17 +85,10 @@ void ShootingStrategy::constructCenterGoalSteps(
 		vec.push_back(new SearchForGoal(5, 0.3));
 		vec.push_back(new AlignWithGoalAndShoot(5, 0.2));
 	} else {
-		vec.push_back(new MoveToWallShootingPosition(10, 0.3));
+		vec.push_back(new SetArmPosition(SetArmPosition::Position::Wallshot, false));
+		vec.push_back(new MoveToWallShootingPosition(10, 0.3, 0.9));
 		vec.push_back(new SnugToWall(0.3, 0.25));
 		vec.push_back(new ShootBall(false));
-	}
-
-	if (retraverse) {
-		vec.push_back(new SetArmPosition(SetArmPosition::Position::Pickup, false));
-		vec.push_back(new ControlBeaterBar(false));
-		vec.push_back(new TimedCrab(1.0, 0.0, 0.3, -0.6));
-		vec.push_back(new CollideWithWall(0.0, -0.5, -0.0, 7));
-		vec.push_back(new TraverseObstacleWithGyroAndSonarLockingValues(-0.5, -2.0, 5, false, 0.0));
 	}
 }
 

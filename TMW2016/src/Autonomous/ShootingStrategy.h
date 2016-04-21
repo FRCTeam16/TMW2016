@@ -15,8 +15,8 @@ public:
 private:
 	std::vector<Step*> locationSteps[8];			// TODO: Can we use safer pointer here
 	unsigned int currentStep = 0;
-	void constructLeftGoalSteps(std::vector<Step*> &vec, const bool useVision, const bool waitForArm, const bool retraverse);
-	void constructCenterGoalSteps(std::vector<Step*> &vec, const bool useVision, const bool waitForArm, const bool retraverse);
+	void constructLeftGoalSteps(std::vector<Step*> &vec, const bool useVision, const bool waitForArm);
+	void constructCenterGoalSteps(std::vector<Step*> &vec, const bool useVision, const bool waitForArm);
 };
 
 #endif /* SRC_AUTONOMOUS_SHOOTINGSTRATEGY_H_ */
