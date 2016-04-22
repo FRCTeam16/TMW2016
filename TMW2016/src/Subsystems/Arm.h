@@ -49,6 +49,7 @@ private:
 	float dartRightMaxReverse;
 	float dartMaxForwardDefault;
 	float dartMaxReverseDefault;
+	const int dartMaxLimit = 100;
 	int dartOutputLimit;
 	int dartRightHotCount;
 	int dartLeftHotCount;
@@ -66,8 +67,8 @@ private:
 
 	int highShooter = 720;					// from prefs
 	int lowShooter = 570;					// from prefs
-	const int pickup = 910;				// 4/5/2016 - 933 		4/20/2016 moving from 920
-	const int travel = 838;
+	int pickup = 910;				// 4/5/2016 - 933 		4/20/2016 moving from 920
+	int travel = 838;
 	const int extendPosition = 300;
 	const int extendLimit = 550;
 

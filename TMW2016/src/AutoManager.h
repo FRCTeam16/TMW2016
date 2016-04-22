@@ -17,6 +17,7 @@
 #include "Vision/VisionServer.h"
 
 static const std::string AUTO_DELAY = "Auto Delay";
+static const std::string AUTO_C_TYPE_RETURN = "Auto C-Type Return";
 
 
 class AutoManager {

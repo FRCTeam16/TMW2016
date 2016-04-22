@@ -4,6 +4,7 @@
 
 #include "TraverseObstacleSteps.h"
 #include "../Robot.h"
+#include "utils.h"
 #include <iostream>
 
 bool TraverseObstacleWithGyro::operator ()(World *world) {
@@ -73,8 +74,13 @@ bool TraverseObstacleWithGyro::operator ()(World *world) {
 bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 	cout << "TraverseObstacleWithGyroAndSonar()\n";
 	const float pitch = Robot::driveBase->imu->GetRoll();
-	const int distance = Robot::driveBase->ultrasonics->GetDistance(2);
+	int distance = Robot::driveBase->ultrasonics->GetDistance(2);
 	const double currentTime = world->GetClock();
+
+	const bool ultrasonic_error = !utils::CheckUltrasonicDistance(distance);
+	if (ultrasonic_error) {
+		distance = last_distance;
+	}
 
 	cout << "currentTime: " << currentTime << '\n';
 	cout << "startTime  : " << startTime << '\n';
@@ -87,6 +93,7 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 	cout << "distance       : " << distance << '\n';
 	cout << "last distance  : " << last_distance << '\n';
 	cout << "in_obstacle    : " << distance_in_obstacle << '\n';
+	cout << "ctype exit     : " << exitAfterEnteringObstacle << '\n';
 
 	if (!running) {
 		running = true;
@@ -102,6 +109,12 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 		return false;
 	}
 
+	if (exitAfterEnteringObstacle && ultrasonic_error) {
+		// Abort return
+		cout << "Aborting return due to error from ultrasonic\n";
+		crab->Stop();
+		return false;
+	}
 
 	//
 	// Normal Operations
@@ -167,8 +180,13 @@ bool TraverseObstacleWithGyroAndSonar::operator ()(World* world) {
 bool TraverseObstacleWithGyroAndSonarLockingValues::operator ()(World* world) {
 	cout << "TraverseObstacleWithGyroAndSonarLockingValues()\n";
 	const float pitch = Robot::driveBase->imu->GetRoll();
-	const int distance = Robot::driveBase->ultrasonics->GetDistance(2);
+	int distance = Robot::driveBase->ultrasonics->GetDistance(2);
 	const double currentTime = world->GetClock();
+
+	const bool ultrasonic_error = !utils::CheckUltrasonicDistance(distance);
+	if (ultrasonic_error) {
+		distance = last_distance;
+	}
 
 	cout << "currentTime: " << currentTime << '\n';
 	cout << "startTime  : " << startTime << '\n';

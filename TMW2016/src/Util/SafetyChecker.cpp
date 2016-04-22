@@ -8,11 +8,11 @@
 
 bool SafetyChecker::CheckLimits() {
 	bool success = true;
-	if (Robot::driveBase->tankLeftHotCount > Robot::driveBase->tankDriveLimit) {
+	if (Robot::driveBase->tankLeftHotCount > Robot::driveBase->tankMaxLimit) {
 		cout << "<<< TANK LEFT EXCEEDED LIMIT >>>\n";
 		success = false;
 	}
-	if (Robot::driveBase->tankRightHotCount > Robot::driveBase->tankDriveLimit) {
+	if (Robot::driveBase->tankRightHotCount > Robot::driveBase->tankMaxLimit) {
 		cout << "<<< TANK RIGHT EXCEEDED LIMIT >>>\n";
 		success = false;
 	}
@@ -33,11 +33,11 @@ bool SafetyChecker::CheckLimits() {
 		success = false;
 	}
 
-	if (Robot::arm->dartRightHotCount > Robot::arm->dartOutputLimit) {
+	if (Robot::arm->dartRightHotCount > Robot::arm->dartMaxLimit) {
 		cout << "<<< DART RIGHT EXCEEDED LIMIT >>>\n";
 		success = false;
 	}
-	if (Robot::arm->dartLeftHotCount > Robot::arm->dartOutputLimit) {
+	if (Robot::arm->dartLeftHotCount > Robot::arm->dartMaxLimit) {
 		cout << "<<< DART LEFT EXCEEDED LIMIT >>>\n";
 		success = false;
 	}

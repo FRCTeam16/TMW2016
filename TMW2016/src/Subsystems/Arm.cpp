@@ -265,12 +265,13 @@ void Arm::ShooterLow() {
 
 }
 void Arm::PickupPosition() {
+	pickup = Preferences::GetInstance()->GetFloat("PickupArm", 910);
 	DartPosition(pickup);
 	shooterRun = false;
 }
 void Arm::TravelPosition() {
+	travel = Preferences::GetInstance()->GetFloat("TravelArm", 838);
 	DartPosition(travel);
-
 }
 
 void Arm::SetShooterSpeed(float ShooterSpeed, float FeederSpeed) {

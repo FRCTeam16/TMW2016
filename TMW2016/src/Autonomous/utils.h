@@ -10,6 +10,7 @@
 namespace utils {
 float CalculateDriveAngle(const int pos, const int goal, outerworks defense);
 void DebugDisplayCalculateDriveAngle();
+bool CheckUltrasonicDistance(int distance);
 }
 
 

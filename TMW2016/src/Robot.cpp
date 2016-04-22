@@ -56,8 +56,12 @@ void Robot::RobotInit() {
 	if(!prefs->ContainsKey("AutoReturnOffset3")) { prefs->PutFloat("AutoReturnOffset3", 92); }
 	if(!prefs->ContainsKey("AutoReturnOffset4")) { prefs->PutFloat("AutoReturnOffset4", -35); }
 	if(!prefs->ContainsKey("AutoReturnOffset5")) { prefs->PutFloat("AutoReturnOffset5", -131); }
+	if(!prefs->ContainsKey("PickupArm")) { prefs->PutFloat("PickupArm", 910); }
+	if(!prefs->ContainsKey("TravelArm")) { prefs->PutFloat("TravelArm", 838); }
+
 
 	SmartDashboard::PutNumber(AUTO_DELAY, 0.0);
+	SmartDashboard::PutBoolean(AUTO_C_TYPE_RETURN, false);
 
 	// Vision
 	if (!prefs->ContainsKey("VisionCenterOffset")) { prefs->PutInt("VisionCenterOffset", -11); }
@@ -138,7 +142,7 @@ void Robot::TeleopInit() {
 	if (autonomousCommand.get() != nullptr)
 		autonomousCommand->Cancel();
 	Robot::driveBase->EnableSteerPIDControllers(true);
-	driveBase->DriveControlTwist->SetPID(prefs->GetFloat("TwistP"),prefs->GetFloat("TwistI"),prefs->GetFloat("TwistD"));
+	driveBase->DriveControlTwist->SetPID(prefs->GetFloat("TwistP", 0.02),prefs->GetFloat("TwistI", 0.0),prefs->GetFloat("TwistD", 0.12));
 	driveBase->DriveControlTwist->SetOutputRange(-.5, .5);
 }
 
@@ -251,22 +255,22 @@ void Robot::TeleopPeriodic() {
 
 	if(oi->GPB->RisingEdge()) {
 		arm->SetWallshotDart(false);
-		arm->ShooterLow();
 		arm->SetShooterSpeed(prefs->GetFloat("ShortShooterSpeed"),prefs->GetFloat("FeederSpeed"));
+		arm->ShooterLow();
 		tankRun = false;
 	}
 
 	if(oi->GPX->RisingEdge()) {
 		arm->SetWallshotDart(true);
-		arm->ShooterHigh();
 		arm->SetShooterSpeed(prefs->GetFloat("LongShooterSpeed"),prefs->GetFloat("FeederSpeed"));
+		arm->ShooterHigh();
 		tankRun = false;
 	}
 
 	if(oi->GPY->RisingEdge()) {
 		arm->SetWallshotDart(false);
-		arm->ShooterHigh();
 		arm->SetShooterSpeed(prefs->GetFloat("LongShooterSpeed"),prefs->GetFloat("FeederSpeed"));
+		arm->ShooterHigh();
 		tankRun = false;
 	}
 

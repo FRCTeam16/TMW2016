@@ -77,4 +77,13 @@ float CalculateDriveAngle(const int pos, const int goal, outerworks defense) {
 	return atan2(dx,dy);
 }
 
+bool CheckUltrasonicDistance(int distance) {
+	if (distance > 765) {
+		cout << "*!*!*!*!*! INVALID DISTANCE DETECTED : " << distance << "*!*!*!*!*!\n";
+		return false;
+	} else {
+		return true;
+	}
+}
+
 }

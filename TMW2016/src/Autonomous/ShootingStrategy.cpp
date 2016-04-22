@@ -83,7 +83,7 @@ void ShootingStrategy::constructCenterGoalSteps(
 
 	if (useVision) {
 		vec.push_back(new SearchForGoal(5, 0.3));
-		vec.push_back(new AlignWithGoalAndShoot(5, 0.2));
+		vec.push_back(new AlignWithGoalAndShoot(8, 0.2));
 	} else {
 		vec.push_back(new SetArmPosition(SetArmPosition::Position::Wallshot, false));
 		vec.push_back(new MoveToWallShootingPosition(10, 0.3, 0.9));

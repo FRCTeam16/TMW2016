@@ -21,7 +21,6 @@ static const std::string AUTO_POSITION = "Auto Position";
 static const std::string AUTO_DEFENSE = "Auto Defense";
 static const std::string AUTO_TARGET = "Auto Goal-";
 static const std::string AUTO_RETURN = "Auto Return";
-static const std::string AUTO_C_TYPE_RETURN = "Auto C-Type Return";
 
 static const std::string AUTO_INIT_CONFIG_ERROR = "Auto Config Error";
 
@@ -103,8 +102,6 @@ AutoManager::AutoManager(const VisionServer *visionServer_):
 	SmartDashboard::PutData(AUTO_DEFENSE, defense.get());
 	SmartDashboard::PutData(AUTO_TARGET, target.get());
 	SmartDashboard::PutData(AUTO_RETURN, returnPosition.get());
-
-	SmartDashboard::PutBoolean(AUTO_C_TYPE_RETURN, false);
 
 	cout << "AutoManager::AutoManager complete\n";
 }
