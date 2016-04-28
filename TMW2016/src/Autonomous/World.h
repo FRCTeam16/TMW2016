@@ -18,7 +18,8 @@ class World {
 public:
 	World() : timer(new Timer()) {};
 	virtual ~World() {};
-	void Init(const int& startingPosition_, const int& targetGoal_, outerworks startingDefense_, int returnPosition_, bool ctypeReturn_);
+	void Init(const int& startingPosition_, const int& targetGoal_, outerworks startingDefense_,
+			  int returnPosition_, bool ctypeReturn_, bool twoBallPrevent_);
 	void Update(const VisionData &visionData);
 	long GetRunCounter() const;					// number of times Run() is called
 	double GetClock() const;					// time elapsed since Init() in seconds
@@ -27,6 +28,7 @@ public:
 	void SetTargetGoal(const int targetGoal_);
 	int GetReturnPosition() const;
 	bool GetCtypeReturn() const;
+	bool GetTwoBallPrevent() const;
 	outerworks GetStartingDefense() const;		// starting outerworks defense
 	const VisionData& GetVisionData() const;	// vision information
 private:
@@ -35,6 +37,7 @@ private:
 	int targetGoal = -1;					// target goal
 	int returnPosition = 0;					// return position
 	bool ctypeReturn = false;				// whether return is a ctype or not
+	bool twoBallPrevent = false;			// whether we want to start with a two goal prevent strategy modification
 	outerworks startingDefense = Noop;		// starting outerworks type
 	std::unique_ptr<Timer> timer;			// tracks time in autonomous world
 	VisionData visionData;					// tracks vision data

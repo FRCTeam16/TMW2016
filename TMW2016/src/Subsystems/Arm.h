@@ -91,6 +91,8 @@ public:
 	bool DartInPosition() const;
 	void IncDart();
 	void DecDart();
+	void IncLowDart();
+	void DecLowDart();
 	void SetWallshotDart(const bool enabled);
 	bool GetWallshotDart() const;
 	void ClimbExtend();

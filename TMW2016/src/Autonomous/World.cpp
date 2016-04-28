@@ -5,13 +5,15 @@
 #include "World.h"
 #include <cassert>
 
-void World::Init(const int& startingPosition_, const int& targetGoal_, outerworks startingDefense_, int returnPosition_, bool ctypeReturn_) {
+void World::Init(const int& startingPosition_, const int& targetGoal_, outerworks startingDefense_,
+		int returnPosition_, bool ctypeReturn_, bool twoBallPrevent_) {
 	cout << "World::Init\n";
 	startingPosition = startingPosition_;
 	targetGoal = targetGoal_;
 	startingDefense = startingDefense_;
 	returnPosition = returnPosition_;
 	ctypeReturn = ctypeReturn_;
+	twoBallPrevent = twoBallPrevent_;
 	timer->Start();
 }
 
@@ -56,3 +58,8 @@ int World::GetReturnPosition() const {
 bool World::GetCtypeReturn() const {
 	return ctypeReturn;
 }
+
+bool World::GetTwoBallPrevent() const {
+	return twoBallPrevent;
+}
+

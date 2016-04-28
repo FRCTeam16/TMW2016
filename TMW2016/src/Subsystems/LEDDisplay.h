@@ -34,8 +34,8 @@ private:
 	const long MIN_OUT = 0;
 	const long MAX_OUT = 5;
 
-	float MapWidth(const int width, const int xposition) const;
-	float MapX(const int xposition) const;
+	float MapWidth(const int width, const int xposition, const int offset) const;
+	float MapX(const int xposition, const int offset) const;
 };
 
 #endif /* SRC_SUBSYSTEMS_LEDDISPLAY_H_ */

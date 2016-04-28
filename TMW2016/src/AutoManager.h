@@ -18,6 +18,7 @@
 
 static const std::string AUTO_DELAY = "Auto Delay";
 static const std::string AUTO_C_TYPE_RETURN = "Auto C-Type Return";
+static const std::string AUTO_TWO_BALL_PREVENT = "STC";
 
 
 class AutoManager {

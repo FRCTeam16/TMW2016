@@ -144,8 +144,16 @@ void Arm::IncDart() {
 
 void Arm::DecDart() {
 	highShooter = highShooter - 10;
-
 }
+
+void Arm::IncLowDart() {
+	lowShooter = lowShooter + 10;
+}
+
+void Arm::DecLowDart() {
+	lowShooter = lowShooter - 10;
+}
+
 
 void Arm::DartSetToCurrent() {
 	DartPosition(dartLeft->GetPosition());

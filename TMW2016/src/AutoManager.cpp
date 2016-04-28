@@ -122,6 +122,7 @@ void AutoManager::Init(World *world) {
 	SmartDashboard::PutNumber("Selected Return", returnPos);
 
 	const bool ctypeReturn = SmartDashboard::GetBoolean(AUTO_C_TYPE_RETURN, false);
+	const bool twoBallPrevent = SmartDashboard::GetBoolean(AUTO_TWO_BALL_PREVENT, false);
 
 	// TODO: Add precondition state checks to prevent starting at 1 and shooting at 3, for example
 	SmartDashboard::PutString(AUTO_INIT_CONFIG_ERROR, "");
@@ -133,7 +134,7 @@ void AutoManager::Init(World *world) {
 
 	// Initialize world state with initial information
 	// Must occur before strategy initialization
-	world->Init(startingPosition, targetGoal, startingDefense, returnPos, ctypeReturn);
+	world->Init(startingPosition, targetGoal, startingDefense, returnPos, ctypeReturn, twoBallPrevent);
 
 	// Lookup strategy for starting outerwork defense
 	auto iterator = strategyLookup.find(startingDefense);

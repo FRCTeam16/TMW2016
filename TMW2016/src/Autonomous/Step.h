@@ -100,10 +100,11 @@ private:
 // --------------------------------------------------------------------------//
 class ControlBeaterBar: public Step {
 public:
-	ControlBeaterBar(bool enable_) : enable(enable_) {}
+	ControlBeaterBar(bool enable_, float speed_ = -1.0) : enable(enable_), speed(speed_) {}
 	bool operator()(World *world) override;
 private:
 	const bool enable;
+	const float speed;
 };
 
 // --------------------------------------------------------------------------//

@@ -62,6 +62,7 @@ void Robot::RobotInit() {
 
 	SmartDashboard::PutNumber(AUTO_DELAY, 0.0);
 	SmartDashboard::PutBoolean(AUTO_C_TYPE_RETURN, false);
+	SmartDashboard::PutBoolean(AUTO_TWO_BALL_PREVENT, false);
 
 	// Vision
 	if (!prefs->ContainsKey("VisionCenterOffset")) { prefs->PutInt("VisionCenterOffset", -11); }

@@ -134,10 +134,9 @@ bool ControlShooterMotors::operator()(World *world) {
 
 // --------------------------------------------------------------------------//
 
-
 bool ControlBeaterBar::operator()(World *world) {
 	cout << "ControlBeaterBar(" << enable << ")\n";
-	crab->beater_bar = enable ? -1.0 : 0.0;
+	crab->beater_bar = enable ? speed : 0.0;
 	return true;
 }
 
