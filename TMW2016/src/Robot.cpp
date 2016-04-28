@@ -65,7 +65,7 @@ void Robot::RobotInit() {
 	SmartDashboard::PutBoolean(AUTO_TWO_BALL_PREVENT, false);
 
 	// Vision
-	if (!prefs->ContainsKey("VisionCenterOffset")) { prefs->PutInt("VisionCenterOffset", -11); }
+	if (!prefs->ContainsKey("VisionCenterOffset")) { prefs->PutInt("VisionCenterOffset", 5); }
 
 	File = RAWCConstants::getInstance();
 	driveBase->SetOffsets(File->getValueForKey("FLOff"), File->getValueForKey("FROff"), File->getValueForKey("RLOff"), File->getValueForKey("RROff"));

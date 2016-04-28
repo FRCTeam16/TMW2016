@@ -36,7 +36,7 @@ bool AlignWithGoalAndShoot::operator()(World *world) {
 	// Startup & Timeout Checks
 	if (startTime < 0) {
 		startTime = currentTime;
-		vision_center_offset = Preferences::GetInstance()->GetInt("VisionCenterOffset", -11);
+		vision_center_offset = Preferences::GetInstance()->GetInt("VisionCenterOffset", 5);
 		cout << "Set Offset to: " << vision_center_offset << '\n';
 	} else if ((currentTime - startTime) > timeout) {
 		std::cerr << "AlignWithGoal: timed out, halting\n";

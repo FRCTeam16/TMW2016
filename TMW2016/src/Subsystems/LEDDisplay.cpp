@@ -22,7 +22,7 @@ void LEDDisplay::Update(const VisionData &vd) {
 	if (vd.HasData()) {
 		const int invalidGoal = -1;
 		GoalInfo goal = vd.GetGoal(invalidGoal);
-		const int offset = Preferences::GetInstance()->GetInt("VisionCenterOffset", -11);
+		const int offset = Preferences::GetInstance()->GetInt("VisionCenterOffset", 5);
 		float translationVoltage = MapX(goal.xposition, offset);
 		float widthVoltage = MapWidth(goal.width, goal.xposition, offset);
 		widthOutput->SetVoltage(widthVoltage);
