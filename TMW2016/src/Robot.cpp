@@ -153,65 +153,32 @@ void Robot::TeleopPeriodic() {
 	driveBase->SMDB();
 	arm->SMDB();
 
-	if (!oi->DR3->Pressed()) {
-		if(oi->DL1->Pressed()) {
-			driveBase->Lock();
-		}
-		else if(oi->DL4->Pressed()) {
-			driveBase->DriveControlTwist->SetSetpoint(-120.0);
-			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-		}
-		else if(oi->DL5->Pressed()) {
-			driveBase->DriveControlTwist->SetSetpoint(120.0);
-			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-		}
-		else if(oi->DL3->Pressed()) {
-			driveBase->DriveControlTwist->SetSetpoint(0);
-			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-		}
-		else if(oi->DL2->Pressed()) {
-			driveBase->DriveControlTwist->SetSetpoint(180.0);
-			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-		}
-		else if(oi->DR5->Pressed()) {
-			driveBase->DriveControlTwist->SetSetpoint(60.0);
-			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-		}
-		else if(oi->DR6->Pressed()) {
-			driveBase->DriveControlTwist->SetSetpoint(-60.0);
-			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-		}
-		else
-		{
-			driveBase->Crab(oi->getJoystickTwist(),-oi->getJoystickY(),oi->getJoystickX(),true);
-		}
-	} else {
-		// modifier for auto high shooting enabled
-		int target = -1;
-		if(oi->DL1->Pressed()) {
-			driveBase->Lock();
-		}
-		else if(oi->DL4->Pressed()) {
-			target = 1;
-		}
-		else if(oi->DL5->Pressed()) {
-			target = 2;
-		}
-		else if(oi->DL3->Pressed()) {
-			target = 2;
-		}
-		else
-		{
-			driveBase->Crab(oi->getJoystickTwist(),-oi->getJoystickY(),oi->getJoystickX(),true);
-		}
-
-		if (target > 0) {
-			world->SetTargetGoal(target);
-			teleopAutoHighShootStrategy->RunPeriodic(world.get());
-		} else {
-			teleopAutoHighShootStrategy->Reset();
-		}
+	if(oi->DL1->Pressed()) {
+		driveBase->Lock();
 	}
+	else if(oi->DL4->Pressed()) {
+		float setpoint = oi->DR3->Pressed() ? -120.0 : 60.0;
+		driveBase->DriveControlTwist->SetSetpoint(setpoint);
+		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+	}
+	else if(oi->DL5->Pressed()) {
+		float setpoint = oi->DR3->Pressed() ? 120.0 : -60.0;
+		driveBase->DriveControlTwist->SetSetpoint(setpoint);
+		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+	}
+	else if(oi->DL3->Pressed()) {
+		driveBase->DriveControlTwist->SetSetpoint(0);
+		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+	}
+	else if(oi->DL2->Pressed()) {
+		driveBase->DriveControlTwist->SetSetpoint(180.0);
+		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+	}
+	else
+	{
+		driveBase->Crab(oi->getJoystickTwist(),-oi->getJoystickY(),oi->getJoystickX(),true);
+	}
+
 
 	if (oi->DL8->Pressed()) {
 		float currentOffset = Preferences::GetInstance()->GetFloat("WallShotOffset", 0);
