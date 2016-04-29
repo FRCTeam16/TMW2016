@@ -288,7 +288,7 @@ void Arm::SetShooterSpeed(float ShooterSpeed, float FeederSpeed) {
 }
 void Arm::ShooterManager() {
 	if(shooterRun) {
-		if (Relay::kOff == RobotMap::flashlightRelay->Get()) {
+		if ((Relay::kOff == RobotMap::flashlightRelay->Get()) && flashlightEnabled) {
 			RobotMap::flashlightRelay->Set(Relay::kOn);
 		}
 		shooterWheel->Set(shooterSpeed);
@@ -404,6 +404,10 @@ std::vector<std::string> Arm::GetHeaders() {
 		"Climb Left Status",
 		"Climb Right Status"
 	};
+}
+
+void Arm::SetFlashlightEnabled(bool enabled) {
+	flashlightEnabled = enabled;
 }
 
 void Arm::Log(std::ofstream &outstream) {

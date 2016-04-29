@@ -72,6 +72,8 @@ private:
 	const int extendPosition = 300;
 	const int extendLimit = 550;
 
+	bool flashlightEnabled = true;
+
 public:
 	Arm();
 	void InitDefaultCommand();
@@ -112,6 +114,8 @@ public:
 	void FireManager();
 	void DartManager();
 	void SMDB();
+
+	void SetFlashlightEnabled(bool enabled);
 
 	// DataLoggable
 	std::vector<std::string> GetHeaders() override;
