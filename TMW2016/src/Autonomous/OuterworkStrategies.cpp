@@ -10,10 +10,9 @@
 
 
 void DoTwoGoalPrevent(std::vector<std::unique_ptr<Step>> &steps) {
-	steps.push_back(std::unique_ptr<Step>(new TimedCrab(0.35, 0.0, 0.30, 0.0)));
-	steps.push_back(std::unique_ptr<Step>(new SetArmPosition(SetArmPosition::Position::Pickup, true)));
-	steps.push_back(std::unique_ptr<Step>(new ControlBeaterBar(true)));
-	steps.push_back(std::unique_ptr<Step>(new Delay(2.0)));
+	steps.push_back(std::unique_ptr<Step>(new TimedCrab(0.35, 0.0, 0.15, 0.0)));
+	steps.push_back(std::unique_ptr<Step>(new SetArmPositionNoLock(SetArmPositionNoLock::Position::Pickup, true)));
+	steps.push_back(std::unique_ptr<Step>(new ControlBeaterBar(true, -1.0, 2.0)));
 }
 
 

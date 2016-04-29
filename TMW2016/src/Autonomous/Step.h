@@ -100,11 +100,13 @@ private:
 // --------------------------------------------------------------------------//
 class ControlBeaterBar: public Step {
 public:
-	ControlBeaterBar(bool enable_, float speed_ = -1.0) : enable(enable_), speed(speed_) {}
+	ControlBeaterBar(bool enable_, float speed_ = -1.0, float period_ = -1) : enable(enable_), speed(speed_), period(period_) {}
 	bool operator()(World *world) override;
 private:
 	const bool enable;
 	const float speed;
+	float startTime = -1;
+	const float period;
 };
 
 // --------------------------------------------------------------------------//
@@ -140,5 +142,23 @@ private:
 	int loopCounter = 0;
 	bool running = false;
 };
+
+class SetArmPositionNoLock : public Step {
+public:
+	enum struct Position { Custom, Pickup, Travel, ShooterLow, ShooterHigh, Wallshot };
+	SetArmPositionNoLock(Position pos_, bool wait_):
+		position(pos_), wait(wait_), customTarget(-1) {}
+	SetArmPositionNoLock(int targetPosition_, bool wait_):
+			position(Position::Custom), wait(wait_), customTarget(targetPosition_) {}
+	bool operator()(World *world) override;
+private:
+	const Position position;
+	const bool wait;
+	const int customTarget;
+	const int MAX_LOOPS = 500;	// 10 seconds
+	int loopCounter = 0;
+	bool running = false;
+};
+
 
 #endif /* SRC_AUTONOMOUS_STEP_H_ */

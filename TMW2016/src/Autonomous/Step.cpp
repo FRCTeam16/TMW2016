@@ -110,6 +110,49 @@ bool SetArmPosition::operator()(World *world) {
 	}
 }
 
+bool SetArmPositionNoLock::operator()(World *world) {
+	cout << "SetArmPosition\n";
+	if (++loopCounter > MAX_LOOPS) {
+		cerr << "Aborting SetArmPosition\n";
+		return true;
+	}
+
+	if (!running) {
+		running = true;
+		switch(position) {
+		case Position::Custom:
+			Robot::arm->DartPosition(customTarget);
+			break;
+		case Position::Pickup:
+			Robot::arm->PickupPosition();
+			break;
+		case Position::Travel:
+			Robot::arm->TravelPosition();
+			break;
+		case Position::ShooterLow:
+			Robot::arm->ShooterLow();
+			break;
+		case Position::ShooterHigh:
+			Robot::arm->ShooterHigh();
+			break;
+		case Position::Wallshot:
+			Robot::arm->SetWallshotDart(true);
+			Robot::arm->ShooterHigh();
+			break;
+		default:
+			std::cerr << "Unrecognized position requested: " << static_cast<int>(position) << ", aborting!\n";
+			return true;
+		}
+	}
+
+	if (wait) {
+		cout << "Waiting for DART...";
+		return Robot::arm->DartInPosition();
+	} else {
+		return true;
+	}
+}
+
 
 // --------------------------------------------------------------------------//
 
@@ -136,7 +179,23 @@ bool ControlShooterMotors::operator()(World *world) {
 
 bool ControlBeaterBar::operator()(World *world) {
 	cout << "ControlBeaterBar(" << enable << ")\n";
-	crab->beater_bar = enable ? speed : 0.0;
+	cout << "period = " << period << '\n';
+	const float now = world->GetClock();
+	if (startTime < 0) {
+		// First run
+		startTime = now;
+	}
+	// No period
+	if (period < 0) {
+		crab->beater_bar = enable ? speed : 0.0;
+		return true;
+	} else {
+		if ((now - startTime) <= period  ) {
+			crab->Stop();
+			crab->beater_bar = enable ? speed : 0.0;
+			return false;
+		}
+	}
 	return true;
 }
 
