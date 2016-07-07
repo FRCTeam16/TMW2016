@@ -158,23 +158,31 @@ void Robot::TeleopPeriodic() {
 	if(oi->DL1->Pressed()) {
 		driveBase->Lock();
 	}
-	else if(oi->DL4->Pressed()) {
+	else if(oi->DL4->Pressed()) { // left high goal
 		float setpoint = oi->DR3->Pressed() ? -120.0 : 60.0;
 		driveBase->DriveControlTwist->SetSetpoint(setpoint);
 		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
-	else if(oi->DL5->Pressed()) {
+	else if(oi->DL5->Pressed()) { // right high goal
 		float setpoint = oi->DR3->Pressed() ? 120.0 : -60.0;
 		driveBase->DriveControlTwist->SetSetpoint(setpoint);
 		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
-	else if(oi->DL3->Pressed()) {
+	else if(oi->DL3->Pressed()) { // straight
 		driveBase->DriveControlTwist->SetSetpoint(0);
 		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
-	else if(oi->DL2->Pressed()) {
+	else if(oi->DL2->Pressed()) {  // backwards
 		driveBase->DriveControlTwist->SetSetpoint(180.0);
 		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+	}
+	else if (oi->DR5->Pressed()) { // left low goal
+		driveBase->DriveControlTwist->SetSetpoint(-120);
+		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
+	}
+	else if (oi->DR7->Pressed()) { // right low goal
+			driveBase->DriveControlTwist->SetSetpoint(120);
+			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
 	else
 	{

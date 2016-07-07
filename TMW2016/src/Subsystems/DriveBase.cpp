@@ -8,7 +8,8 @@
 // update. Deleting the comments indicating the section will prevent
 // it from being updated in the future.
 
-
+#include <algorithm>
+#include <vector>
 
 
 #include "DriveBase.h"
@@ -116,13 +117,22 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	DriveControlTwist->SetInputRange(-180, 180);
 
 	frontLeftSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
-	frontLeftDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
 	frontRightSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
-	frontRightDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
 	rearLeftSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
-	rearLeftDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
 	rearRightSteer->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Brake);
-	rearRightDrive->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+
+	std::vector<std::shared_ptr<CANTalon>> drives{frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive};
+	std::for_each(drives.begin(), drives.end(), [](std::shared_ptr<CANTalon> motor) {
+		motor->SetFeedbackDevice(CANTalon::QuadEncoder);
+		motor->SetControlMode(CANTalon::kSpeed);
+		motor->ConfigEncoderCodesPerRev(3);
+		motor->ConfigNeutralMode(CANSpeedController::NeutralMode::kNeutralMode_Coast);
+		motor->SetP(2);
+		motor->SetI(0.001);
+		motor->SetD(0);
+		motor->SetF(3.93);
+		motor->SetIzone(20);
+	});
 
 	ultrasonics.reset(new DualMaxBoticsI2CXL(I2C::Port::kOnboard, 1, 2, 0.08));
 	proximityLeft = RobotMap::driveBaseProximityLeft;
@@ -509,17 +519,20 @@ void DriveBase::SetDriveSpeed(float FLSpeed, float FRSpeed, float RLSpeed, float
 		driveLimit = 1.0;
 	}
 
+
+	int driveFullSpeed = 13000;
+
 	if(driveFront) {
-		frontLeftDrive->Set(FLSpeed*FLInv);
-		frontRightDrive->Set(FRSpeed*FRInv);
-		rearLeftDrive->Set(RLSpeed*RLInv);
-		rearRightDrive->Set(RRSpeed*RRInv);
+		frontLeftDrive->Set(FLSpeed*FLInv*driveFullSpeed);
+		frontRightDrive->Set(FRSpeed*FRInv*driveFullSpeed);
+		rearLeftDrive->Set(RLSpeed*RLInv*driveFullSpeed);
+		rearRightDrive->Set(RRSpeed*RRInv*driveFullSpeed);
 	}
 	else {
-		frontLeftDrive->Set(RRSpeed*FLInv);
-		frontRightDrive->Set(RLSpeed*FRInv);
-		rearLeftDrive->Set(FRSpeed*RLInv);
-		rearRightDrive->Set(FLSpeed*RRInv);
+		frontLeftDrive->Set(RRSpeed*FLInv*driveFullSpeed);
+		frontRightDrive->Set(RLSpeed*FRInv*driveFullSpeed);
+		rearLeftDrive->Set(FRSpeed*RLInv*driveFullSpeed);
+		rearRightDrive->Set(FLSpeed*RRInv*driveFullSpeed);
 	}
 
 //	std::cout << "DriveLimit:" << driveLimit << " HotCounts:" << FLHotCount << "|" << FRHotCount << "|" << RLHotCount << "|" << RRHotCount << " CoolCount:" << coolCount << std::endl;
