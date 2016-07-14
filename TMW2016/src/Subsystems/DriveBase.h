@@ -114,6 +114,9 @@ private:
 	int tankDriveLimit;
 	int tankCoolCount;
 
+	bool fineTurn;
+
+
 	double CorrectSteerSetpoint(double setpoint);
 	void SetSteerSetpoint(float setpoint, std::shared_ptr<AnalogInput> actual, float offset, std::shared_ptr<PIDController> PIDCon, std::shared_ptr<CANTalon> steer, int turns, int &inv, bool UseShortcut);
 	void SetDriveSpeed(float FLSpeed, float FRSpeed, float RLSpeed, float RRSpeed);
@@ -170,7 +173,7 @@ public:
 	AHRS *imu;
 	void TestDrive(float first);
 	void SMDB();
-
+	void SetFineTurn(bool value);
 };
 
 #endif
