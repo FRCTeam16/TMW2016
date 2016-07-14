@@ -159,12 +159,12 @@ void Robot::TeleopPeriodic() {
 		driveBase->Lock();
 	}
 	else if(oi->DL4->Pressed()) { // left high goal
-		float setpoint = oi->DR3->Pressed() ? -120.0 : 60.0;
+		float setpoint = oi->DR3->Pressed() ? 60.0 : -120.0;
 		driveBase->DriveControlTwist->SetSetpoint(setpoint);
 		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
 	else if(oi->DL5->Pressed()) { // right high goal
-		float setpoint = oi->DR3->Pressed() ? 120.0 : -60.0;
+		float setpoint = oi->DR3->Pressed() ? -60.0 : 120.0;
 		driveBase->DriveControlTwist->SetSetpoint(setpoint);
 		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
@@ -175,14 +175,6 @@ void Robot::TeleopPeriodic() {
 	else if(oi->DL2->Pressed()) {  // backwards
 		driveBase->DriveControlTwist->SetSetpoint(180.0);
 		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-	}
-	else if (oi->DR5->Pressed()) { // left low goal
-		driveBase->DriveControlTwist->SetSetpoint(-120);
-		driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
-	}
-	else if (oi->DR7->Pressed()) { // right low goal
-			driveBase->DriveControlTwist->SetSetpoint(120);
-			driveBase->Crab(driveBase->CrabSpeedTwist->Get(),-oi->getJoystickY(),oi->getJoystickX(),true);
 	}
 	else
 	{
@@ -229,6 +221,7 @@ void Robot::TeleopPeriodic() {
 		arm->SetWallshotDart(false);
 		arm->PickupPosition();
 		tankRun = false;
+		driveBase->SetFineTurn(false);
 	}
 
 	if(oi->GPB->RisingEdge()) {
@@ -236,6 +229,7 @@ void Robot::TeleopPeriodic() {
 		arm->SetShooterSpeed(prefs->GetFloat("ShortShooterSpeed"),prefs->GetFloat("FeederSpeed"));
 		arm->ShooterLow();
 		tankRun = false;
+		driveBase->SetFineTurn(false);
 	}
 
 	if(oi->GPX->RisingEdge()) {
@@ -243,6 +237,7 @@ void Robot::TeleopPeriodic() {
 		arm->SetShooterSpeed(prefs->GetFloat("LongShooterSpeed"),prefs->GetFloat("FeederSpeed"));
 		arm->ShooterHigh();
 		tankRun = false;
+		driveBase->SetFineTurn(true);
 	}
 
 	if(oi->GPY->RisingEdge()) {
@@ -250,12 +245,14 @@ void Robot::TeleopPeriodic() {
 		arm->SetShooterSpeed(prefs->GetFloat("LongShooterSpeed"),prefs->GetFloat("FeederSpeed"));
 		arm->ShooterHigh();
 		tankRun = false;
+		driveBase->SetFineTurn(true);
 	}
 
 	if(oi->GPLT->RisingEdge()) {
 		arm->SetWallshotDart(false);
 		arm->TravelPosition();
 		tankRun = true;
+		driveBase->SetFineTurn(false);
 	}
 
 	if(oi->GPRT->RisingEdge() || oi->DR1->RisingEdge()) {

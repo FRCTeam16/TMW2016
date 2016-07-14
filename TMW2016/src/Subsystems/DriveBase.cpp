@@ -107,6 +107,8 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 	driveLimit = 1.0;
 	coolCount = 0;
 
+	fineTurn = false;
+
 
 	CrabSpeedTwist.reset(new CrabSpeed());
 	DriveControlTwist.reset(new PIDController(.01, 0, .05, imu, CrabSpeedTwist.get(), 0.02));
@@ -167,6 +169,11 @@ void DriveBase::ToggleFrontBack(){
 	driveFront = !driveFront;
 }
 void DriveBase::Crab(float twist, float y, float x, bool UseGyro) {
+	float Twist = twist;
+
+	if(fineTurn) {
+		Twist = Twist/2;
+	}
 
 	robotangle = imu->GetYaw()*M_PI/180;
 
@@ -180,10 +187,10 @@ void DriveBase::Crab(float twist, float y, float x, bool UseGyro) {
 
 	radius = sqrt(pow(2*Y,2)+pow(X,2));
 
-	AP = STR - twist*X/radius;
-	BP = STR + twist*X/radius;
-	CP = FWD - twist*2*Y/radius;
-	DP = FWD + twist*2*Y/radius;
+	AP = STR - Twist*X/radius;
+	BP = STR + Twist*X/radius;
+	CP = FWD - Twist*2*Y/radius;
+	DP = FWD + Twist*2*Y/radius;
 
 	float FLSetPoint = 2.5;
 	float FRSetPoint = 2.5;
@@ -595,4 +602,8 @@ void DriveBase::SMDB() {
 	SmartDashboard::PutNumber("RightTankDriveCurrent", tankRight->GetOutputCurrent());
 	SmartDashboard::PutNumber("Ultrasonics 1", ultrasonics->GetDistance(1));
 	SmartDashboard::PutNumber("Ultrasonics 2", ultrasonics->GetDistance(2));
+}
+
+void DriveBase::SetFineTurn(bool value) {
+	fineTurn = value;
 }

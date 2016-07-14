@@ -66,10 +66,10 @@ void ShootingStrategy::constructLeftGoalSteps(
 
 	if (useVision) {
 		vec.push_back(new SearchForGoal(5, 0.1));
-		vec.push_back(new AlignWithGoalAndShoot(8, 0.1));
+		vec.push_back(new AlignWithGoalAndShoot(12, 0.1));
 	} else {
 		vec.push_back(new SetArmPosition(SetArmPosition::Position::Wallshot, false));
-		vec.push_back(new MoveToWallShootingPosition(10, 0.3, 0.9));
+		vec.push_back(new MoveToWallShootingPosition(10, 0.3, 1.5));
 		vec.push_back(new SnugToWall(0.3, 0.25));
 		vec.push_back(new ShootBall(false));
 	}
@@ -83,7 +83,7 @@ void ShootingStrategy::constructCenterGoalSteps(
 
 	if (useVision) {
 		vec.push_back(new SearchForGoal(5, 0.1));
-		vec.push_back(new AlignWithGoalAndShoot(8, 0.1));
+		vec.push_back(new AlignWithGoalAndShoot(12, 0.1));
 	} else {
 		vec.push_back(new SetArmPosition(SetArmPosition::Position::Wallshot, false));
 		vec.push_back(new MoveToWallShootingPosition(10, 0.3, 0.9));
