@@ -18,6 +18,7 @@
 #include "DualMaxBoticsI2CXL.h"
 #include "../Util/SafetyChecker.h"
 
+using frc::SmartDashboard;
 
 class DriveBase: public Subsystem {
 	friend class SafetyChecker;

@@ -9,6 +9,8 @@
 #include "VisionDataParser.h"
 #include "WPILib.h"
 
+using frc::SmartDashboard;
+
 class VisionServer {
 public:
 	VisionServer(const int port);

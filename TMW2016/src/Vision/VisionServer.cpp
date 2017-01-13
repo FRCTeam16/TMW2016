@@ -105,6 +105,7 @@ bool VisionServer::GetClientConnected() const {
 
 void VisionServer::SMDB() {
 	const VisionData vd = GetVisionData();
+
 	SmartDashboard::PutBoolean("Vis:ClientConn",clientConnected);
 	SmartDashboard::PutNumber("Vis:Left::X", 	vd.leftGoal.xposition);
 	SmartDashboard::PutNumber("Vis:Left::Y", 	vd.leftGoal.yposition);
